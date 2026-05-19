@@ -1,64 +1,22 @@
 import Link from "next/link";
 import Image from "next/image";
-
-const casos = [
-  {
-    slug: "compas-urbano",
-    color: "teal" as const,
-    industry: "Sector público · Cultura",
-    nombre: "Compás Urbano",
-    tagline: "Agenda cultural inteligente para una ciudad",
-    metricNum: "91%",
-    metricLabel: "de usuarios recomendaría el canal",
-    minis: [
-      { num: "8.212", lbl: "eventos en base" },
-      { num: "2.036", lbl: "usuarios WhatsApp" },
-      { num: "13",    lbl: "fuentes activas" },
-    ],
-    desc: "Automatización completa de una agenda cultural ciudadana: recolección de datos de múltiples fuentes, curación con IA y distribución personalizada por WhatsApp.",
-    stack: ["Make.com", "Airtable", "WhatsApp", "Claude"],
-  },
-  {
-    slug: "retail-crm",
-    color: "blue" as const,
-    industry: "Retail · E-commerce",
-    nombre: "CRM Inteligente",
-    tagline: "Recuperación de clientes perdidos con IA",
-    metricNum: "3.2x",
-    metricLabel: "aumento en recompra de clientes inactivos",
-    minis: [
-      { num: "+40%", lbl: "tasa de reactivación" },
-      { num: "73h",  lbl: "ahorradas al mes" },
-      { num: "100%", lbl: "automatizado" },
-    ],
-    desc: "Sistema de detección y recuperación de clientes en riesgo usando análisis de comportamiento con IA y campañas automáticas de reactivación.",
-    stack: ["Make.com", "Monday.com", "OpenAI", "WhatsApp"],
-  },
-  {
-    slug: "soporte-ia",
-    color: "purple" as const,
-    industry: "SaaS · Tecnología",
-    nombre: "Soporte con IA",
-    tagline: "De 4 agentes a 1 con el mismo volumen resuelto",
-    metricNum: "68%",
-    metricLabel: "de tickets resueltos sin intervención humana",
-    minis: [
-      { num: "24/7", lbl: "disponibilidad" },
-      { num: "< 30s",lbl: "tiempo de respuesta" },
-      { num: "4→1",  lbl: "agentes necesarios" },
-    ],
-    desc: "Agente de soporte entrenado sobre la documentación real del producto. Escala casos complejos con historial completo — el cliente nunca repite.",
-    stack: ["Claude", "Zendesk", "Make.com", "Airtable"],
-  },
-];
+import { casos } from "@/content/data/casos";
 
 const headerBg = {
   teal:   "linear-gradient(135deg, #E6FAF8 0%, #D8F5F2 100%)",
   blue:   "linear-gradient(135deg, #EEF4FF 0%, #E8F0FD 100%)",
   purple: "linear-gradient(135deg, #F0EFFF 0%, #EAE8FE 100%)",
 };
-const industryColor = { teal: "text-[#0A9B8C]", blue: "text-mundo-blue", purple: "text-mundo-purple" };
-const metricColor   = { teal: "text-mundo-teal", blue: "text-mundo-blue", purple: "text-mundo-purple" };
+const industryColor = {
+  teal:   "text-[#0A9B8C]",
+  blue:   "text-mundo-blue",
+  purple: "text-mundo-purple",
+};
+const metricColor = {
+  teal:   "text-mundo-teal",
+  blue:   "text-mundo-blue",
+  purple: "text-mundo-purple",
+};
 
 export function CasosSection() {
   return (
