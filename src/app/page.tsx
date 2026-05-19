@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { LogosStrip } from "@/components/sections/LogosStrip";
 import { ProductosSection } from "@/components/sections/ProductosSection";
-import { NosotrosSection } from "@/components/sections/NosotrosSection";
+import { IALabSection } from "@/components/sections/IALabSection";
 import { CasosSection } from "@/components/sections/CasosSection";
 import { ContactoSection } from "@/components/sections/ContactoSection";
 
@@ -15,7 +15,7 @@ export default function Home() {
         <HeroSection />
         <LogosStrip />
         <ProductosSection />
-        <NosotrosSection />
+        <IALabSection />
         <CasosSection />
         <ContactoSection />
       </main>

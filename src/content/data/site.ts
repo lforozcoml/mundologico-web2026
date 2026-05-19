@@ -22,10 +22,9 @@ export const site = {
 export const nav = {
   links: [
     { label: "Productos", href: "/productos" },
-    { label: "IA Lab", href: "/productos#ia-lab" },
     { label: "Nosotros", href: "/nosotros" },
     { label: "Casos de éxito", href: "/casos" },
-    { label: "Contacto", href: "/contacto" },
+    { label: "Contacto", href: "/#contacto" },
   ],
-  cta: { label: "Agendar diagnóstico", href: "/contacto" },
+  cta: { label: "Agendar diagnóstico", href: "/#contacto" },
 };

@@ -91,7 +91,7 @@ function ProductCard({ producto }: { producto: Producto }) {
 
       {/* Footer */}
       <div className="px-9 pb-9 flex justify-end">
-        <Link href="/contacto" className="inline-flex items-center gap-1.5 bg-mundo-blue text-white text-[14px] font-semibold px-5 py-2.5 rounded-full hover:bg-blue-700 transition-colors">
+        <Link href={`/productos#${producto.id}`} className="inline-flex items-center gap-1.5 bg-mundo-blue text-white text-[14px] font-semibold px-5 py-2.5 rounded-full hover:bg-blue-700 transition-colors">
           Ver más información
         </Link>
       </div>
