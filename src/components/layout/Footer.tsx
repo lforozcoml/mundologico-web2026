@@ -12,7 +12,7 @@ const footerLinks = {
   Empresa: [
     { label: "Nosotros",         href: "/nosotros" },
     { label: "Casos de éxito",   href: "/casos" },
-    { label: "Contacto",         href: "/contacto" },
+    { label: "Contacto",         href: "/#contacto" },
   ],
   Legal: [
     { label: "Términos y condiciones", href: "/terminos" },
@@ -28,12 +28,12 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Image src="/logo-mundologico-blanco.png" alt="Mundo Lógico" width={160} height={36} className="h-8 w-auto mb-4" />
-            <p className="text-[14px] text-white/50 leading-relaxed max-w-[260px]">
+            <p className="text-[14px] text-white/70 leading-relaxed max-w-[260px]">
               {site.descripcion}
             </p>
             {site.redes.linkedin && (
               <a href={site.redes.linkedin} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 mt-5 text-[13px] text-white/50 hover:text-white transition-colors">
+                className="inline-flex items-center gap-2 mt-5 text-[13px] text-white/70 hover:text-white transition-colors">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
                 LinkedIn
               </a>
@@ -43,10 +43,10 @@ export function Footer() {
           {/* Link columns */}
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
-              <h4 className="text-[13px] font-bold uppercase tracking-widest text-white/40 mb-4">{title}</h4>
+              <h4 className="text-[13px] font-bold uppercase tracking-widest text-white/55 mb-4">{title}</h4>
               {links.map(({ label, href }) => (
                 <Link key={label} href={href}
-                  className="block text-[14px] text-white/65 hover:text-white transition-colors mb-2.5">
+                  className="block text-[14px] text-white/80 hover:text-white transition-colors mb-2.5">
                   {label}
                 </Link>
               ))}
@@ -56,10 +56,10 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-3">
-          <p className="text-[13px] text-white/35">
+          <p className="text-[13px] text-white/55">
             © {new Date().getFullYear()} Mundo Lógico. Todos los derechos reservados.
           </p>
-          <p className="text-[13px] text-white/35">
+          <p className="text-[13px] text-white/55">
             {site.contacto.ciudad} · {site.contacto.email}
           </p>
         </div>
