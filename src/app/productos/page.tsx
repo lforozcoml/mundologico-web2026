@@ -232,15 +232,15 @@ export default function ProductosPage() {
       <main className="flex-1 pt-16">
 
         {/* Page header */}
-        <section className="py-20 bg-white border-b border-gray-100">
+        <section className="py-24 bg-white border-b border-gray-100">
           <div className="max-w-7xl mx-auto px-6">
-            <Image src="/isotipo-separador.svg" alt="" width={26} height={26} className="mb-3" />
-            <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-3">Nuestros productos</p>
-            <h1 className="text-4xl md:text-5xl font-black text-mundo-dark leading-tight mb-4">
+            <Image src="/isotipo-separador.svg" alt="" width={28} height={28} className="mb-4" />
+            <p className="text-[13px] font-extrabold uppercase tracking-widest text-gray-400 mb-4">Nuestros productos</p>
+            <h1 className="text-5xl md:text-6xl font-black text-mundo-dark leading-tight mb-6">
               Automatización con IA,<br />
               <span className="text-mundo-blue">lista para tu operación</span>
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl leading-relaxed">
+            <p className="text-xl text-gray-600 max-w-2xl leading-relaxed">
               Cada producto resuelve un problema concreto. No son demos ni conceptos — son sistemas funcionando con arquitectura real, métricas verificables y soporte continuo.
             </p>
           </div>
@@ -254,34 +254,36 @@ export default function ProductosPage() {
             <section
               key={p.id}
               id={p.id}
-              className={`py-20 ${isEven ? "bg-white" : "bg-gray-50"}`}
+              className={`py-24 ${isEven ? "bg-white" : "bg-gray-50"}`}
             >
               <div className="max-w-7xl mx-auto px-6">
 
                 {/* Product header — card style */}
                 <div
-                  className="relative overflow-hidden rounded-3xl px-10 pt-10 pb-9 mb-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6"
+                  className="relative overflow-hidden rounded-3xl px-12 pt-12 pb-11 mb-14 flex flex-col md:flex-row md:items-end md:justify-between gap-8"
                   style={{ background: ct.grad }}
                 >
                   <DecoShapes id={p.id} />
                   <div className="relative z-10 max-w-2xl">
-                    <div className="inline-flex items-center gap-1.5 mb-5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide text-white/90" style={{ background: "rgba(255,255,255,.15)" }}>
-                      Producto {p.numero}
-                    </div>
-                    {p.id === "ia-lab" && (
-                      <div className="mb-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wide text-white/80 ml-2" style={{ background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.15)" }}>
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                        Engagement de 90 días
+                    <div className="flex items-center gap-3 mb-6 flex-wrap">
+                      <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12px] font-bold uppercase tracking-widest text-white" style={{ background: "rgba(255,255,255,.18)" }}>
+                        Producto {p.numero}
                       </div>
-                    )}
-                    <h2 className="text-3xl md:text-4xl font-black text-white leading-tight mb-3">{p.nombre}</h2>
-                    <p className="text-[16px] text-white/75 leading-snug mb-4">{p.tagline}</p>
-                    <p className="text-[14px] text-white/60 leading-relaxed max-w-xl">{p.descripcion}</p>
+                      {p.id === "ia-lab" && (
+                        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12px] font-bold tracking-wide text-white/90" style={{ background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.2)" }}>
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                          Engagement de 90 días
+                        </div>
+                      )}
+                    </div>
+                    <h2 className="text-4xl md:text-5xl font-black text-white leading-tight mb-4">{p.nombre}</h2>
+                    <p className="text-xl text-white/90 leading-snug font-medium mb-5">{p.tagline}</p>
+                    <p className="text-[16px] text-white/70 leading-relaxed max-w-xl">{p.descripcion}</p>
                   </div>
                   <div className="relative z-10 flex-shrink-0">
                     <Link
                       href="/#contacto"
-                      className="inline-flex items-center gap-2 bg-white text-mundo-dark font-semibold text-[14px] px-6 py-3 rounded-full hover:bg-gray-100 transition-colors"
+                      className="inline-flex items-center gap-2 bg-white text-mundo-dark font-bold text-[15px] px-7 py-3.5 rounded-full hover:bg-gray-100 transition-colors"
                     >
                       Agendar diagnóstico →
                     </Link>
@@ -289,45 +291,45 @@ export default function ProductosPage() {
                 </div>
 
                 {/* Main content grid */}
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-3 gap-10">
 
                   {/* Left col: problema + pasos */}
-                  <div className="md:col-span-2 flex flex-col gap-8">
+                  <div className="md:col-span-2 flex flex-col gap-10">
 
                     {/* Problema */}
-                    <div className="rounded-2xl p-7 border border-gray-200 bg-white">
-                      <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-3">El problema</p>
-                      <p className="text-[15px] text-gray-700 leading-relaxed">{p.problema}</p>
+                    <div className="rounded-2xl p-8 border border-gray-200 bg-white">
+                      <p className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400 mb-4">El problema</p>
+                      <p className="text-[17px] text-gray-800 leading-relaxed font-medium">{p.problema}</p>
                     </div>
 
                     {/* Pasos */}
                     <div>
-                      <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-5">Cómo funciona</p>
-                      <div className="grid sm:grid-cols-2 gap-4">
+                      <p className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400 mb-6">Cómo funciona</p>
+                      <div className="grid sm:grid-cols-2 gap-5">
                         {p.pasos.map((paso, i) => (
                           <div
                             key={paso.titulo}
-                            className="rounded-xl p-5 border"
+                            className="rounded-2xl p-7 border"
                             style={{ background: ct.bg, borderColor: ct.border }}
                           >
                             <div
-                              className="text-[11px] font-black uppercase tracking-widest mb-2"
+                              className="text-[12px] font-black uppercase tracking-widest mb-3"
                               style={{ color: ct.accent }}
                             >
                               {String(i + 1).padStart(2, "0")} · {paso.titulo}
                             </div>
-                            <p className="text-[13px] text-gray-700 leading-relaxed">{paso.desc}</p>
+                            <p className="text-[15px] text-gray-800 leading-relaxed font-medium">{paso.desc}</p>
                           </div>
                         ))}
                       </div>
                     </div>
 
                     {/* Features */}
-                    <div>
-                      <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-4">Qué incluye</p>
-                      <div className="grid sm:grid-cols-2 gap-3">
+                    <div className="rounded-2xl p-8 border border-gray-200 bg-white">
+                      <p className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400 mb-6">Qué incluye</p>
+                      <div className="grid sm:grid-cols-2 gap-4">
                         {p.features.map((f) => (
-                          <div key={f} className="flex gap-2.5 text-[14px] text-gray-700 leading-snug">
+                          <div key={f} className="flex gap-3 text-[15px] text-gray-800 leading-snug font-medium">
                             <CheckIcon color={ct.accent} />
                             {f}
                           </div>
@@ -337,24 +339,24 @@ export default function ProductosPage() {
                   </div>
 
                   {/* Right col: para quién + addons + stack */}
-                  <div className="flex flex-col gap-5">
+                  <div className="flex flex-col gap-6">
 
                     {/* Para quién */}
-                    <div className="rounded-2xl p-6 border border-gray-200 bg-white">
-                      <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-4">Para quién es</p>
-                      <div className="flex flex-col gap-2.5">
+                    <div className="rounded-2xl p-7 border border-gray-200 bg-white">
+                      <p className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400 mb-5">Para quién es</p>
+                      <div className="flex flex-col gap-3.5">
                         {p.para_quien.map((item) => (
-                          <div key={item} className="flex gap-2 text-[13px] text-gray-700 leading-snug">
+                          <div key={item} className="flex gap-2.5 text-[14px] text-gray-800 leading-snug font-medium">
                             <CheckIcon color={ct.accent} />
                             {item}
                           </div>
                         ))}
                       </div>
-                      <div className="h-px bg-gray-100 my-4" />
-                      <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-3">No es para</p>
-                      <div className="flex flex-col gap-2.5">
+                      <div className="h-px bg-gray-100 my-5" />
+                      <p className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400 mb-4">No es para</p>
+                      <div className="flex flex-col gap-3.5">
                         {p.no_es_para.map((item) => (
-                          <div key={item} className="flex gap-2 text-[13px] text-gray-500 leading-snug">
+                          <div key={item} className="flex gap-2.5 text-[14px] text-gray-500 leading-snug">
                             <XIcon />
                             {item}
                           </div>
@@ -364,16 +366,16 @@ export default function ProductosPage() {
 
                     {/* Add-ons */}
                     <div
-                      className="rounded-2xl p-6 border"
+                      className="rounded-2xl p-7 border"
                       style={{ background: ct.bg, borderColor: ct.border }}
                     >
-                      <p className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{ color: ct.accent }}>
+                      <p className="text-[12px] font-extrabold uppercase tracking-widest mb-5" style={{ color: ct.accent }}>
                         {p.addons.label}
                       </p>
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-3">
                         {p.addons.items.map((item) => (
-                          <div key={item} className="flex gap-2 text-[13px] text-gray-700 leading-snug">
-                            <span style={{ color: ct.accent }} className="flex-shrink-0">→</span>
+                          <div key={item} className="flex gap-2.5 text-[15px] text-gray-800 leading-snug font-medium">
+                            <span style={{ color: ct.accent }} className="flex-shrink-0 font-bold">→</span>
                             {item}
                           </div>
                         ))}
@@ -381,11 +383,11 @@ export default function ProductosPage() {
                     </div>
 
                     {/* Stack */}
-                    <div className="rounded-2xl p-6 border border-gray-200 bg-white">
-                      <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-4">Stack tecnológico</p>
-                      <div className="flex flex-wrap gap-1.5">
+                    <div className="rounded-2xl p-7 border border-gray-200 bg-white">
+                      <p className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400 mb-5">Stack tecnológico</p>
+                      <div className="flex flex-wrap gap-2">
                         {p.stack.map((s) => (
-                          <span key={s} className="text-[12px] font-semibold text-gray-600 bg-gray-100 rounded-md px-2.5 py-1">{s}</span>
+                          <span key={s} className="text-[13px] font-bold text-gray-700 bg-gray-100 rounded-lg px-3 py-1.5">{s}</span>
                         ))}
                       </div>
                     </div>
