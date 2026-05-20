@@ -35,8 +35,43 @@ const productos: {
   stack: string[];
 }[] = [
   {
-    id: "knowledge-engine",
+    id: "ia-lab",
     numero: "01",
+    nombre: "IA Lab",
+    tagline: "En 90 días sabes si tu hipótesis de IA funciona — con datos reales y el sistema ya construido.",
+    color: "purple",
+    problema: "Las empresas saben que deben incorporar IA pero no saben por dónde empezar sin arriesgar sus sistemas o presupuestos. Los proyectos de exploración genéricos son costosos, demoran meses y terminan en informes sin nada implementado. El resultado: inversión sin retorno medible y resistencia interna que bloquea la adopción real.",
+    descripcion: "Tomamos un caso de uso de negocio concreto, construimos un experimento con arquitectura real, lo medimos con métricas definidas desde el inicio, y lo iteramos mínimo dos veces — todo en un ambiente sandbox, sin tocar los sistemas productivos. En 90 días tienes una decisión basada en datos: escalar o no. Y si escala, el sistema ya está construido.",
+    pasos: [
+      { titulo: "Definición", desc: "Caso de uso, hipótesis, métricas de éxito técnicas y de negocio. Sin KPI definido, el experimento no arranca." },
+      { titulo: "Construcción", desc: "Arquitectura funcional completa en sandbox — datos, flujos, inteligencia. Nunca en producción." },
+      { titulo: "Iteración", desc: "Mínimo dos ciclos de ajuste y medición con datos reales del cliente." },
+      { titulo: "Decisión", desc: "¿Cumple la métrica? ¿El impacto es medible? ¿El costo proyectado es viable? Si sí — ya está listo para producción." },
+    ],
+    features: [
+      "De la hipótesis a un MVP validado en 90 días",
+      "Sandbox seguro — sin tocar sistemas productivos",
+      "Métricas técnicas y de negocio definidas antes de arrancar",
+      "Mínimo 2 ciclos de iteración por caso de uso",
+    ],
+    addons: {
+      label: "Casos de uso frecuentes",
+      items: ["Procesamiento de documentos", "Atención al cliente", "Reportes automáticos", "Onboarding automatizado"],
+    },
+    para_quien: [
+      "Empresas medianas o grandes que quieren validar IA antes de comprometer presupuesto",
+      "Organizaciones con procesos repetitivos donde sospechan que la IA puede ayudar pero no tienen certeza",
+      "Equipos de innovación que necesitan evidencia para venderle la idea internamente",
+    ],
+    no_es_para: [
+      "Empresas que ya saben exactamente qué construir y tienen presupuesto aprobado",
+      "Proyectos donde no hay acceso a datos reales del proceso",
+    ],
+    stack: ["Make.com", "OpenAI / Claude / Gemini", "Airtable", "Monday.com", "Google Docs"],
+  },
+  {
+    id: "knowledge-engine",
+    numero: "02",
     nombre: "Knowledge Engine",
     tagline: "Tu base de conocimiento siempre actualizada, sin depender de que alguien encuentre el tiempo de escribir.",
     color: "blue",
@@ -71,7 +106,7 @@ const productos: {
   },
   {
     id: "support-engine",
-    numero: "02",
+    numero: "03",
     nombre: "Support Engine",
     tagline: "Tu equipo humano solo atiende los casos que realmente necesitan juicio humano.",
     color: "teal",
@@ -103,41 +138,6 @@ const productos: {
       "Casos donde casi toda la atención requiere criterio humano complejo",
     ],
     stack: ["WhatsApp Business API (Meta)", "OpenAI / Claude", "Make.com", "Airtable", "Monday.com"],
-  },
-  {
-    id: "ia-lab",
-    numero: "03",
-    nombre: "IA Lab",
-    tagline: "En 90 días sabes si tu hipótesis de IA funciona — con datos reales y el sistema ya construido.",
-    color: "purple",
-    problema: "Las empresas saben que deben incorporar IA pero no saben por dónde empezar sin arriesgar sus sistemas o presupuestos. Los proyectos de exploración genéricos son costosos, demoran meses y terminan en informes sin nada implementado. El resultado: inversión sin retorno medible y resistencia interna que bloquea la adopción real.",
-    descripcion: "Tomamos un caso de uso de negocio concreto, construimos un experimento con arquitectura real, lo medimos con métricas definidas desde el inicio, y lo iteramos mínimo dos veces — todo en un ambiente sandbox, sin tocar los sistemas productivos. En 90 días tienes una decisión basada en datos: escalar o no. Y si escala, el sistema ya está construido.",
-    pasos: [
-      { titulo: "Definición", desc: "Caso de uso, hipótesis, métricas de éxito técnicas y de negocio. Sin KPI definido, el experimento no arranca." },
-      { titulo: "Construcción", desc: "Arquitectura funcional completa en sandbox — datos, flujos, inteligencia. Nunca en producción." },
-      { titulo: "Iteración", desc: "Mínimo dos ciclos de ajuste y medición con datos reales del cliente." },
-      { titulo: "Decisión", desc: "¿Cumple la métrica? ¿El impacto es medible? ¿El costo proyectado es viable? Si sí — ya está listo para producción." },
-    ],
-    features: [
-      "De la hipótesis a un MVP validado en 90 días",
-      "Sandbox seguro — sin tocar sistemas productivos",
-      "Métricas técnicas y de negocio definidas antes de arrancar",
-      "Mínimo 2 ciclos de iteración por caso de uso",
-    ],
-    addons: {
-      label: "Casos de uso frecuentes",
-      items: ["Procesamiento de documentos", "Atención al cliente", "Reportes automáticos", "Onboarding automatizado"],
-    },
-    para_quien: [
-      "Empresas medianas o grandes que quieren validar IA antes de comprometer presupuesto",
-      "Organizaciones con procesos repetitivos donde sospechan que la IA puede ayudar pero no tienen certeza",
-      "Equipos de innovación que necesitan evidencia para venderle la idea internamente",
-    ],
-    no_es_para: [
-      "Empresas que ya saben exactamente qué construir y tienen presupuesto aprobado",
-      "Proyectos donde no hay acceso a datos reales del proceso",
-    ],
-    stack: ["Make.com", "OpenAI / Claude / Gemini", "Airtable", "Monday.com", "Google Docs"],
   },
   {
     id: "signal-engine",

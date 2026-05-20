@@ -103,9 +103,9 @@ export function HeroSection() {
               ].map(({ src, alt }) => (
                 <div
                   key={alt}
-                  className="flex items-center px-3.5 py-1.5 bg-white/10 border border-white/15 rounded-lg"
+                  className="flex items-center px-3.5 py-1.5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
                 >
-                  <Image src={src} alt={alt} width={80} height={26} className="h-6 w-auto brightness-0 invert" />
+                  <Image src={src} alt={alt} width={80} height={26} className="h-6 w-auto" />
                 </div>
               ))}
             </div>

@@ -4,9 +4,9 @@ import { site } from "@/content/data/site";
 
 const footerLinks = {
   Productos: [
+    { label: "IA Lab",           href: "/productos#ia-lab" },
     { label: "Knowledge Engine", href: "/productos#knowledge-engine" },
     { label: "Support Engine",   href: "/productos#support-engine" },
-    { label: "IA Lab",           href: "/productos#ia-lab" },
     { label: "Signal Engine",    href: "/productos#signal-engine" },
   ],
   Empresa: [
