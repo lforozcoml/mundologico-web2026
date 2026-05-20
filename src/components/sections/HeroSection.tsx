@@ -4,7 +4,7 @@ import { site } from "@/content/data/site";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-white pt-28 pb-20 md:pt-36 md:pb-28">
+    <section className="relative overflow-hidden pt-28 pb-20 md:pt-36 md:pb-28" style={{ background: "#23274C" }}>
       {/* Blob top-right */}
       <div
         className="absolute pointer-events-none"
@@ -16,7 +16,7 @@ export function HeroSection() {
           height: "600px",
           borderRadius: "50%",
           background:
-            "radial-gradient(circle, rgba(23,107,236,.08) 0%, rgba(4,188,166,.04) 60%, transparent 100%)",
+            "radial-gradient(circle, rgba(23,107,236,.30) 0%, rgba(4,188,166,.12) 60%, transparent 100%)",
         }}
       />
       {/* Blob bottom-left */}
@@ -30,7 +30,7 @@ export function HeroSection() {
           height: "400px",
           borderRadius: "50%",
           background:
-            "radial-gradient(circle, rgba(81,62,245,.06) 0%, transparent 70%)",
+            "radial-gradient(circle, rgba(81,62,245,.25) 0%, transparent 70%)",
         }}
       />
       {/* Brand shape — píldora del isotipo rotada */}
@@ -51,7 +51,7 @@ export function HeroSection() {
           x="4" y="4" width="672" height="332"
           rx="166" ry="166"
           fill="#176BEC"
-          opacity="0.18"
+          opacity="0.22"
         />
       </svg>
 
@@ -61,32 +61,32 @@ export function HeroSection() {
           {/* Eyebrow */}
           <div className="flex items-center gap-2.5 mb-6">
             <div className="w-2 h-2 rounded-full bg-mundo-teal shrink-0" />
-            <span className="text-sm font-semibold text-gray-600">
+            <span className="text-sm font-semibold text-white/65">
               Automatización · IA · Empresas que quieren crecer
             </span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-[56px] font-black text-mundo-dark leading-[1.08] tracking-tight mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-[56px] font-black text-white leading-[1.08] tracking-tight mb-6">
             Automatizamos lo que{" "}
             <span className="text-mundo-blue">frena tu negocio.</span>{" "}
             Construimos lo que{" "}
             <span className="text-mundo-teal">lo escala.</span>
           </h1>
 
-          <p className="text-lg text-gray-600 leading-relaxed max-w-[480px] mb-9">
+          <p className="text-lg text-white/65 leading-relaxed max-w-[480px] mb-9">
             {site.descripcion}
           </p>
 
           <div className="flex flex-wrap gap-3 mb-10">
             <Link
-              href="/contacto"
+              href="/#contacto"
               className="inline-flex items-center gap-2 bg-mundo-blue text-white font-semibold text-base px-7 py-3.5 rounded-full hover:bg-blue-700 transition-colors"
             >
               Agendar diagnóstico gratis →
             </Link>
             <Link
               href="/casos"
-              className="inline-flex items-center gap-2 border border-gray-200 text-mundo-dark font-semibold text-base px-7 py-3.5 rounded-full hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center gap-2 border border-white/20 text-white font-semibold text-base px-7 py-3.5 rounded-full hover:bg-white/10 transition-colors"
             >
               Ver casos de éxito
             </Link>
@@ -94,7 +94,7 @@ export function HeroSection() {
 
           {/* Partner badges */}
           <div className="flex items-center gap-4 flex-wrap">
-            <span className="text-sm text-gray-400 font-medium">Partners oficiales:</span>
+            <span className="text-sm text-white/45 font-medium">Partners oficiales:</span>
             <div className="flex items-center gap-2 flex-wrap">
               {[
                 { src: "/make-logo.svg", alt: "Make.com" },
@@ -103,9 +103,9 @@ export function HeroSection() {
               ].map(({ src, alt }) => (
                 <div
                   key={alt}
-                  className="flex items-center px-3.5 py-1.5 bg-white border border-gray-200 rounded-lg"
+                  className="flex items-center px-3.5 py-1.5 bg-white/10 border border-white/15 rounded-lg"
                 >
-                  <Image src={src} alt={alt} width={80} height={26} className="h-6 w-auto" />
+                  <Image src={src} alt={alt} width={80} height={26} className="h-6 w-auto brightness-0 invert" />
                 </div>
               ))}
             </div>
@@ -150,11 +150,11 @@ export function HeroSection() {
 
           {/* Stat flotante — superior derecha */}
           <div
-            className="absolute top-0 -right-2 bg-mundo-dark rounded-2xl shadow-[0_12px_32px_rgba(23,39,76,0.25)]"
-            style={{ padding: "16px 20px" }}
+            className="absolute top-0 -right-2 rounded-2xl shadow-[0_12px_32px_rgba(0,0,0,0.35)]"
+            style={{ padding: "16px 20px", background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.18)", backdropFilter: "blur(12px)" }}
           >
             <div className="text-[26px] font-black text-white leading-none">73h</div>
-            <div className="text-[12px] text-white/55 mt-1">ahorro mensual<br />por cliente</div>
+            <div className="text-[12px] text-white/60 mt-1">ahorro mensual<br />por cliente</div>
           </div>
         </div>
       </div>
