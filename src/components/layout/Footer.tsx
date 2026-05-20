@@ -55,13 +55,31 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-3">
-          <p className="text-[13px] text-white/55">
-            © {new Date().getFullYear()} Mundo Lógico. Todos los derechos reservados.
-          </p>
-          <p className="text-[13px] text-white/55">
-            {site.contacto.ciudad} · {site.contacto.email}
-          </p>
+        <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex flex-col gap-1 text-center md:text-left">
+            <p className="text-[13px] text-white/55">
+              © {new Date().getFullYear()} Mundo Lógico S.A.S. Todos los derechos reservados.
+            </p>
+            <p className="text-[13px] text-white/55">
+              {site.contacto.ciudad} · {site.contacto.email}
+            </p>
+          </div>
+
+          {/* Insignias de certificación */}
+          <div className="flex items-center gap-3 flex-wrap justify-center md:justify-end">
+            <div className="bg-white rounded-xl px-4 py-2.5 flex items-center">
+              <Image src="/make-silver-sales.avif" alt="Make Silver Sales Partner" width={120} height={60} className="h-14 w-auto" />
+            </div>
+            <div className="bg-white rounded-xl px-4 py-2.5 flex items-center">
+              <Image src="/make-silver-service.avif" alt="Make Silver Service Partner" width={120} height={60} className="h-14 w-auto" />
+            </div>
+            <div className="bg-white rounded-xl px-4 py-3 flex items-center">
+              <Image src="/monday-logo.svg" alt="Monday.com Partner" width={100} height={28} className="h-7 w-auto" />
+            </div>
+            <div className="bg-white rounded-xl px-4 py-3 flex items-center">
+              <Image src="/google-partner-logo.png" alt="Google Partner" width={100} height={28} className="h-7 w-auto" />
+            </div>
+          </div>
         </div>
       </div>
     </footer>
