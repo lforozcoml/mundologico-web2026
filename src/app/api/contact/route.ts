@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export interface ContactPayload {
   nombre: string;
+  apellidos: string;
   empresa: string;
   email: string;
   interes: string;
@@ -29,8 +30,8 @@ export async function POST(req: NextRequest) {
   }
 
   // Validación de campos requeridos
-  const { nombre, email, mensaje } = body;
-  if (!nombre?.trim() || !email?.trim() || !mensaje?.trim()) {
+  const { nombre, apellidos, email, mensaje } = body;
+  if (!nombre?.trim() || !apellidos?.trim() || !email?.trim() || !mensaje?.trim()) {
     return NextResponse.json(
       { error: "Faltan campos requeridos: nombre, email y mensaje son obligatorios" },
       { status: 422 }
@@ -45,6 +46,7 @@ export async function POST(req: NextRequest) {
 
   const payload: ContactPayload = {
     nombre: nombre.trim(),
+    apellidos: apellidos!.trim(),
     empresa: body.empresa?.trim() ?? "",
     email: email.trim().toLowerCase(),
     interes: body.interes?.trim() ?? "",

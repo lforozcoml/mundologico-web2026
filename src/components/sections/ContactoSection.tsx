@@ -24,11 +24,12 @@ export function ContactoSection() {
 
     const form = e.currentTarget;
     const data = {
-      nombre:  (form.elements.namedItem("nombre")  as HTMLInputElement).value,
-      empresa: (form.elements.namedItem("empresa") as HTMLInputElement).value,
-      email:   (form.elements.namedItem("email")   as HTMLInputElement).value,
-      interes: (form.elements.namedItem("interes") as HTMLSelectElement).value,
-      mensaje: (form.elements.namedItem("mensaje") as HTMLTextAreaElement).value,
+      nombre:    (form.elements.namedItem("nombre")    as HTMLInputElement).value,
+      apellidos: (form.elements.namedItem("apellidos") as HTMLInputElement).value,
+      empresa:   (form.elements.namedItem("empresa")   as HTMLInputElement).value,
+      email:     (form.elements.namedItem("email")     as HTMLInputElement).value,
+      interes:   (form.elements.namedItem("interes")   as HTMLSelectElement).value,
+      mensaje:   (form.elements.namedItem("mensaje")   as HTMLTextAreaElement).value,
     };
 
     try {
@@ -94,15 +95,21 @@ export function ContactoSection() {
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[13px] font-semibold text-mundo-dark">Nombre</label>
-                    <input required name="nombre" type="text" placeholder="Tu nombre"
+                    <label className="text-[13px] font-semibold text-mundo-dark">Nombres</label>
+                    <input required name="nombre" type="text" placeholder="Tus nombres"
                       className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors" />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[13px] font-semibold text-mundo-dark">Empresa</label>
-                    <input name="empresa" type="text" placeholder="Nombre de tu empresa"
+                    <label className="text-[13px] font-semibold text-mundo-dark">Apellidos</label>
+                    <input required name="apellidos" type="text" placeholder="Tus apellidos"
                       className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors" />
                   </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[13px] font-semibold text-mundo-dark">Empresa</label>
+                  <input name="empresa" type="text" placeholder="Nombre de tu empresa"
+                    className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors" />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
