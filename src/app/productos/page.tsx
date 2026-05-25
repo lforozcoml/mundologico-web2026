@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { CALENDARIO_URL } from "@/content/data/site";
+import { StackPill } from "@/components/ui/StackPill";
 
 export const metadata: Metadata = {
   title: "Productos — Mundo Lógico",
@@ -68,7 +69,7 @@ const productos: {
       "Empresas que ya saben exactamente qué construir y tienen presupuesto aprobado",
       "Proyectos donde no hay acceso a datos reales del proceso",
     ],
-    stack: ["Make.com", "OpenAI / Claude / Gemini", "Airtable", "Monday.com", "Google Docs"],
+    stack: ["Make.com", "OpenAI", "Claude", "Gemini", "Airtable", "Monday.com"],
   },
   {
     id: "knowledge-engine",
@@ -103,7 +104,7 @@ const productos: {
       "Empresas sin ningún proceso documentado",
       "Equipos sin un responsable de validar el contenido generado",
     ],
-    stack: ["Claude (Anthropic)", "Make.com", "Airtable", "Monday.com", "Zendesk / Freshdesk / Confluence"],
+    stack: ["Claude", "Make.com", "Airtable", "Monday.com", "Zendesk", "Confluence"],
   },
   {
     id: "support-engine",
@@ -138,7 +139,7 @@ const productos: {
       "Empresas sin procesos de atención definidos",
       "Casos donde casi toda la atención requiere criterio humano complejo",
     ],
-    stack: ["WhatsApp Business API (Meta)", "OpenAI / Claude", "Make.com", "Airtable", "Monday.com"],
+    stack: ["WhatsApp Business API", "OpenAI", "Claude", "Make.com", "Airtable", "Monday.com"],
   },
   {
     id: "signal-engine",
@@ -173,7 +174,7 @@ const productos: {
       "Empresas sin datos estructurados o plataformas sin API disponible",
       "Organizaciones que no tienen claridad sobre qué comportamiento quieren detectar",
     ],
-    stack: ["Make.com", "OpenAI / Google Gemini", "CRM del cliente", "WhatsApp Business API", "Monday.com"],
+    stack: ["Make.com", "OpenAI", "Gemini", "Monday.com", "WhatsApp Business API"],
   },
 ];
 
@@ -390,7 +391,7 @@ export default function ProductosPage() {
                       <p className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400 mb-5">Stack tecnológico</p>
                       <div className="flex flex-wrap gap-2">
                         {p.stack.map((s) => (
-                          <span key={s} className="text-[13px] font-bold text-gray-700 bg-gray-100 rounded-lg px-3 py-1.5">{s}</span>
+                          <StackPill key={s} name={s} size="md" />
                         ))}
                       </div>
                     </div>
