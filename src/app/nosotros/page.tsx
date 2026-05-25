@@ -7,7 +7,7 @@ import { CtaBand } from "@/components/ui/CtaBand";
 export const metadata: Metadata = {
   title: "Nosotros — Mundo Lógico",
   description:
-    "Más de 20 años conectando tecnología y negocio. Conoce al equipo detrás de cada proyecto de automatización e IA.",
+    "Conoce al equipo detrás de cada proyecto de automatización e IA de Mundo Lógico.",
 };
 
 export default function NosotrosPage() {

@@ -1,12 +1,5 @@
 import Image from "next/image";
 
-const statsGrid = [
-  { num: "+20", label: "años de experiencia", color: "text-white", bg: "bg-mundo-dark" },
-  { num: "3",   label: "partners oficiales",  color: "text-mundo-blue", bg: "bg-gray-50 border border-gray-200" },
-  { num: "2",   label: "países con clientes activos", color: "text-mundo-teal", bg: "bg-gray-50 border border-gray-200" },
-  { num: "3",   label: "motores de IA dominados", color: "text-mundo-purple", bg: "bg-gray-50 border border-gray-200" },
-];
-
 const pillares = [
   { color: "bg-mundo-blue", text: "No somos una agencia. Somos ingenieros que se involucran en el problema desde adentro." },
   { color: "bg-mundo-teal", text: "Los mismos que diagnostican son los que construyen y entregan." },
@@ -44,35 +37,25 @@ export function NosotrosSection() {
     <section className="py-24 overflow-hidden" id="nosotros">
       <div className="max-w-7xl mx-auto px-6">
 
-        {/* Historia + stats */}
-        <div className="grid md:grid-cols-2 gap-20 items-center mb-24">
-          <div>
-            <Image src="/isotipo-separador.svg" alt="" width={26} height={26} className="mb-2.5" />
-            <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-3">Quiénes somos</p>
-            <h2 className="text-4xl md:text-5xl font-black text-mundo-dark leading-tight mb-5">
-              Más de 20 años<br />conectando{" "}
-              <span className="text-mundo-blue">tecnología y negocio</span>
-            </h2>
-            <p className="text-[16px] text-gray-600 leading-relaxed mb-4">
-              Mundo Lógico nació de la convicción de que la tecnología debe simplificar el trabajo, no complicarlo. Llevamos más de dos décadas ayudando a empresas alrededor del mundo a operar mejor, tomar mejores decisiones y crecer con menos fricción.
-            </p>
-            <p className="text-[16px] text-gray-600 leading-relaxed mb-7">
-              Empezamos cuando la automatización era privilegio de las grandes corporaciones. Hoy, con IA, Make.com y las herramientas que dominamos como partners oficiales, cualquier empresa puede operar con la inteligencia de una multinacional.
-            </p>
-            <div className="flex flex-col gap-3">
-              {pillares.map(({ color, text }) => (
-                <div key={text} className="flex items-center gap-3">
-                  <div className={`w-1 h-9 rounded-full flex-shrink-0 ${color}`} />
-                  <p className="text-[15px] text-mundo-dark font-semibold">{text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            {statsGrid.map(({ num, label, color, bg }) => (
-              <div key={label} className={`rounded-2xl p-8 text-center ${bg}`}>
-                <div className={`text-[48px] font-black leading-none ${color}`}>{num}</div>
-                <div className={`text-[14px] mt-2 ${bg.includes("dark") ? "text-white/60" : "text-gray-600"}`}>{label}</div>
+        {/* Historia */}
+        <div className="max-w-3xl mb-24">
+          <Image src="/isotipo-separador.svg" alt="" width={26} height={26} className="mb-2.5" />
+          <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-3">Quiénes somos</p>
+          <h2 className="text-4xl md:text-5xl font-black text-mundo-dark leading-tight mb-5">
+            Conectamos{" "}
+            <span className="text-mundo-blue">tecnología y negocio</span>
+          </h2>
+          <p className="text-[16px] text-gray-600 leading-relaxed mb-4">
+            Mundo Lógico nació de la convicción de que la tecnología debe simplificar el trabajo, no complicarlo. Ayudamos a empresas alrededor del mundo a operar mejor, tomar mejores decisiones y crecer con menos fricción.
+          </p>
+          <p className="text-[16px] text-gray-600 leading-relaxed mb-7">
+            Con IA, Make.com y las herramientas que dominamos como partners oficiales, cualquier empresa puede operar con la inteligencia de una multinacional.
+          </p>
+          <div className="flex flex-col gap-3">
+            {pillares.map(({ color, text }) => (
+              <div key={text} className="flex items-center gap-3">
+                <div className={`w-1 h-9 rounded-full flex-shrink-0 ${color}`} />
+                <p className="text-[15px] text-mundo-dark font-semibold">{text}</p>
               </div>
             ))}
           </div>
@@ -110,37 +93,22 @@ export function NosotrosSection() {
         </div>
 
         {/* Equipo técnico */}
-        <div className="bg-gray-50 rounded-3xl border border-gray-200 p-12 grid md:grid-cols-[1.2fr_1fr] gap-12 items-center">
-          <div>
-            <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-3">Equipo de ingeniería</p>
-            <h3 className="text-[26px] font-extrabold text-mundo-dark mb-4">Especialistas en IA y automatización</h3>
-            <p className="text-[15px] text-gray-600 leading-relaxed mb-6">
-              Nuestro equipo técnico trabaja con Make.com, Monday.com, Airtable y los principales modelos de IA del mercado. No subcontratamos lo que no sabemos hacer: cada herramienta que ofrecemos es una que ya hemos implementado en proyectos reales.
-            </p>
-            <div className="flex items-center gap-4 flex-wrap mb-5">
-              {["/make-logo.svg", "/monday-logo.svg", "/google-partner-logo.png"].map((src) => (
-                <div key={src} className="bg-gray-100 border border-gray-200 rounded-xl px-5 py-2.5">
-                  <Image src={src} alt="" width={80} height={36} className="h-9 w-auto" />
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center gap-3 flex-wrap">
-              <Image src="/make-silver-sales.avif" alt="Make Silver Partner Sales" width={76} height={76} className="h-[76px] w-auto" />
-              <Image src="/make-silver-service.avif" alt="Make Silver Partner Service" width={76} height={76} className="h-[76px] w-auto" />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { num: "+20", label: "años en el mercado", color: "text-mundo-dark" },
-              { num: "3",   label: "partners oficiales",  color: "text-mundo-blue" },
-              { num: "+10K",label: "ops automatizadas",   color: "text-mundo-teal" },
-              { num: "USA", label: "clientes en EE.UU.",  color: "text-mundo-purple" },
-            ].map(({ num, label, color }) => (
-              <div key={label} className="bg-white rounded-xl border border-gray-200 p-5 text-center">
-                <div className={`text-[32px] font-black ${color}`}>{num}</div>
-                <div className="text-[12px] text-gray-400 mt-1">{label}</div>
+        <div className="bg-gray-50 rounded-3xl border border-gray-200 p-12">
+          <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-3">Equipo de ingeniería</p>
+          <h3 className="text-[26px] font-extrabold text-mundo-dark mb-4">Especialistas en IA y automatización</h3>
+          <p className="text-[15px] text-gray-600 leading-relaxed mb-6 max-w-2xl">
+            Nuestro equipo técnico trabaja con Make.com, Monday.com, Airtable y los principales modelos de IA del mercado. No subcontratamos lo que no sabemos hacer: cada herramienta que ofrecemos es una que ya hemos implementado en proyectos reales.
+          </p>
+          <div className="flex items-center gap-4 flex-wrap mb-5">
+            {["/make-logo.svg", "/monday-logo.svg", "/google-partner-logo.png"].map((src) => (
+              <div key={src} className="bg-gray-100 border border-gray-200 rounded-xl px-5 py-2.5">
+                <Image src={src} alt="" width={80} height={36} className="h-9 w-auto" />
               </div>
             ))}
+          </div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <Image src="/make-silver-sales.avif" alt="Make Silver Partner Sales" width={76} height={76} className="h-[76px] w-auto" />
+            <Image src="/make-silver-service.avif" alt="Make Silver Partner Service" width={76} height={76} className="h-[76px] w-auto" />
           </div>
         </div>
 
