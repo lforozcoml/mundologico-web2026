@@ -15,14 +15,41 @@ const servicios = [
 export function ContactoSection() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    // Integración con Resend va aquí — por ahora simula éxito
-    await new Promise((r) => setTimeout(r, 800));
-    setSent(true);
-    setLoading(false);
+    setError(null);
+
+    const form = e.currentTarget;
+    const data = {
+      nombre:  (form.elements.namedItem("nombre")  as HTMLInputElement).value,
+      empresa: (form.elements.namedItem("empresa") as HTMLInputElement).value,
+      email:   (form.elements.namedItem("email")   as HTMLInputElement).value,
+      interes: (form.elements.namedItem("interes") as HTMLSelectElement).value,
+      mensaje: (form.elements.namedItem("mensaje") as HTMLTextAreaElement).value,
+    };
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const { error: msg } = await res.json().catch(() => ({}));
+        setError(msg ?? "Ocurrió un error. Intenta de nuevo o escríbenos directamente.");
+        return;
+      }
+
+      setSent(true);
+    } catch {
+      setError("No se pudo enviar el mensaje. Revisa tu conexión e intenta de nuevo.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -68,25 +95,25 @@ export function ContactoSection() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[13px] font-semibold text-mundo-dark">Nombre</label>
-                    <input required type="text" placeholder="Tu nombre"
+                    <input required name="nombre" type="text" placeholder="Tu nombre"
                       className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[13px] font-semibold text-mundo-dark">Empresa</label>
-                    <input type="text" placeholder="Nombre de tu empresa"
+                    <input name="empresa" type="text" placeholder="Nombre de tu empresa"
                       className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors" />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-mundo-dark">Email</label>
-                  <input required type="email" placeholder="tu@empresa.com"
+                  <input required name="email" type="email" placeholder="tu@empresa.com"
                     className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors" />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-mundo-dark">¿Qué te interesa?</label>
-                  <select className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors">
+                  <select name="interes" className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors">
                     <option value="">Selecciona una opción</option>
                     {servicios.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
@@ -94,9 +121,15 @@ export function ContactoSection() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-mundo-dark">Cuéntanos tu proceso o problema</label>
-                  <textarea required rows={4} placeholder="¿Qué proceso quieres automatizar? ¿Qué problema tienes hoy?"
+                  <textarea required name="mensaje" rows={4} placeholder="¿Qué proceso quieres automatizar? ¿Qué problema tienes hoy?"
                     className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors resize-y min-h-[120px]" />
                 </div>
+
+                {error && (
+                  <p className="text-[13px] text-red-500 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+                    ⚠️ {error}
+                  </p>
+                )}
 
                 <button type="submit" disabled={loading}
                   className="w-full bg-mundo-blue text-white font-semibold text-[15px] py-3.5 rounded-full hover:bg-blue-700 transition-colors disabled:opacity-60">
