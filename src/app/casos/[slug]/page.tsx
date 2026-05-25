@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CtaBand } from "@/components/ui/CtaBand";
+import { StackPill } from "@/components/ui/StackPill";
 import { casos } from "@/content/data/casos";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -92,9 +93,7 @@ export default async function CasoPage({ params }: Props) {
                   <p className="text-[12px] font-bold uppercase tracking-widest text-gray-400 mb-3">Stack tecnológico</p>
                   <div className="flex flex-wrap gap-2">
                     {caso.stack.map((s) => (
-                      <span key={s} className="inline-block px-3 py-1.5 rounded-lg bg-gray-100 text-[13px] font-semibold text-mundo-dark">
-                        {s}
-                      </span>
+                      <StackPill key={s} name={s} size="md" />
                     ))}
                   </div>
                 </div>

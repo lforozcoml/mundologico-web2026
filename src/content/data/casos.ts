@@ -59,7 +59,7 @@ export const casos: Caso[] = [
       { num: "100%", lbl: "trazabilidad" },
     ],
     desc: "Sistema completo que orquesta apertura de catálogo, invitaciones a clientes, consolidación de órdenes y comunicación de estados sin intervención manual.",
-    stack: ["Make.com", "Monday.com", "Google Sheets"],
+    stack: ["Make.com", "Monday.com"],
     problema: "Una distribuidora mayorista de equipos de climatización coordinaba pedidos internacionales desde China con una cadena de correos manuales entre proveedores, bodega y clientes. Cada temporada de catálogo requería decenas de horas de coordinación y era propensa a errores.",
     solucion: "Sistema de 10 automatizaciones en Make.com que orquesta todo el ciclo: apertura de catálogo con invitaciones automáticas a clientes segmentados, consolidación de órdenes en Monday.com, sincronización con Google Sheets para proveedores, y notificaciones de estado automáticas en cada etapa del proceso. Cero intervención manual después de activar la temporada.",
     stats: [

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { casos } from "@/content/data/casos";
+import { StackPill } from "@/components/ui/StackPill";
 
 const headerBg = {
   teal:   "linear-gradient(135deg, #E6FAF8 0%, #D8F5F2 100%)",
@@ -64,7 +65,7 @@ export function CasosSection() {
                 <p className="text-[14px] text-gray-600 leading-relaxed flex-1">{c.desc}</p>
                 <div className="flex flex-wrap gap-1.5">
                   {c.stack.map((s) => (
-                    <span key={s} className="text-[12px] font-semibold text-gray-600 bg-gray-100 rounded-md px-2.5 py-1">{s}</span>
+                    <StackPill key={s} name={s} size="sm" />
                   ))}
                 </div>
               </div>
