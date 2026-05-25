@@ -19,13 +19,15 @@ export const site = {
   ],
 };
 
+export const CALENDARIO_URL =
+  "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ2McfMCNpByJV-5t2BNp4Dbetqm_DA3BGSiEitNWiplFuMauPHKMIZFBvA1aB7zPdBDIyomUesw";
+
 export const nav = {
   links: [
     { label: "Productos", href: "/productos" },
-    { label: "IA Lab", href: "/productos#ia-lab" },
     { label: "Nosotros", href: "/nosotros" },
     { label: "Casos de éxito", href: "/casos" },
-    { label: "Contacto", href: "/contacto" },
+    { label: "Contacto", href: "/#contacto" },
   ],
-  cta: { label: "Agendar diagnóstico", href: "/contacto" },
+  cta: { label: "Agendar diagnóstico", href: CALENDARIO_URL },
 };
