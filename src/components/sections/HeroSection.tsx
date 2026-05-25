@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { site } from "@/content/data/site";
+import { site, CALENDARIO_URL } from "@/content/data/site";
 
 export function HeroSection() {
   return (
@@ -79,7 +79,9 @@ export function HeroSection() {
 
           <div className="flex flex-wrap gap-3 mb-10">
             <Link
-              href="/#contacto"
+              href={CALENDARIO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-mundo-blue text-white font-semibold text-base px-7 py-3.5 rounded-full hover:bg-blue-700 transition-colors"
             >
               Agendar diagnóstico gratis →

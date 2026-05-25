@@ -3,6 +3,7 @@
 import { useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { CALENDARIO_URL } from "@/content/data/site";
 
 const pasos = [
   {
@@ -221,7 +222,9 @@ export function IALabSection() {
               </div>
             </div>
             <Link
-              href="/#contacto"
+              href={CALENDARIO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center justify-center bg-white text-mundo-dark font-semibold text-[15px] px-7 py-4 rounded-full hover:bg-gray-100 transition-colors"
             >
               Llevar mi hipótesis al IA Lab →

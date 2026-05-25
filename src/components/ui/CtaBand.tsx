@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CALENDARIO_URL } from "@/content/data/site";
 
 type Props = {
   titulo?: string;
@@ -10,7 +11,7 @@ type Props = {
 export function CtaBand({
   titulo = "¿Tu negocio tiene procesos que se pueden automatizar?",
   descripcion = "La primera sesión de diagnóstico es gratis. En 45 minutos identificamos qué automatizar y cuánto te ahorra.",
-  ctaPrimario = { label: "Agendar diagnóstico gratuito →", href: "/contacto" },
+  ctaPrimario = { label: "Agendar diagnóstico gratuito →", href: CALENDARIO_URL },
   ctaSecundario = { label: "Ver más casos", href: "/casos" },
 }: Props) {
   return (
@@ -23,6 +24,8 @@ export function CtaBand({
         <div className="flex flex-wrap gap-3 justify-center">
           <Link
             href={ctaPrimario.href}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center bg-white text-mundo-dark font-semibold text-base px-7 py-3.5 rounded-full hover:bg-gray-100 transition-colors"
           >
             {ctaPrimario.label}

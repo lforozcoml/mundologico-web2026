@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CtaBand } from "@/components/ui/CtaBand";
+import { CALENDARIO_URL } from "@/content/data/site";
 
 export const metadata: Metadata = {
   title: "Productos — Mundo Lógico",
@@ -282,7 +283,9 @@ export default function ProductosPage() {
                   </div>
                   <div className="relative z-10 flex-shrink-0">
                     <Link
-                      href="/#contacto"
+                      href={CALENDARIO_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 bg-white text-mundo-dark font-bold text-[15px] px-7 py-3.5 rounded-full hover:bg-gray-100 transition-colors"
                     >
                       Agendar diagnóstico →
