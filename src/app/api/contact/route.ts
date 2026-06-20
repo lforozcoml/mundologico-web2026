@@ -1,5 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Rate limiter in-memory: 3 envíos por IP cada 60 segundos.
+// Funciona dentro de instancias calientes del serverless; suficiente para disuadir abuso básico.
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const WINDOW_MS = 60_000;
+const MAX_PER_WINDOW = 3;
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + WINDOW_MS });
+    return false;
+  }
+  if (entry.count >= MAX_PER_WINDOW) return true;
+  entry.count++;
+  return false;
+}
+
 export interface ContactPayload {
   nombre: string;
   apellidos: string;
@@ -12,6 +30,18 @@ export interface ContactPayload {
 }
 
 export async function POST(req: NextRequest) {
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+    req.headers.get("x-real-ip") ??
+    "unknown";
+
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: "Demasiados intentos. Esperá un momento antes de volver a enviar." },
+      { status: 429 }
+    );
+  }
+
   const webhookUrl = process.env.MAKE_WEBHOOK_URL;
 
   if (!webhookUrl) {

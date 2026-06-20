@@ -10,16 +10,29 @@ const tajawal = Tajawal({
   display: "swap",
 });
 
+const BASE = "https://mundologico.com";
+
 export const metadata: Metadata = {
   title: "Mundo Lógico — Automatización e IA para empresas",
   description:
     "Diseñamos e implementamos automatizaciones con IA para que tu equipo deje de hacer trabajo repetitivo y se enfoque en lo que realmente importa.",
+  metadataBase: new URL(BASE),
   openGraph: {
-    title: "Mundo Lógico",
-    description: "Automatización e IA para empresas que quieren crecer.",
+    title: "Mundo Lógico — Automatización e IA para empresas",
+    description:
+      "Diseñamos e implementamos automatizaciones con IA para que tu equipo deje de hacer trabajo repetitivo y se enfoque en lo que realmente importa.",
+    url: BASE,
     siteName: "Mundo Lógico",
     locale: "es_CO",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mundo Lógico — Automatización e IA para empresas",
+    description: "Automatización e IA para empresas que quieren crecer.",
+  },
+  alternates: {
+    canonical: BASE,
   },
 };
 
@@ -31,6 +44,27 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${tajawal.variable} h-full`}>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Mundo Lógico",
+              url: BASE,
+              logo: `${BASE}/icon.png`,
+              contactPoint: {
+                "@type": "ContactPoint",
+                email: "hola@mundologico.com",
+                telephone: "+57-312-8315581",
+                contactType: "customer support",
+                areaServed: ["CO", "US"],
+                availableLanguage: "Spanish",
+              },
+              sameAs: ["https://www.linkedin.com/company/mundologico"],
+            }),
+          }}
+        />
         {/* Google Tag Manager */}
         <Script id="gtm-script" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
