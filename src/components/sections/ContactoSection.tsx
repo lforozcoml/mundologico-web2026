@@ -3,13 +3,20 @@
 import { useState } from "react";
 import { site } from "@/content/data/site";
 
-const servicios = [
-  "Knowledge Engine",
-  "Support Engine",
-  "IA Lab",
-  "Signal Engine",
-  "Diagnóstico gratuito",
-  "Otro",
+/**
+ * Opciones del select de interés. `value` es lo que viaja al webhook de Make:
+ * no cambiarlo sin revisar el escenario. `label` es solo el texto visible.
+ */
+type OpcionServicio = { value: string; label: string };
+
+const servicios: OpcionServicio[] = [
+  { value: "Knowledge Engine", label: "Knowledge Engine" },
+  { value: "Support Engine", label: "Support Engine" },
+  { value: "IA Lab", label: "IA Lab" },
+  { value: "Signal Engine", label: "Signal Engine" },
+  // value se mantiene por compatibilidad con el escenario de Make.
+  { value: "Diagnóstico gratuito", label: "Llamada de 20 minutos" },
+  { value: "Otro", label: "Otro" },
 ];
 
 export function ContactoSection() {
@@ -65,7 +72,7 @@ export function ContactoSection() {
               Cuéntanos qué quieres automatizar
             </h2>
             <p className="text-[15px] text-gray-600 leading-relaxed mb-8">
-              Agendamos un diagnóstico gratuito de 30 minutos. Sin compromiso. Al final sabes exactamente qué se puede automatizar en tu operación y cuánto te costaría.
+              Agenda una llamada de 20 minutos. Sin compromiso. Revisamos un proceso concreto y te decimos si vale la pena automatizarlo.
             </p>
 
             {[
@@ -122,7 +129,7 @@ export function ContactoSection() {
                   <label className="text-[13px] font-semibold text-mundo-dark">¿Qué te interesa?</label>
                   <select name="interes" className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors">
                     <option value="">Selecciona una opción</option>
-                    {servicios.map((s) => <option key={s} value={s}>{s}</option>)}
+                    {servicios.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
                   </select>
                 </div>
 
@@ -140,11 +147,11 @@ export function ContactoSection() {
 
                 <button type="submit" disabled={loading}
                   className="w-full bg-mundo-blue text-white font-semibold text-[15px] py-3.5 rounded-full hover:bg-blue-700 transition-colors disabled:opacity-60">
-                  {loading ? "Enviando..." : "Agendar diagnóstico gratuito →"}
+                  {loading ? "Enviando..." : "Enviar mensaje →"}
                 </button>
 
                 <p className="text-[12px] text-gray-400 text-center">
-                  Sin compromiso. Respuesta en menos de 24 horas.
+                  Te respondemos en 24 a 48 horas.
                 </p>
               </form>
             )}

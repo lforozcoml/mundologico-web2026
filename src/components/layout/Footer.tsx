@@ -73,11 +73,8 @@ export function Footer() {
             <div className="bg-white rounded-xl px-4 py-2.5 flex items-center">
               <Image src="/make-silver-service.avif" alt="Make Silver Service Partner" width={120} height={60} className="h-14 w-auto" />
             </div>
-            <div className="bg-white rounded-xl px-4 py-3 flex items-center">
-              <Image src="/monday-logo.svg" alt="Monday.com Partner" width={100} height={28} className="h-7 w-auto" />
-            </div>
-            <div className="bg-white rounded-xl px-4 py-3 flex items-center">
-              <Image src="/google-partner-logo.png" alt="Google Partner" width={100} height={28} className="h-7 w-auto" />
+            <div className="bg-white rounded-xl px-4 py-2.5 flex items-center">
+              <Image src="/google-workspace-select-partner-sin-borde.png" alt="Google Workspace Select Partner" width={917} height={621} className="h-14 w-auto" />
             </div>
           </div>
         </div>

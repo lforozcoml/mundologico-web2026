@@ -130,7 +130,7 @@ export default async function CasoPage({ params }: Props) {
 
         <CtaBand
           titulo="¿Tu negocio tiene procesos que se pueden automatizar?"
-          descripcion="La primera sesión de diagnóstico es gratis. En 45 minutos identificamos qué automatizar y cuánto te ahorra."
+          descripcion="Agenda una llamada de 20 minutos. Revisamos un proceso concreto y te decimos si vale la pena automatizarlo."
           ctaSecundario={{ label: "Ver más casos", href: "/casos" }}
         />
       </main>

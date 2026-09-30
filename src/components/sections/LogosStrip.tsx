@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { site } from "@/content/data/site";
 
 const aiLogos = [
   { src: "/claude.svg", alt: "Claude" },
@@ -15,6 +16,20 @@ const autoLogos = [
 export function LogosStrip() {
   return (
     <div className="border-t border-b border-gray-200 bg-gray-50 py-7">
+      {/* Franja de confianza — mismas cifras y fecha de corte que Nosotros */}
+      <div className="max-w-7xl mx-auto px-6 mb-6 flex items-center gap-x-3 gap-y-1 flex-wrap justify-center text-[14px] text-gray-500">
+        {site.cifras.items.map(({ valor, unidad, complemento }, i) => (
+          <span key={complemento} className="flex items-center gap-x-3">
+            {i > 0 && <span className="text-gray-300" aria-hidden>·</span>}
+            <span>
+              <strong className="font-bold text-mundo-dark">
+                {unidad ? `${valor} ${unidad}` : valor}
+              </strong>{" "}
+              {complemento}
+            </span>
+          </span>
+        ))}
+      </div>
       <div className="max-w-7xl mx-auto px-6 flex items-center gap-8 flex-wrap justify-center">
         <span className="text-[13px] text-gray-400 font-medium whitespace-nowrap">IA agnósticos:</span>
         {aiLogos.map(({ src, alt }) => (

@@ -10,8 +10,9 @@ type Props = {
 
 export function CtaBand({
   titulo = "¿Tu negocio tiene procesos que se pueden automatizar?",
-  descripcion = "La primera sesión de diagnóstico es gratis. En 45 minutos identificamos qué automatizar y cuánto te ahorra.",
-  ctaPrimario = { label: "Agendar diagnóstico gratuito →", href: CALENDARIO_URL },
+  descripcion = "Agenda una llamada de 20 minutos. Revisamos un proceso concreto y te decimos si vale la pena automatizarlo.",
+  // TODO: Cal.com
+  ctaPrimario = { label: "Agenda una llamada de 20 minutos →", href: CALENDARIO_URL },
   ctaSecundario = { label: "Ver más casos", href: "/casos" },
 }: Props) {
   return (
