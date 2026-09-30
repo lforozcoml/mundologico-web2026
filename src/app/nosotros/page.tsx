@@ -5,9 +5,9 @@ import { NosotrosSection } from "@/components/sections/NosotrosSection";
 import { CtaBand } from "@/components/ui/CtaBand";
 
 export const metadata: Metadata = {
-  title: "Nosotros — Mundo Lógico",
+  title: "Nosotros | Mundo Lógico",
   description:
-    "Conoce al equipo detrás de cada proyecto de automatización e IA de Mundo Lógico.",
+    "21 años construyendo tecnología para empresas en Colombia y Estados Unidos, más de 8 automatizando procesos. Hoy, automatización e IA embebida.",
 };
 
 export default function NosotrosPage() {
@@ -18,7 +18,7 @@ export default function NosotrosPage() {
         <NosotrosSection />
         <CtaBand
           titulo="¿Listo para trabajar juntos?"
-          descripcion="Agendamos un diagnóstico gratuito. En 45 minutos identificamos qué automatizar en tu operación."
+          descripcion="Agenda una llamada de 20 minutos. Revisamos un proceso concreto y te decimos si vale la pena automatizarlo."
           ctaSecundario={{ label: "Ver casos de éxito", href: "/casos" }}
         />
       </main>

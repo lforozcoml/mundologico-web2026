@@ -404,7 +404,7 @@ export default function ProductosPage() {
 
         <CtaBand
           titulo="¿Cuál de estos productos es para tu empresa?"
-          descripcion="La primera sesión de diagnóstico es gratis. En 45 minutos identificamos qué automatizar y qué producto encaja mejor con tu operación."
+          descripcion="Agenda una llamada de 20 minutos. Revisamos un proceso concreto y te decimos qué producto encaja mejor con tu operación."
           ctaSecundario={{ label: "Ver casos de éxito", href: "/casos" }}
         />
       </main>

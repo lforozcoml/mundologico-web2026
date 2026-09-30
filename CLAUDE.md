@@ -26,7 +26,7 @@ Dev server: `localhost:3000`.
 | Fuente | Tajawal (Google Fonts via next/font) |
 | Contenido | Archivos `.ts` en `src/content/data/` |
 | Formulario | API route `/api/contact` → webhook Make.com |
-| Deploy | Vercel (pendiente) |
+| Deploy | Vercel. En vivo en `mundologico.com`. Rama de producción: `feat/secciones-home` |
 
 ## Tokens de marca
 
@@ -69,7 +69,5 @@ En `.env.local` para desarrollo. Agregar en Vercel antes del deploy.
 
 ## Pendiente para publicar
 
-1. Deploy a Vercel + `MAKE_WEBHOOK_URL` en variables de entorno de Vercel
-2. Dominio `mundologico.com` apuntando a Vercel
-3. SEO: metadata por página, sitemap.xml, robots.txt
-4. i18n (inglés + francés) — después del lanzamiento
+1. SEO: metadata por página, sitemap.xml, robots.txt
+2. i18n (inglés + francés), después del lanzamiento

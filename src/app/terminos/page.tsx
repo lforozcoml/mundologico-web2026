@@ -44,7 +44,7 @@ export default function TerminosPage() {
                   Cualquier reproducción, representación, utilización o modificación —total o parcial— del sitio o de sus contenidos, sin autorización previa y escrita de <strong className="text-mundo-dark">Mundo Lógico S.A.S.</strong>, queda terminantemente prohibida y se someterá a las sanciones establecidas por la ley.
                 </p>
                 <p>
-                  Las marcas de terceros mencionadas en el sitio (Make.com, Monday.com, Google Workspace, entre otras) son propiedad de sus respectivos titulares. Su aparición en el sitio responde únicamente a la identificación de los productos y servicios con los que <strong className="text-mundo-dark">Mundo Lógico S.A.S.</strong> trabaja como partner certificado.
+                  Las marcas de terceros mencionadas en el sitio (Make.com, Google Workspace, entre otras) son propiedad de sus respectivos titulares. Su aparición responde únicamente a la identificación de los productos y servicios que <strong className="text-mundo-dark">Mundo Lógico S.A.S.</strong> utiliza o con los que integra. <strong className="text-mundo-dark">Mundo Lógico S.A.S.</strong> es partner oficial de Make.com (Silver Partner) y de Google Workspace (Select Partner).
                 </p>
               </div>
             </div>
