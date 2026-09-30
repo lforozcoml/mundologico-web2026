@@ -38,6 +38,8 @@ export function Header() {
         <div className="hidden md:block">
           <Link
             href={nav.cta.href}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-mundo-blue text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-blue-700 transition-colors"
           >
             {nav.cta.label}
@@ -77,6 +79,8 @@ export function Header() {
           ))}
           <Link
             href={nav.cta.href}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center justify-center bg-mundo-blue text-white text-sm font-semibold px-5 py-2.5 rounded-full"
             onClick={() => setOpen(false)}
           >
