@@ -151,7 +151,7 @@ export function ContactoSection() {
                 </button>
 
                 <p className="text-[12px] text-gray-400 text-center">
-                  Te respondemos en 24 a 48 horas.
+                  Sin compromiso. Te respondemos en 24 a 48 horas.
                 </p>
               </form>
             )}

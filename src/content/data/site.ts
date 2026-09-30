@@ -60,7 +60,7 @@ export const site = {
   redes: {
     linkedin: "https://www.linkedin.com/company/mundologico",
   },
-  partners: ["Make.com", "Monday.com", "Google Workspace"],
+  partners: ["Make.com", "Google Workspace"],
   cifras,
 };
 
