@@ -12,6 +12,12 @@ export const metadata: Metadata = pageMetadata({
   path: "/privacidad",
 });
 
+const cookies = [
+  { categoria: "Necesarias", detalle: "permiten que el sitio funcione y recuerdan tu decisión sobre cookies. Siempre están activas." },
+  { categoria: "Analítica", detalle: "Google Analytics, para medir qué páginas se visitan, desde qué dispositivo y por cuánto tiempo. Puede incluir tipo de navegador, idioma, páginas visitadas y dirección IP." },
+  { categoria: "Marketing", detalle: "Google Ads, para medir campañas publicitarias. Solo se activan con tu aceptación." },
+];
+
 const finalidades = [
   "Responder solicitudes de contacto y agendar diagnósticos",
   "Prestar y mejorar los servicios contratados",
@@ -100,10 +106,23 @@ export default function PrivacidadPage() {
                 3. Cookies
               </h2>
               <p className="text-[15px] text-gray-600 leading-relaxed mb-4">
-                <strong className="text-mundo-dark">Mundo Lógico S.A.S.</strong> puede utilizar cookies y tecnologías similares para analizar el comportamiento de navegación, mejorar la experiencia de usuario y medir el rendimiento del sitio. La información obtenida puede incluir tipo de navegador, idioma del dispositivo, páginas visitadas, dirección IP y duración de la sesión.
+                <strong className="text-mundo-dark">Mundo Lógico S.A.S.</strong> utiliza cookies y tecnologías similares, agrupadas en tres categorías:
+              </p>
+              <div className="flex flex-col gap-3 mb-4">
+                {cookies.map(({ categoria, detalle }) => (
+                  <div key={categoria} className="flex gap-3 items-start">
+                    <span className="text-mundo-blue font-bold text-lg flex-shrink-0 mt-0.5">→</span>
+                    <span className="text-[15px] text-gray-600 leading-relaxed">
+                      <strong className="text-mundo-dark">{categoria}:</strong> {detalle}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[15px] text-gray-600 leading-relaxed mb-4">
+                Al ingresar al sitio se muestra un aviso de cookies. Si continúas navegando sin rechazarlas, las de analítica quedan activas; las de marketing solo se activan si las aceptas expresamente. Tu decisión se guarda en tu navegador por 12 meses.
               </p>
               <div className="rounded-xl px-6 py-4 bg-white border border-gray-200 text-[14px] text-gray-600 leading-relaxed">
-                El usuario puede deshabilitar las cookies desde la configuración de su navegador en cualquier momento.
+                Puedes cambiar tu decisión en cualquier momento desde el enlace &quot;Configurar cookies&quot; al pie de cada página, o deshabilitar las cookies desde la configuración de tu navegador.
               </div>
             </div>
 

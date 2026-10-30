@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Tajawal } from "next/font/google";
 import Script from "next/script";
 import { SITE_NAME, SITE_URL } from "@/lib/metadata";
+import { consentInitScript } from "@/lib/consent";
+import { CookieBanner } from "@/components/layout/CookieBanner";
 import "./globals.css";
 
 const tajawal = Tajawal({
@@ -57,6 +59,8 @@ export default function RootLayout({
             }),
           }}
         />
+        {/* Consent Mode v2: debe ir antes de GTM */}
+        <script dangerouslySetInnerHTML={{ __html: consentInitScript }} />
         {/* Google Tag Manager */}
         <Script id="gtm-script" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -77,6 +81,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           />
         </noscript>
         {children}
+        <CookieBanner />
       </body>
     </html>
   );

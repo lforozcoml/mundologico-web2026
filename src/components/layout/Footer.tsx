@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { site } from "@/content/data/site";
+import { CookieSettingsButton } from "@/components/layout/CookieBanner";
 
 const footerLinks = {
   Productos: [
@@ -50,6 +51,9 @@ export function Footer() {
                   {label}
                 </Link>
               ))}
+              {title === "Legal" && (
+                <CookieSettingsButton className="block text-left text-[14px] text-white/80 hover:text-white transition-colors mb-2.5" />
+              )}
             </div>
           ))}
         </div>
