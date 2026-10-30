@@ -199,9 +199,13 @@ export function IALabSection() {
               <div className="h-px my-1" style={{ background: "rgba(255,255,255,.07)" }} />
               <div className="flex items-center gap-2.5 flex-wrap">
                 <span className="text-[12px] text-white/40">+ IA según el caso:</span>
-                {["/claude.svg", "/gemini.svg", "/openai.svg"].map((src) => (
+                {[
+                  { src: "/claude.svg", alt: "Claude" },
+                  { src: "/gemini.svg", alt: "Gemini" },
+                  { src: "/openai.svg", alt: "OpenAI" },
+                ].map(({ src, alt }) => (
                   <div key={src} className="w-9 h-9 rounded-lg bg-white flex items-center justify-center p-1.5" style={{ border: "1px solid rgba(255,255,255,.2)" }}>
-                    <Image src={src} alt="" width={24} height={24} className="w-full h-full object-contain" />
+                    <Image src={src} alt={alt} width={24} height={24} className="w-full h-full object-contain" />
                   </div>
                 ))}
               </div>

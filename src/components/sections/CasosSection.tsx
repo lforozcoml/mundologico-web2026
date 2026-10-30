@@ -19,7 +19,12 @@ const metricColor = {
   purple: "text-mundo-purple",
 };
 
-export function CasosSection() {
+type Props = {
+  /** h1 cuando la sección es el contenido principal de la página (/casos). */
+  headingAs?: "h1" | "h2";
+};
+
+export function CasosSection({ headingAs: Heading = "h2" }: Props) {
   return (
     <section className="py-24 bg-gray-50 overflow-hidden" id="casos">
       <div className="max-w-7xl mx-auto px-6">
@@ -27,10 +32,10 @@ export function CasosSection() {
         <div className="mb-14">
           <Image src="/isotipo-separador.svg" alt="" width={26} height={26} className="mb-2.5" />
           <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-3">Casos de éxito</p>
-          <h2 className="text-4xl md:text-5xl font-black text-mundo-dark leading-tight mb-4">
+          <Heading className="text-4xl md:text-5xl font-black text-mundo-dark leading-tight mb-4">
             Resultados reales,<br />
             <span className="text-mundo-blue">no promesas</span>
-          </h2>
+          </Heading>
           <p className="text-lg text-gray-600 max-w-xl leading-relaxed">
             Cada proyecto tiene métricas concretas. Esto es lo que hemos construido para nuestros clientes.
           </p>

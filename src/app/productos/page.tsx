@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import Image from "next/image";
 import { Header } from "@/components/layout/Header";
@@ -7,10 +8,12 @@ import { CtaBand } from "@/components/ui/CtaBand";
 import { CALENDARIO_URL } from "@/content/data/site";
 import { StackPill } from "@/components/ui/StackPill";
 
-export const metadata: Metadata = {
-  title: "Productos — Mundo Lógico",
-  description: "Soluciones de automatización con IA para tu empresa. Knowledge Engine, Support Engine, IA Lab y Signal Engine.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Productos",
+  description:
+    "Soluciones de automatización con IA para tu empresa. Knowledge Engine, Support Engine, IA Lab y Signal Engine.",
+  path: "/productos",
+});
 
 const colorToken = {
   blue:     { accent: "#176BEC", bg: "rgba(23,107,236,.08)",  border: "rgba(23,107,236,.2)",  tag: "text-mundo-blue",   grad: "linear-gradient(135deg,#23274C 0%,#176BEC 100%)" },

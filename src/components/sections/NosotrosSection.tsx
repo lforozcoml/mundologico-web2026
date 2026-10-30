@@ -44,10 +44,10 @@ export function NosotrosSection() {
         <div className="max-w-3xl mb-16">
           <Image src="/isotipo-separador.svg" alt="" width={26} height={26} className="mb-2.5" />
           <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-3">Quiénes somos</p>
-          <h2 className="text-4xl md:text-5xl font-black text-mundo-dark leading-tight mb-5">
+          <h1 className="text-4xl md:text-5xl font-black text-mundo-dark leading-tight mb-5">
             21 años conectando{" "}
             <span className="text-mundo-blue">tecnología y negocio</span>
-          </h2>
+          </h1>
           <p className="text-[16px] text-gray-600 leading-relaxed mb-4">
             Desde 2005 construimos tecnología para empresas en Colombia y Estados Unidos, y hace más de 8 años nos especializamos en automatizar procesos. Hoy nos enfocamos en automatización e IA: que tu equipo deje las tareas manuales, cometa menos errores de digitación y tenga mejor información para decidir.
           </p>

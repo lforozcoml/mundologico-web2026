@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import Image from "next/image";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
-export const metadata: Metadata = {
-  title: "Política de privacidad — Mundo Lógico",
-  description: "Política de privacidad y tratamiento de datos personales de Mundo Lógico S.A.S. Ley 1581 de 2012.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Política de privacidad",
+  description:
+    "Política de privacidad y tratamiento de datos personales de Mundo Lógico S.A.S. Ley 1581 de 2012.",
+  path: "/privacidad",
+});
 
 const finalidades = [
   "Responder solicitudes de contacto y agendar diagnósticos",

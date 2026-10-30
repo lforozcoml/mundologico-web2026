@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { pageMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -17,20 +18,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const caso = casos.find((c) => c.slug === slug);
   if (!caso) return {};
-  const title = `${caso.nombre} — Casos de éxito · Mundo Lógico`;
-  return {
-    title,
+  return pageMetadata({
+    title: `${caso.nombre} · Casos de éxito`,
     description: caso.subtitulo,
-    alternates: { canonical: `https://mundologico.com/casos/${slug}` },
-    openGraph: {
-      title,
-      description: caso.subtitulo,
-      url: `https://mundologico.com/casos/${slug}`,
-      siteName: "Mundo Lógico",
-      locale: "es_CO",
-      type: "article",
-    },
-  };
+    path: `/casos/${slug}`,
+    type: "article",
+  });
 }
 
 const colorToken = {

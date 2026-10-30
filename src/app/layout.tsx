@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Tajawal } from "next/font/google";
 import Script from "next/script";
+import { SITE_NAME, SITE_URL } from "@/lib/metadata";
 import "./globals.css";
 
 const tajawal = Tajawal({
@@ -10,29 +11,20 @@ const tajawal = Tajawal({
   display: "swap",
 });
 
-const BASE = "https://mundologico.com";
-
+// Valores por defecto. Cada página define su propio canonical y openGraph con
+// pageMetadata() para no heredar los del home.
 export const metadata: Metadata = {
-  title: "Mundo Lógico — Automatización e IA para empresas",
+  title: `${SITE_NAME} | Automatización e IA para empresas`,
   description:
     "Diseñamos e implementamos automatizaciones con IA para que tu equipo deje de hacer trabajo repetitivo y se enfoque en lo que realmente importa.",
-  metadataBase: new URL(BASE),
+  metadataBase: new URL(SITE_URL),
   openGraph: {
-    title: "Mundo Lógico — Automatización e IA para empresas",
-    description:
-      "Diseñamos e implementamos automatizaciones con IA para que tu equipo deje de hacer trabajo repetitivo y se enfoque en lo que realmente importa.",
-    url: BASE,
-    siteName: "Mundo Lógico",
+    siteName: SITE_NAME,
     locale: "es_CO",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mundo Lógico — Automatización e IA para empresas",
-    description: "Automatización e IA para empresas que quieren crecer.",
-  },
-  alternates: {
-    canonical: BASE,
   },
 };
 
@@ -51,8 +43,8 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "Mundo Lógico",
-              url: BASE,
-              logo: `${BASE}/icon.png`,
+              url: SITE_URL,
+              logo: `${SITE_URL}/icon.png`,
               contactPoint: {
                 "@type": "ContactPoint",
                 email: "hola@mundologico.com",

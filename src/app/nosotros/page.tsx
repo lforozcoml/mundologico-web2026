@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { NosotrosSection } from "@/components/sections/NosotrosSection";
 import { CtaBand } from "@/components/ui/CtaBand";
 
-export const metadata: Metadata = {
-  title: "Nosotros | Mundo Lógico",
+export const metadata: Metadata = pageMetadata({
+  title: "Nosotros",
   description:
     "21 años construyendo tecnología para empresas en Colombia y Estados Unidos, más de 8 automatizando procesos. Hoy, automatización e IA embebida.",
-};
+  path: "/nosotros",
+});
 
 export default function NosotrosPage() {
   return (

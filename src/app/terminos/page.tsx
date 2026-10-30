@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/metadata";
 import Link from "next/link";
 import Image from "next/image";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
-export const metadata: Metadata = {
-  title: "Términos y condiciones — Mundo Lógico",
-  description: "Condiciones de uso de los servicios de Mundo Lógico S.A.S.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Términos y condiciones",
+  description:
+    "Condiciones de uso de los servicios de Mundo Lógico S.A.S.",
+  path: "/terminos",
+});
 
 export default function TerminosPage() {
   return (
