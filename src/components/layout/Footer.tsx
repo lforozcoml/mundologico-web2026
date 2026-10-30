@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { site } from "@/content/data/site";
+import { site, partnerBadges } from "@/content/data/site";
+import { PartnerBadge } from "@/components/ui/PartnerBadge";
 import { CookieSettingsButton } from "@/components/layout/CookieBanner";
 
 const footerLinks = {
@@ -71,15 +72,14 @@ export function Footer() {
 
           {/* Insignias de certificación */}
           <div className="flex items-center gap-3 flex-wrap justify-center md:justify-end">
-            <div className="bg-white rounded-xl px-4 py-2.5 flex items-center">
-              <Image src="/make-silver-sales.avif" alt="Make Silver Sales Partner" width={120} height={60} className="h-14 w-auto" />
-            </div>
-            <div className="bg-white rounded-xl px-4 py-2.5 flex items-center">
-              <Image src="/make-silver-service.avif" alt="Make Silver Service Partner" width={120} height={60} className="h-14 w-auto" />
-            </div>
-            <div className="bg-white rounded-xl px-4 py-2.5 flex items-center">
-              <Image src="/google-workspace-select-partner-sin-borde.png" alt="Google Workspace Select Partner" width={917} height={621} className="h-14 w-auto" />
-            </div>
+            {partnerBadges.map((badge) => (
+              <PartnerBadge
+                key={badge.alt}
+                badge={badge}
+                className="bg-white rounded-xl px-4 py-2.5 flex items-center"
+                imgClassName="h-14 w-auto"
+              />
+            ))}
           </div>
         </div>
       </div>

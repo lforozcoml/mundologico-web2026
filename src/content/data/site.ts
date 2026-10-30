@@ -64,6 +64,25 @@ export const site = {
   cifras,
 };
 
+export type PartnerBadge = {
+  src: string;
+  alt: string;
+  w: number;
+  h: number;
+  /** Perfil público del partner. Sin href, la insignia no enlaza. */
+  href?: string;
+};
+
+export const MAKE_PARTNER_URL = "https://www.make.com/partners-directory/mundologico";
+export const GOOGLE_PARTNER_URL = "https://cloud.google.com/find-a-partner/partner/mundo-l%C3%B3gico";
+
+/** Insignias de partners. Se usan en Hero, Nosotros y Footer. */
+export const partnerBadges: readonly PartnerBadge[] = [
+  { src: "/make-silver-sales.avif", alt: "Make Silver Partner Sales", w: 246, h: 246, href: MAKE_PARTNER_URL },
+  { src: "/make-silver-service.avif", alt: "Make Silver Partner Service", w: 239, h: 239, href: MAKE_PARTNER_URL },
+  { src: "/google-workspace-select-partner-sin-borde.png", alt: "Google Workspace Select Partner", w: 917, h: 621, href: GOOGLE_PARTNER_URL },
+];
+
 export const CALENDARIO_URL =
   "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ2McfMCNpByJV-5t2BNp4Dbetqm_DA3BGSiEitNWiplFuMauPHKMIZFBvA1aB7zPdBDIyomUesw";
 

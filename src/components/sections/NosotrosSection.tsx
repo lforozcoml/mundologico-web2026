@@ -1,16 +1,11 @@
 import Image from "next/image";
-import { site } from "@/content/data/site";
+import { site, partnerBadges } from "@/content/data/site";
+import { PartnerBadge } from "@/components/ui/PartnerBadge";
 
 const pillares = [
   { color: "bg-mundo-blue", text: "No somos una agencia. Somos ingenieros que se involucran en el problema desde adentro." },
   { color: "bg-mundo-teal", text: "Los mismos que diagnostican son los que construyen y entregan." },
   { color: "bg-mundo-purple", text: "Elegimos la herramienta y la IA según el problema." },
-];
-
-const badges = [
-  { src: "/make-silver-sales.avif", alt: "Make Silver Partner Sales", w: 246, h: 246 },
-  { src: "/make-silver-service.avif", alt: "Make Silver Partner Service", w: 239, h: 239 },
-  { src: "/google-workspace-select-partner-sin-borde.png", alt: "Google Workspace Select Partner", w: 917, h: 621 },
 ];
 
 type Fundador = {
@@ -87,8 +82,8 @@ export function NosotrosSection() {
         <div className="bg-gray-50 rounded-3xl border border-gray-200 p-12 mb-14">
           <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-5">Partners y certificaciones</p>
           <div className="flex items-center gap-4 flex-wrap mb-6">
-            {badges.map(({ src, alt, w, h }) => (
-              <Image key={alt} src={src} alt={alt} width={w} height={h} className="h-[76px] w-auto" />
+            {partnerBadges.map((badge) => (
+              <PartnerBadge key={badge.alt} badge={badge} imgClassName="h-[76px] w-auto" />
             ))}
           </div>
           <p className="text-[15px] text-gray-600 leading-relaxed max-w-2xl">

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { site, CALENDARIO_URL } from "@/content/data/site";
+import { site, CALENDARIO_URL, partnerBadges } from "@/content/data/site";
+import { PartnerBadge } from "@/components/ui/PartnerBadge";
 
 export function HeroSection() {
   return (
@@ -103,17 +104,13 @@ export function HeroSection() {
           <div className="flex items-center gap-4 flex-wrap">
             <span className="text-sm text-white/45 font-medium">Partners oficiales:</span>
             <div className="flex items-center gap-3 flex-wrap">
-              {[
-                { src: "/make-silver-sales.avif", alt: "Make Silver Partner Sales", w: 246, h: 246 },
-                { src: "/make-silver-service.avif", alt: "Make Silver Partner Service", w: 239, h: 239 },
-                { src: "/google-workspace-select-partner-sin-borde.png", alt: "Google Workspace Select Partner", w: 917, h: 621 },
-              ].map(({ src, alt, w, h }) => (
-                <div
-                  key={alt}
+              {partnerBadges.map((badge) => (
+                <PartnerBadge
+                  key={badge.alt}
+                  badge={badge}
                   className="flex items-center px-4 py-2.5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
-                >
-                  <Image src={src} alt={alt} width={w} height={h} className="h-14 w-auto" />
-                </div>
+                  imgClassName="h-14 w-auto"
+                />
               ))}
             </div>
           </div>
