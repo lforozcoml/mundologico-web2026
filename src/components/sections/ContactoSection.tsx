@@ -113,7 +113,7 @@ export function ContactoSection() {
               <div className="text-center py-12">
                 <div className="text-5xl mb-4">✅</div>
                 <h3 className="text-xl font-bold text-mundo-dark mb-2">Mensaje recibido</h3>
-                <p className="text-gray-600">Te contactamos en menos de 24 horas para agendar el diagnóstico.</p>
+                <p className="text-gray-600">Te respondemos en 24 a 48 horas para agendar la llamada.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="relative flex flex-col gap-5">
