@@ -27,6 +27,7 @@ export function ContactoSection() {
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [resetSignal, setResetSignal] = useState(0);
+  const [verifyFailed, setVerifyFailed] = useState(false);
   // Momento en que se pintó el formulario: los bots envían en milisegundos.
   const startedAtRef = useRef(0);
 
@@ -163,7 +164,44 @@ export function ContactoSection() {
                   </label>
                 </div>
 
-                <Turnstile onToken={setToken} resetSignal={resetSignal} />
+                <Turnstile
+                  onToken={(t) => {
+                    setToken(t);
+                    if (t) setVerifyFailed(false);
+                  }}
+                  onError={() => setVerifyFailed(true)}
+                  resetSignal={resetSignal}
+                />
+
+                {verifyFailed && (
+                  <p className="text-[13px] text-mundo-dark bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 leading-relaxed">
+                    ⚠️ No pudimos verificar tu navegador.{" "}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setVerifyFailed(false);
+                        setResetSignal((n) => n + 1);
+                      }}
+                      className="font-semibold text-mundo-blue hover:underline"
+                    >
+                      Intentar de nuevo
+                    </button>{" "}
+                    o escríbenos a{" "}
+                    <a href={`mailto:${site.contacto.email}`} className="font-semibold text-mundo-blue hover:underline">
+                      {site.contacto.email}
+                    </a>{" "}
+                    o por{" "}
+                    <a
+                      href={`https://wa.me/${site.contacto.telefono.replace(/\D/g, "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-mundo-blue hover:underline"
+                    >
+                      WhatsApp
+                    </a>
+                    .
+                  </p>
+                )}
 
                 {error && (
                   <p className="text-[13px] text-red-500 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
@@ -173,7 +211,7 @@ export function ContactoSection() {
 
                 <button type="submit" disabled={loading || !token}
                   className="w-full bg-mundo-blue text-white font-semibold text-[15px] py-3.5 rounded-full hover:bg-blue-700 transition-colors disabled:opacity-60">
-                  {loading ? "Enviando..." : token ? "Enviar mensaje →" : "Verificando..."}
+                  {loading ? "Enviando..." : token ? "Enviar mensaje →" : verifyFailed ? "Verificación pendiente" : "Verificando..."}
                 </button>
 
                 <p className="text-[12px] text-gray-400 text-center">

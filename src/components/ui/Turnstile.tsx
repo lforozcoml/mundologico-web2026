@@ -50,17 +50,21 @@ type Props = {
   onToken: (token: string | null) => void;
   /** Cambiarlo reinicia el widget (los tokens son de un solo uso). */
   resetSignal: number;
+  /** La verificación no pudo completarse (navegador bloqueado o script sin cargar). */
+  onError: () => void;
 };
 
 /** Verificación anti-bots de Cloudflare. En modo Managed casi nunca le pide nada a una persona. */
-export function Turnstile({ onToken, resetSignal }: Props) {
+export function Turnstile({ onToken, resetSignal, onError }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
   const onTokenRef = useRef(onToken);
+  const onErrorRef = useRef(onError);
 
   useEffect(() => {
     onTokenRef.current = onToken;
-  }, [onToken]);
+    onErrorRef.current = onError;
+  }, [onToken, onError]);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,10 +76,16 @@ export function Turnstile({ onToken, resetSignal }: Props) {
           language: "es",
           callback: (token) => onTokenRef.current(token),
           "expired-callback": () => onTokenRef.current(null),
-          "error-callback": () => onTokenRef.current(null),
+          "error-callback": () => {
+            onTokenRef.current(null);
+            onErrorRef.current();
+          },
         });
       })
-      .catch((err: unknown) => console.error("[turnstile]", err));
+      .catch((err: unknown) => {
+        console.error("[turnstile]", err);
+        onErrorRef.current();
+      });
 
     return () => {
       cancelled = true;
