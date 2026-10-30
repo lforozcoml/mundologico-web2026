@@ -83,6 +83,13 @@ export const partnerBadges: readonly PartnerBadge[] = [
   { src: "/google-workspace-select-partner-sin-borde.png", alt: "Google Workspace Select Partner", w: 917, h: 621, href: GOOGLE_PARTNER_URL },
 ];
 
+/**
+ * Site Key pública de Cloudflare Turnstile (widget mundologico-contacto).
+ * NEXT_PUBLIC_TURNSTILE_SITE_KEY permite usar las llaves de prueba de Cloudflare en local.
+ */
+export const TURNSTILE_SITE_KEY =
+  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "0x4AAAAAAFtFW8SJRD02DHzL";
+
 export const CALENDARIO_URL =
   "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ2McfMCNpByJV-5t2BNp4Dbetqm_DA3BGSiEitNWiplFuMauPHKMIZFBvA1aB7zPdBDIyomUesw";
 

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import { validateContact, type ContactPayload } from "@/lib/contact";
 
 // Rate limiter in-memory: 3 envíos por IP cada 60 segundos.
-// Funciona dentro de instancias calientes del serverless; suficiente para disuadir abuso básico.
+// Solo vive dentro de una instancia caliente del serverless; la protección real es Turnstile.
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const WINDOW_MS = 60_000;
 const MAX_PER_WINDOW = 3;
@@ -18,15 +19,19 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
-export interface ContactPayload {
-  nombre: string;
-  apellidos: string;
-  empresa: string;
-  email: string;
-  interes: string;
-  mensaje: string;
-  origen: string;
-  timestamp: string;
+const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+
+type TurnstileResult = { success: boolean; "error-codes"?: string[]; hostname?: string };
+
+async function verifyTurnstile(token: string, ip: string, secret: string): Promise<TurnstileResult> {
+  const form = new URLSearchParams({ secret, response: token });
+  if (ip !== "unknown") form.set("remoteip", ip);
+  const res = await fetch(TURNSTILE_VERIFY_URL, {
+    method: "POST",
+    body: form,
+    signal: AbortSignal.timeout(5000),
+  });
+  return (await res.json()) as TurnstileResult;
 }
 
 export async function POST(req: NextRequest) {
@@ -37,58 +42,75 @@ export async function POST(req: NextRequest) {
 
   if (isRateLimited(ip)) {
     return NextResponse.json(
-      { error: "Demasiados intentos. Esperá un momento antes de volver a enviar." },
+      { error: "Demasiados intentos. Espera un momento antes de volver a enviar." },
       { status: 429 }
     );
   }
 
   const webhookUrl = process.env.MAKE_WEBHOOK_URL;
+  const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
 
-  if (!webhookUrl) {
-    console.error("[contact] MAKE_WEBHOOK_URL no está configurado");
+  if (!webhookUrl || !turnstileSecret) {
+    console.error("[contact] Falta configuración:", {
+      MAKE_WEBHOOK_URL: Boolean(webhookUrl),
+      TURNSTILE_SECRET_KEY: Boolean(turnstileSecret),
+    });
     return NextResponse.json(
       { error: "Configuración incompleta en el servidor" },
       { status: 500 }
     );
   }
 
-  let body: Partial<ContactPayload>;
+  let body: unknown;
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Cuerpo inválido" }, { status: 400 });
   }
 
-  // Validación de campos requeridos
-  const { nombre, apellidos, email, mensaje } = body;
-  if (!nombre?.trim() || !apellidos?.trim() || !email?.trim() || !mensaje?.trim()) {
+  const result = validateContact(body);
+
+  if (result.kind === "spam") {
+    // Se responde ok para que el bot no sepa que fue detectado.
+    console.warn("[contact] Spam descartado:", { reason: result.reason, ip });
+    return NextResponse.json({ ok: true }, { status: 200 });
+  }
+  if (result.kind === "invalid") {
+    return NextResponse.json({ error: result.error }, { status: 422 });
+  }
+
+  let turnstile: TurnstileResult;
+  try {
+    turnstile = await verifyTurnstile(result.token, ip, turnstileSecret);
+  } catch (err) {
+    console.error("[contact] Error verificando Turnstile:", err);
     return NextResponse.json(
-      { error: "Faltan campos requeridos: nombre, email y mensaje son obligatorios" },
-      { status: 422 }
+      { error: "No pudimos verificar el envío. Intenta de nuevo en un momento." },
+      { status: 503 }
+    );
+  }
+  if (!turnstile.success) {
+    console.warn("[contact] Turnstile rechazó el envío:", { codes: turnstile["error-codes"], ip });
+    return NextResponse.json(
+      { error: "No pudimos verificar que eres una persona. Recarga la página e intenta de nuevo." },
+      { status: 403 }
     );
   }
 
-  // Validación básica de email
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email.trim())) {
-    return NextResponse.json({ error: "Email inválido" }, { status: 422 });
-  }
-
   const payload: ContactPayload = {
-    nombre: nombre.trim(),
-    apellidos: apellidos!.trim(),
-    empresa: body.empresa?.trim() ?? "",
-    email: email.trim().toLowerCase(),
-    interes: body.interes?.trim() ?? "",
-    mensaje: mensaje.trim(),
+    ...result.data,
     origen: "mundologico.com",
     timestamp: new Date().toISOString(),
   };
 
+  // Header secreto opcional: el escenario de Make descarta lo que no lo traiga.
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (process.env.MAKE_WEBHOOK_SECRET) headers["x-ml-secret"] = process.env.MAKE_WEBHOOK_SECRET;
+
   try {
     const makeRes = await fetch(webhookUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(payload),
     });
 

@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { site } from "@/content/data/site";
+import { Turnstile } from "@/components/ui/Turnstile";
+import { CONTACT_LIMITS, HONEYPOT_FIELD, type ContactRequest } from "@/lib/contact";
 
 /**
  * Opciones del select de interés. `value` es lo que viaja al webhook de Make:
@@ -23,6 +25,14 @@ export function ContactoSection() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [resetSignal, setResetSignal] = useState(0);
+  // Momento en que se pintó el formulario: los bots envían en milisegundos.
+  const startedAtRef = useRef(0);
+
+  useEffect(() => {
+    startedAtRef.current = Date.now();
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -30,13 +40,16 @@ export function ContactoSection() {
     setError(null);
 
     const form = e.currentTarget;
-    const data = {
+    const data: ContactRequest = {
       nombre:    (form.elements.namedItem("nombre")    as HTMLInputElement).value,
       apellidos: (form.elements.namedItem("apellidos") as HTMLInputElement).value,
       empresa:   (form.elements.namedItem("empresa")   as HTMLInputElement).value,
       email:     (form.elements.namedItem("email")     as HTMLInputElement).value,
       interes:   (form.elements.namedItem("interes")   as HTMLSelectElement).value,
       mensaje:   (form.elements.namedItem("mensaje")   as HTMLTextAreaElement).value,
+      [HONEYPOT_FIELD]: (form.elements.namedItem(HONEYPOT_FIELD) as HTMLInputElement).value,
+      elapsedMs: Date.now() - startedAtRef.current,
+      turnstileToken: token ?? "",
     };
 
     try {
@@ -49,12 +62,15 @@ export function ContactoSection() {
       if (!res.ok) {
         const { error: msg } = await res.json().catch(() => ({}));
         setError(msg ?? "Ocurrió un error. Intenta de nuevo o escríbenos directamente.");
+        // El token de Turnstile ya se usó: hay que pedir uno nuevo.
+        setResetSignal((n) => n + 1);
         return;
       }
 
       setSent(true);
     } catch {
       setError("No se pudo enviar el mensaje. Revisa tu conexión e intenta de nuevo.");
+      setResetSignal((n) => n + 1);
     } finally {
       setLoading(false);
     }
@@ -99,29 +115,29 @@ export function ContactoSection() {
                 <p className="text-gray-600">Te contactamos en menos de 24 horas para agendar el diagnóstico.</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+              <form onSubmit={handleSubmit} className="relative flex flex-col gap-5">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[13px] font-semibold text-mundo-dark">Nombres</label>
-                    <input required name="nombre" type="text" placeholder="Tus nombres"
+                    <input required name="nombre" maxLength={CONTACT_LIMITS.nombre} type="text" placeholder="Tus nombres"
                       className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[13px] font-semibold text-mundo-dark">Apellidos</label>
-                    <input required name="apellidos" type="text" placeholder="Tus apellidos"
+                    <input required name="apellidos" maxLength={CONTACT_LIMITS.apellidos} type="text" placeholder="Tus apellidos"
                       className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors" />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-mundo-dark">Empresa</label>
-                  <input name="empresa" type="text" placeholder="Nombre de tu empresa"
+                  <input name="empresa" maxLength={CONTACT_LIMITS.empresa} type="text" placeholder="Nombre de tu empresa"
                     className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors" />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-mundo-dark">Email</label>
-                  <input required name="email" type="email" placeholder="tu@empresa.com"
+                  <input required name="email" maxLength={CONTACT_LIMITS.email} type="email" placeholder="tu@empresa.com"
                     className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors" />
                 </div>
 
@@ -135,9 +151,19 @@ export function ContactoSection() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-semibold text-mundo-dark">Cuéntanos tu proceso o problema</label>
-                  <textarea required name="mensaje" rows={4} placeholder="¿Qué proceso quieres automatizar? ¿Qué problema tienes hoy?"
+                  <textarea required name="mensaje" minLength={CONTACT_LIMITS.mensajeMin} maxLength={CONTACT_LIMITS.mensaje} rows={4} placeholder="¿Qué proceso quieres automatizar? ¿Qué problema tienes hoy?"
                     className="px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors resize-y min-h-[120px]" />
                 </div>
+
+                {/* Campo trampa: oculto para personas y lectores de pantalla; los bots lo llenan. */}
+                <div aria-hidden="true" className="absolute -left-[9999px] w-px h-px overflow-hidden">
+                  <label>
+                    Sitio web
+                    <input type="text" name={HONEYPOT_FIELD} tabIndex={-1} autoComplete="off" defaultValue="" />
+                  </label>
+                </div>
+
+                <Turnstile onToken={setToken} resetSignal={resetSignal} />
 
                 {error && (
                   <p className="text-[13px] text-red-500 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
@@ -145,9 +171,9 @@ export function ContactoSection() {
                   </p>
                 )}
 
-                <button type="submit" disabled={loading}
+                <button type="submit" disabled={loading || !token}
                   className="w-full bg-mundo-blue text-white font-semibold text-[15px] py-3.5 rounded-full hover:bg-blue-700 transition-colors disabled:opacity-60">
-                  {loading ? "Enviando..." : "Enviar mensaje →"}
+                  {loading ? "Enviando..." : token ? "Enviar mensaje →" : "Verificando..."}
                 </button>
 
                 <p className="text-[12px] text-gray-400 text-center">
