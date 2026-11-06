@@ -26,7 +26,7 @@ export function ComoTrabajamos() {
     <section className="bg-gray-50 py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6">
         <h2 className="mb-10 text-3xl font-black leading-tight text-mundo-dark md:text-4xl">{comoTrabajamos.titulo}</h2>
-        <ol className="grid gap-4 sm:grid-cols-3 lg:grid-cols-6">
+        <ol className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
           {comoTrabajamos.pasos.map((paso, i) => (
             <li key={paso} className="relative rounded-2xl bg-white p-5 shadow-sm">
               <span className="mb-3 flex size-9 items-center justify-center rounded-full bg-mundo-blue text-[15px] font-black text-white">
