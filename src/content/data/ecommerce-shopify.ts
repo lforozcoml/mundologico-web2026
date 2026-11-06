@@ -333,7 +333,7 @@ const tiendas: Tienda[] = [
     nombre: "Parchita",
     dominios: ["parchita.com.co", "parchita.co"],
     url: "https://parchita.com.co",
-    desde: "Desde abril de 2022",
+    desde: "Desde 2022",
     descripcion: "Tienda completa en Colombia (pesos) y EE.UU. (dólares), con soporte mensual.",
     // Consentimiento confirmado por Federico, 2026-11-06
     autorizado: true,
@@ -361,19 +361,20 @@ const tiendas: Tienda[] = [
     autorizado: true,
     logo: { src: "/tiendas/logos/autollantas.png", width: 377, height: 57 },
     servicios: ["Desarrollo"],
-    mostrarEnlace: false,
+    mostrarEnlace: true,
   },
   {
     id: "formex",
     nombre: "Formex",
     dominios: ["formex.com.co"],
+    url: "https://formex.com.co",
     desde: "Desde 2022",
     descripcion: "Tienda de insumos de refrigeración y aire acondicionado.",
     // Consentimiento confirmado por Federico, 2026-11-06
     autorizado: true,
     logo: { src: "/tiendas/logos/formex.png", width: 195, height: 36 },
     servicios: ["Desarrollo"],
-    mostrarEnlace: false,
+    mostrarEnlace: true,
   },
 ];
 

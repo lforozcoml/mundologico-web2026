@@ -300,7 +300,7 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     await expect(franja.locator("a")).toHaveCount(0);
   });
 
-  test("#tiendas: tarjetas compactas sin marco de navegador y solo Parchita con Ver tienda", async ({ page }) => {
+  test("#tiendas: tarjetas compactas sin marco de navegador y Ver tienda en cada tienda", async ({ page }) => {
     await page.goto(RUTA);
     const seccion = page.locator("section#tiendas");
     await expect(seccion.getByRole("heading", { level: 2 })).toHaveText(tiendasSeccion.titulo);
@@ -314,9 +314,10 @@ test.describe("Página /productos/ecommerce-shopify", () => {
       await expect(tarjeta.getByRole("heading", { level: 3 })).toHaveText(t.nombre);
       for (const texto of [t.desde, t.descripcion, ...t.servicios]) await expect(tarjeta).toContainText(texto);
       const enlaces = tarjeta.getByRole("link", { name: /Ver tienda/ });
-      if (t.id === "parchita") {
+      if (t.mostrarEnlace && t.url) {
         await expect(enlaces).toHaveCount(1);
-        await expect(enlaces).toHaveAttribute("href", t.url!);
+        await expect(enlaces).toHaveAttribute("href", t.url);
+        await expect(enlaces).toHaveAttribute("target", "_blank");
         await expect(enlaces).toHaveAttribute("rel", "noopener noreferrer");
       } else {
         await expect(enlaces).toHaveCount(0);
@@ -325,7 +326,8 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     // Sin marco de navegador, sin capturas ni chips de dominio.
     await expect(seccion.locator("img[src*='parchita-desktop'], img[src*='parchita-mobile']")).toHaveCount(0);
     for (const t of tiendas) for (const d of t.dominios) await expect(seccion.getByText(d, { exact: true })).toHaveCount(0);
-    await expect(seccion.getByRole("link", { name: /Ver tienda/ })).toHaveCount(1);
+    await expect(seccion.getByRole("link", { name: /Ver tienda/ })).toHaveCount(tiendas.filter((t) => t.mostrarEnlace && t.url).length);
+    expect(tiendas.every((t) => t.mostrarEnlace && t.url)).toBe(true);
   });
 
   test("a 390 px no hay scroll horizontal", async ({ page }) => {
