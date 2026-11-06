@@ -52,6 +52,10 @@ export type Frente = {
 };
 export type PasoPlan = { titulo: string; texto: string };
 
+/** Paso de una ruta de trabajo: qué hacemos y qué recibes al terminarlo. */
+export type Paso = { titulo: string; texto: string; recibes: string };
+export type Ruta = { id: "nueva" | "existente"; etiqueta: string; pasos: readonly Paso[] };
+
 export type ModuloOperacion = {
   id: "pedidos" | "conciliacion" | "agente";
   texto: string;
@@ -286,18 +290,6 @@ export const revision = {
   apoyo: "La llamada no tiene costo. Ahí definimos si la revisión es lo que tu tienda necesita.",
 } as const;
 
-export const incluye = {
-  titulo: "Tienda desde cero: qué incluye",
-  items: [
-    "Arquitectura del catálogo (colecciones, filtros, atributos).",
-    "Diseño y desarrollo de la tienda sobre Shopify.",
-    "Medios de pago y envíos de tu mercado, en una o varias monedas.",
-    "SEO de base, analítica y consentimiento de cookies.",
-    "Capacitación para tu equipo y documentación.",
-    "Lanzamiento con pruebas y lista de verificación.",
-  ],
-} as const;
-
 const modulos: ModuloOperacion[] = [
   { id: "pedidos", texto: "Pedidos: del pago a bodega y seguimiento, sin copiar datos a mano.", activo: MODULO_PEDIDOS },
   {
@@ -316,9 +308,79 @@ export const operacion = {
 } as const;
 
 export const comoTrabajamos = {
-  titulo: "Cómo trabajamos",
-  pasos: ["Descubrimiento y alcance", "Diseño", "Desarrollo", "Pruebas", "Lanzamiento", "Soporte"],
-  nota: "Tus cuentas, tu dominio y tus pasarelas siempre quedan a nombre de tu empresa.",
+  id: "como-trabajamos",
+  titulo: "Cómo trabajamos: sabes qué sigue en cada paso",
+  intro: "Cada paso tiene un resultado claro. El camino cambia si tu tienda es nueva o ya existe.",
+  rutas: [
+    {
+      id: "nueva",
+      etiqueta: "Tienda nueva",
+      pasos: [
+        {
+          titulo: "Alcance",
+          texto: "Entendemos tu negocio y definimos qué debe lograr la tienda.",
+          recibes: "Propuesta escrita con alcance y cronograma",
+        },
+        {
+          titulo: "Diseño",
+          texto: "Definimos catálogo, navegación y diseño de la tienda.",
+          recibes: "Diseño para tu aprobación",
+        },
+        {
+          titulo: "Desarrollo",
+          texto: "Construimos en Shopify: pagos, envíos, monedas, SEO de base y analítica.",
+          recibes: "Avances que puedes revisar",
+        },
+        {
+          titulo: "Pruebas",
+          texto: "Probamos compra, pagos, envíos, medición y cookies, en celular y escritorio.",
+          recibes: "Lista de verificación",
+        },
+        {
+          titulo: "Lanzamiento",
+          texto: "Publicamos con tu dominio y tus cuentas, y capacitamos a tu equipo.",
+          recibes: "Capacitación y documentación",
+        },
+        {
+          titulo: "Soporte (opcional)",
+          texto: "Seguimos con un paquete mensual de horas.",
+          recibes: "Primera respuesta en horario hábil",
+        },
+      ],
+    },
+    {
+      id: "existente",
+      etiqueta: "Tienda que ya tienes",
+      pasos: [
+        {
+          titulo: "Acceso",
+          texto: "Definimos qué se revisa y entramos como colaborador con permisos mínimos.",
+          recibes: "Alcance por escrito",
+        },
+        {
+          titulo: "Revisión",
+          texto: "Analizamos los seis frentes de tu tienda.",
+          recibes: "Hallazgos priorizados",
+        },
+        {
+          titulo: "Plan",
+          texto: "Te explicamos los hallazgos en lenguaje de negocio.",
+          recibes: "Informe y plan a 30, 60 y 90 días",
+        },
+        {
+          titulo: "Mejoras",
+          texto: "Ejecutamos lo que decidas, empezando por lo de más impacto.",
+          recibes: "Cambios con alcance por escrito",
+        },
+        {
+          titulo: "Soporte (opcional)",
+          texto: "Seguimos con un paquete mensual de horas.",
+          recibes: "Primera respuesta en horario hábil",
+        },
+      ],
+    },
+  ] satisfies Ruta[],
+  confianza: "Tus cuentas, tu dominio y tus pasarelas siempre quedan a nombre de tu empresa.",
 } as const;
 
 export const soporte = {

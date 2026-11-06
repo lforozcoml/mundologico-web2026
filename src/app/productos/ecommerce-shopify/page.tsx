@@ -19,7 +19,8 @@ import { FranjaLogos } from "@/components/sections/ecommerce/FranjaLogos";
 import { FormasTrabajo } from "@/components/sections/ecommerce/FormasTrabajo";
 import { RevisionTienda } from "@/components/sections/ecommerce/RevisionTienda";
 import { FlujoOperacion } from "@/components/sections/ecommerce/FlujoOperacion";
-import { ComoTrabajamos, Incluye, SoporteMensual } from "@/components/sections/ecommerce/BloquesServicio";
+import { SoporteMensual } from "@/components/sections/ecommerce/BloquesServicio";
+import { ComoTrabajamos } from "@/components/sections/ecommerce/ComoTrabajamos";
 import { TiendasDesarrolladas } from "@/components/sections/ecommerce/TiendasDesarrolladas";
 import { FaqAcordeon } from "@/components/sections/ecommerce/FaqAcordeon";
 
@@ -60,7 +61,6 @@ export default function EcommerceShopifyPage() {
 
           <RevisionTienda />
 
-          <Incluye />
           {modulos.length > 0 && <FlujoOperacion modulos={modulos} />}
           <ComoTrabajamos />
           <SoporteMensual />

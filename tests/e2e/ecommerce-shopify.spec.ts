@@ -4,6 +4,7 @@ import {
   RUTA,
   _todasLasTiendas,
   _todosLosModulos,
+  comoTrabajamos,
   faq,
   hero,
   leyendaCaptura,
@@ -16,6 +17,7 @@ import {
   visibleModulos,
   visibleTiendas,
 } from "../../src/content/data/ecommerce-shopify";
+import * as contenido from "../../src/content/data/ecommerce-shopify";
 
 const SITE = "https://mundologico.com";
 /** Em dash escrito como escape para que el archivo no lo contenga literal. */
@@ -328,6 +330,60 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     for (const t of tiendas) for (const d of t.dominios) await expect(seccion.getByText(d, { exact: true })).toHaveCount(0);
     await expect(seccion.getByRole("link", { name: /Ver tienda/ })).toHaveCount(tiendas.filter((t) => t.mostrarEnlace && t.url).length);
     expect(tiendas.every((t) => t.mostrarEnlace && t.url)).toBe(true);
+  });
+
+  test("Cómo trabajamos: dos pestañas, 6 y 5 pasos, teclado y ambos paneles en el DOM", async ({ page }) => {
+    await page.goto(RUTA);
+    const seccion = page.locator(`section#${comoTrabajamos.id}`);
+    await expect(seccion.getByRole("heading", { level: 2 })).toHaveText(comoTrabajamos.titulo);
+
+    const tabs = seccion.getByRole("tab");
+    await expect(tabs).toHaveCount(2);
+    const [nueva, existente] = comoTrabajamos.rutas;
+    await expect(tabs.nth(0)).toHaveText(nueva.etiqueta);
+    await expect(tabs.nth(1)).toHaveText(existente.etiqueta);
+    await expect(tabs.nth(0)).toHaveAttribute("aria-selected", "true");
+    await expect(tabs.nth(0)).toHaveAttribute("tabindex", "0");
+    await expect(tabs.nth(1)).toHaveAttribute("tabindex", "-1");
+
+    // Ambos paneles existen en el DOM; el inactivo con hidden.
+    const paneles = seccion.locator('[role="tabpanel"]');
+    await expect(paneles).toHaveCount(2);
+    await expect(paneles.nth(0).locator("ol > li")).toHaveCount(nueva.pasos.length);
+    await expect(paneles.nth(1).locator("ol > li")).toHaveCount(existente.pasos.length);
+    expect(nueva.pasos).toHaveLength(6);
+    expect(existente.pasos).toHaveLength(5);
+    await expect(paneles.nth(0)).toBeVisible();
+    await expect(paneles.nth(1)).toBeHidden();
+    for (const [i, p] of nueva.pasos.entries()) {
+      for (const t of [p.titulo, p.texto, p.recibes]) await expect(paneles.nth(0).locator("ol > li").nth(i)).toContainText(t);
+    }
+    await expect(paneles.nth(1)).toHaveAttribute("aria-labelledby", (await tabs.nth(1).getAttribute("id"))!);
+
+    // Teclado: flechas, Home y End mueven el foco y activan.
+    await tabs.nth(0).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(tabs.nth(1)).toBeFocused();
+    await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
+    await expect(paneles.nth(1)).toBeVisible();
+    await expect(paneles.nth(0)).toBeHidden();
+    await page.keyboard.press("ArrowRight");
+    await expect(tabs.nth(0)).toBeFocused();
+    await page.keyboard.press("ArrowLeft");
+    await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
+    await page.keyboard.press("Home");
+    await expect(tabs.nth(0)).toHaveAttribute("aria-selected", "true");
+    await page.keyboard.press("End");
+    await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
+
+    await expect(seccion.getByText(comoTrabajamos.confianza)).toBeVisible();
+    await expect(seccion.getByRole("link")).toHaveCount(0);
+  });
+
+  test("ya no existe el bloque Tienda desde cero: qué incluye", async ({ page }) => {
+    expect("incluye" in contenido).toBe(false);
+    await page.goto(RUTA);
+    expect(await page.content()).not.toContain("Tienda desde cero: qué incluye");
   });
 
   test("a 390 px no hay scroll horizontal", async ({ page }) => {

@@ -1,49 +1,5 @@
-import { Check, LifeBuoy, ShieldCheck } from "lucide-react";
-import { comoTrabajamos, incluye, soporte } from "@/content/data/ecommerce-shopify";
-
-export function Incluye() {
-  return (
-    <section className="py-20 md:py-28">
-      <div className="mx-auto max-w-7xl px-6">
-        <h2 className="mb-10 max-w-2xl text-3xl font-black leading-tight text-mundo-dark md:text-4xl">{incluye.titulo}</h2>
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {incluye.items.map((item) => (
-            <li key={item} className="flex gap-3 rounded-2xl border border-gray-200 bg-white p-5">
-              <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-mundo-teal/15 text-[#037F70]">
-                <Check aria-hidden className="size-4" />
-              </span>
-              <span className="text-[16px] leading-relaxed text-mundo-dark">{item}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-export function ComoTrabajamos() {
-  return (
-    <section className="bg-gray-50 py-20 md:py-28">
-      <div className="mx-auto max-w-7xl px-6">
-        <h2 className="mb-10 text-3xl font-black leading-tight text-mundo-dark md:text-4xl">{comoTrabajamos.titulo}</h2>
-        <ol className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
-          {comoTrabajamos.pasos.map((paso, i) => (
-            <li key={paso} className="relative rounded-2xl bg-white p-5 shadow-sm">
-              <span className="mb-3 flex size-9 items-center justify-center rounded-full bg-mundo-blue text-[15px] font-black text-white">
-                {i + 1}
-              </span>
-              <span className="text-[16px] font-bold leading-snug text-mundo-dark">{paso}</span>
-            </li>
-          ))}
-        </ol>
-        <p className="mt-8 flex items-start gap-3 text-[16px] font-semibold text-mundo-dark">
-          <ShieldCheck aria-hidden className="mt-0.5 size-5 shrink-0 text-mundo-blue" />
-          {comoTrabajamos.nota}
-        </p>
-      </div>
-    </section>
-  );
-}
+import { LifeBuoy } from "lucide-react";
+import { soporte } from "@/content/data/ecommerce-shopify";
 
 export function SoporteMensual() {
   return (
