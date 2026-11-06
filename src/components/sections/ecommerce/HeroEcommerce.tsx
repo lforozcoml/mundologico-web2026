@@ -78,7 +78,9 @@ export function HeroEcommerce() {
                   height={captura.desktop.height}
                   alt={`${captura.alt}, en escritorio`}
                   sizes="(min-width: 1280px) 560px, (min-width: 768px) 45vw, 92vw"
-                  priority
+                  // Next 16 depreca priority: carga inmediata con prioridad alta.
+                  loading="eager"
+                  fetchPriority="high"
                   className="h-auto w-full"
                 />
               </BrowserFrame>
