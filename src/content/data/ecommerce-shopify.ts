@@ -37,6 +37,8 @@ export type ModuloOperacion = {
   activo: boolean;
 };
 
+export type Imagen = { src: string; width: number; height: number };
+
 export type Tienda = {
   id: string;
   nombre: string;
@@ -48,7 +50,12 @@ export type Tienda = {
   descripcion: string;
   /** false: la tarjeta no se renderiza. */
   autorizado: boolean;
-  captura?: { desktop: string; mobile: string; alt: string; width: number; height: number };
+  captura?: {
+    desktop: Imagen;
+    mobile: Imagen;
+    /** Texto alternativo base; se le agrega "en escritorio" o "en celular". */
+    alt: string;
+  };
   cifra?: { texto: string; mostrar: boolean };
 };
 
@@ -161,11 +168,9 @@ const tiendas: Tienda[] = [
     descripcion: "Tienda completa en Colombia (pesos) y EE.UU. (dólares), con soporte mensual.",
     autorizado: true,
     captura: {
-      desktop: "/tiendas/parchita-desktop.webp",
-      mobile: "/tiendas/parchita-mobile.webp",
+      desktop: { src: "/tiendas/parchita-desktop.webp", width: 1440, height: 900 },
+      mobile: { src: "/tiendas/parchita-mobile.webp", width: 780, height: 1688 },
       alt: "Página de inicio de la tienda Parchita en parchita.com.co",
-      width: 1440,
-      height: 900,
     },
     cifra: {
       texto: "Más de 20.000 pedidos en los últimos 12 meses (corte 5 de noviembre de 2026).",
