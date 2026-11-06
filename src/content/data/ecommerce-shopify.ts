@@ -36,6 +36,8 @@ export type Forma = {
   descripcion: string;
   recibes: readonly string[];
   icono: IconoForma;
+  /** Enlace al final de la tarjeta, hacia la sección que lo amplía. */
+  enlace: { texto: string; href: string };
 };
 /**
  * Un frente de la Revisión de tienda. "etapa": paso del recorrido del cliente;
@@ -146,6 +148,7 @@ export const formas = {
         "Lanzamiento con la cuenta, el dominio y los datos a nombre de tu empresa.",
       ],
       icono: "store",
+      enlace: { texto: "Ver cómo lo hacemos", href: "#como-trabajamos" },
     },
     {
       eyebrow: "Tienda existente",
@@ -161,6 +164,7 @@ export const formas = {
         "Ejecución de las mejoras que decidas, con alcance acordado por escrito.",
       ],
       icono: "gauge",
+      enlace: { texto: "Ver los seis frentes", href: "#revision" },
     },
     {
       eyebrow: "Soporte mensual",
@@ -175,6 +179,7 @@ export const formas = {
         "Funcionalidades nuevas cotizadas aparte, con alcance acordado por escrito.",
       ],
       icono: "lifebuoy",
+      enlace: { texto: "Ver cómo funciona", href: "#soporte" },
     },
   ] satisfies Forma[],
   cierre: "Después de cualquiera de las tres, podemos conectar la operación de tu tienda.",
@@ -460,7 +465,16 @@ export const tiendasSeccion = {
   intro: "Negocios que nos confiaron el desarrollo de su tienda en Shopify.",
 } as const;
 
+/** Banda final de la página (props de CtaBand; el CTA principal usa su valor por defecto). */
+export const bandaFinal = {
+  titulo: "¿Tienes una tienda en Shopify o vas a abrir una?",
+  descripcion:
+    "Agenda una llamada de 20 minutos. Revisamos tu caso y te decimos qué conviene hacer primero y si podemos ayudarte.",
+  ctaSecundario: { label: "Ver preguntas frecuentes", href: "#preguntas" },
+} as const;
+
 export const faq = {
+  id: "preguntas",
   titulo: "Preguntas frecuentes",
   items: [
     {

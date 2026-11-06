@@ -1,7 +1,7 @@
 "use client";
 
 import { m } from "framer-motion";
-import { Check, Gauge, LifeBuoy, Store, type LucideIcon } from "lucide-react";
+import { ArrowRight, Check, Gauge, LifeBuoy, Store, type LucideIcon } from "lucide-react";
 import { formas, type IconoForma } from "@/content/data/ecommerce-shopify";
 
 const ICONOS: Record<IconoForma, LucideIcon> = { store: Store, gauge: Gauge, lifebuoy: LifeBuoy };
@@ -96,6 +96,16 @@ export function FormasTrabajo() {
                     </li>
                   ))}
                 </ul>
+                <div className="mt-auto pt-6">
+                  <a
+                    href={f.enlace.href}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-lg text-[16px] font-bold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mundo-blue"
+                    style={{ color: colorTexto }}
+                  >
+                    {f.enlace.texto}
+                    <ArrowRight aria-hidden className="size-4" />
+                  </a>
+                </div>
               </m.li>
             );
           })}

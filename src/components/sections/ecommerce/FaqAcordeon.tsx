@@ -9,7 +9,7 @@ export function FaqAcordeon() {
   const base = useId();
 
   return (
-    <section className="py-20 md:py-28">
+    <section id={faq.id} className="scroll-mt-24 py-20 md:py-28">
       <div className="mx-auto max-w-3xl px-6">
         <h2 className="mb-10 text-3xl font-black leading-tight text-mundo-dark md:text-4xl">{faq.titulo}</h2>
         <ul className="divide-y divide-gray-200 rounded-2xl border border-gray-200 bg-white">

@@ -7,6 +7,7 @@ import { CtaBand } from "@/components/ui/CtaBand";
 import {
   PUBLICADO,
   RUTA,
+  bandaFinal,
   faq,
   meta,
   robotsPara,
@@ -58,16 +59,14 @@ export default function EcommerceShopifyPage() {
           <HeroEcommerce />
           <FranjaLogos />
           <FormasTrabajo />
-
           <RevisionTienda />
-
           {modulos.length > 0 && <FlujoOperacion modulos={modulos} />}
+          {tiendas.length > 0 && <TiendasDesarrolladas tiendas={tiendas} />}
           <ComoTrabajamos />
           <SoporteMensual />
-          {tiendas.length > 0 && <TiendasDesarrolladas tiendas={tiendas} />}
           <FaqAcordeon />
         </MotionProvider>
-        <CtaBand />
+        <CtaBand {...bandaFinal} />
       </main>
       <Footer />
     </>

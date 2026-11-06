@@ -4,8 +4,10 @@ import {
   RUTA,
   _todasLasTiendas,
   _todosLosModulos,
+  bandaFinal,
   comoTrabajamos,
   faq,
+  formas,
   hero,
   leyendaCaptura,
   meta,
@@ -414,6 +416,67 @@ test.describe("Página /productos/ecommerce-shopify", () => {
 
     const html = await page.content();
     expect(html).not.toContain("mejoras y campañas");
+  });
+
+  test("orden de las secciones", async ({ page }) => {
+    await page.goto(RUTA);
+    const claves = await page.locator("main > *").evaluateAll((els) =>
+      els.map((e) => {
+        if (e.querySelector("h1")) return "hero";
+        if (e.id) return `#${e.id}`;
+        const etiqueta = e.getAttribute("aria-label");
+        if (etiqueta) return `franja:${etiqueta}`;
+        return e.querySelector("h2")?.textContent?.trim() ?? e.tagName;
+      }),
+    );
+    expect(claves).toEqual([
+      "hero",
+      `franja:${tiendasSeccion.titulo}`,
+      formas.titulo,
+      "#revision",
+      ...(visibleModulos().length > 0 ? [operacion.titulo] : []),
+      ...(visibleTiendas().length > 0 ? [`#${tiendasSeccion.id}`] : []),
+      `#${comoTrabajamos.id}`,
+      `#${soporte.id}`,
+      `#${faq.id}`,
+      bandaFinal.titulo,
+    ]);
+  });
+
+  test("enlaces de las tres formas llegan a su ancla sin quedar bajo el header", async ({ page }) => {
+    await page.goto(RUTA);
+    const alturaHeader = (await page.locator("header").first().boundingBox())!.height;
+    expect(formas.items.map((f) => f.enlace.href)).toEqual(["#como-trabajamos", "#revision", "#soporte"]);
+    for (const f of formas.items) {
+      await page.evaluate(() => window.scrollTo(0, 0));
+      const enlace = page.getByRole("link", { name: f.enlace.texto });
+      await expect(enlace).toHaveCount(1);
+      await expect(enlace).toHaveAttribute("href", f.enlace.href);
+      const caja = (await enlace.boundingBox())!;
+      expect(caja.height).toBeGreaterThanOrEqual(44);
+      await enlace.click();
+      await expect(page).toHaveURL(new RegExp(`${f.enlace.href}$`));
+      const destino = page.locator(`section${f.enlace.href}`);
+      await expect(destino.getByRole("heading", { level: 2 })).toBeInViewport();
+      await expect.poll(async () => (await destino.boundingBox())!.y).toBeGreaterThanOrEqual(alturaHeader - 1);
+    }
+  });
+
+  test("banda final propia con secundario a #preguntas", async ({ page }) => {
+    await page.goto(RUTA);
+    const titulo = page.getByRole("heading", { level: 2, name: bandaFinal.titulo });
+    await expect(titulo).toHaveCount(1);
+    await expect(page.getByText(bandaFinal.descripcion)).toHaveCount(1);
+    const banda = titulo.locator("xpath=../..");
+    const secundario = banda.getByRole("link", { name: bandaFinal.ctaSecundario.label });
+    await expect(secundario).toHaveAttribute("href", bandaFinal.ctaSecundario.href);
+    await expect(banda.getByRole("link", { name: "Agenda una llamada de 20 minutos →" })).toHaveAttribute("href", /calendar\.google\.com/);
+    await secundario.click();
+    await expect(page).toHaveURL(/#preguntas$/);
+    const faqSeccion = page.locator(`section#${faq.id}`);
+    await expect(faqSeccion.getByRole("heading", { level: 2 })).toBeInViewport();
+    const alturaHeader = (await page.locator("header").first().boundingBox())!.height;
+    await expect.poll(async () => (await faqSeccion.boundingBox())!.y).toBeGreaterThanOrEqual(alturaHeader - 1);
   });
 
   test("a 390 px no hay scroll horizontal", async ({ page }) => {
