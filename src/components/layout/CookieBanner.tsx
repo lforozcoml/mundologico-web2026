@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   CONSENT_DEFAULTS,
   OPEN_CONSENT_EVENT,
@@ -24,7 +25,11 @@ const categorias: { key: keyof ConsentCategories; titulo: string; desc: string }
   },
 ];
 
+/** Rutas donde el banner sale en versión compacta para no tapar el contenido. */
+const RUTAS_COMPACTAS: readonly string[] = ["/contacto"];
+
 export function CookieBanner() {
+  const compacto = RUTAS_COMPACTAS.includes(usePathname());
   // En el servidor se asume que ya hay decisión para no pintar el banner en el HTML estático.
   const hayDecision = useSyncExternalStore(subscribeConsent, () => readConsent() !== null, () => true);
   const [abierto, setAbierto] = useState(false);
@@ -50,6 +55,47 @@ export function CookieBanner() {
 
   const visible = abierto || !hayDecision;
   if (!visible) return null;
+
+  // Versión de una línea. "Configurar" abre el panel completo.
+  if (compacto && !configurando) {
+    return (
+      <div
+        role="dialog"
+        aria-label="Aviso de cookies"
+        className="fixed inset-x-3 bottom-3 z-[60] md:left-auto md:right-6 md:bottom-6 md:max-w-[440px] rounded-2xl bg-white border border-gray-200 shadow-[0_12px_40px_rgba(15,23,42,0.18)] px-4 py-3"
+      >
+        <p className="text-[13px] text-gray-600 leading-snug mb-2">
+          Usamos cookies de analítica.{" "}
+          <Link href="/privacidad" className="text-mundo-blue font-semibold underline-offset-2 hover:underline">
+            Privacidad
+          </Link>
+        </p>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setConfigurando(true)}
+            className="min-h-11 text-[13px] font-semibold text-gray-600 px-2 hover:text-mundo-dark transition-colors"
+          >
+            Configurar
+          </button>
+          <button
+            type="button"
+            onClick={() => decidir({ analytics: false, marketing: false })}
+            className="min-h-11 flex-1 border border-gray-200 text-mundo-dark font-semibold text-[13px] px-3 rounded-full hover:border-mundo-dark transition-colors"
+          >
+            Solo necesarias
+          </button>
+          <button
+            type="button"
+            onClick={() => decidir({ analytics: true, marketing: true })}
+            className="min-h-11 flex-1 bg-mundo-blue text-white font-semibold text-[13px] px-3 rounded-full hover:bg-mundo-dark transition-colors"
+          >
+            Aceptar todas
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
