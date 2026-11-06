@@ -80,15 +80,28 @@ export const meta = {
 } as const;
 
 export const hero = {
-  h1: "Tu tienda en Shopify, bien construida y conectada a tu operación",
+  /** Texto pequeño sobre el H1. No es un encabezado. */
+  eyebrow: "Desarrollo de e-commerce en Shopify",
+  h1: "Una tienda en Shopify que vende bien y no complica tu operación",
   subtitulo:
-    "Desarrollamos tiendas en Shopify con buenas prácticas y las conectamos con lo que pasa después de la compra: pedidos, medios de pago y atención al cliente.",
+    "Cuando una tienda crece, aparecen los pedidos copiados a mano, los pagos que no cuadran y la atención que no da abasto. Construimos y optimizamos tiendas en Shopify pensando en lo que pasa después de la compra.",
   ctaPrincipal: "Agenda una llamada de 20 minutos →",
-  ctaSecundario: { label: "Ver tiendas que hemos desarrollado", href: "#tiendas" },
+  ctaSecundario: { label: "Ver cómo revisamos una tienda", href: "#revision" },
   apoyo: "Sin costo. Revisamos tu caso y te decimos si podemos ayudarte.",
-  /** Etiquetas de las tarjetitas flotantes (palabras del subtítulo, no estados). */
+  lineaApoyo: "Desarrollamos tiendas en Shopify desde 2022, con operación en pesos y en dólares.",
+  /**
+   * Parte fija de la leyenda de la captura. Se compone con los datos de la
+   * tienda: "<nombre>: tienda desarrollada por Mundo Lógico. <desde>."
+   */
+  leyenda: "tienda desarrollada por Mundo Lógico",
+  /** Etiquetas de las tarjetitas flotantes: lo que pasa después de la compra, no estados. */
   etiquetas: ["Pedidos", "Medios de pago", "Atención al cliente"],
 } as const;
+
+/** Leyenda bajo la captura del hero. */
+export function leyendaCaptura(t: Pick<Tienda, "nombre" | "desde">): string {
+  return `${t.nombre}: ${hero.leyenda}. ${t.desde}.`;
+}
 
 export const formas = {
   titulo: "Tres formas de trabajar contigo",

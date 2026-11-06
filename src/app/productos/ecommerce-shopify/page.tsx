@@ -58,7 +58,7 @@ export default function EcommerceShopifyPage() {
           <HeroEcommerce />
           <FormasTrabajo />
 
-          <section className="py-20 md:py-28">
+          <section id="revision" className="scroll-mt-24 py-20 md:py-28">
             <div className="mx-auto max-w-7xl px-6">
               <h2 className="mb-12 max-w-2xl text-3xl font-black leading-tight text-mundo-dark md:text-4xl">
                 {revision.titulo}

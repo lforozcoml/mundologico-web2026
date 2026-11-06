@@ -5,6 +5,8 @@ import {
   _todasLasTiendas,
   _todosLosModulos,
   faq,
+  hero,
+  leyendaCaptura,
   meta,
   operacion,
   robotsPara,
@@ -183,6 +185,25 @@ test.describe("Página /productos/ecommerce-shopify", () => {
       expect(desborda, item.pregunta).toBe(false);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
     }
+  });
+
+  test("hero: eyebrow no es encabezado, CTA a #revision sin quedar bajo el header, leyenda de la captura", async ({ page }) => {
+    await page.goto(RUTA);
+    await expect(page.locator("h1")).toHaveText(hero.h1);
+    const eyebrow = page.getByText(hero.eyebrow, { exact: true }).first();
+    expect(await eyebrow.evaluate((e) => e.tagName)).toBe("P");
+
+    const tienda = visibleTiendas().find((t) => t.captura);
+    if (tienda) await expect(page.locator("figcaption", { hasText: leyendaCaptura(tienda) })).toBeVisible();
+
+    const cta = page.getByRole("link", { name: hero.ctaSecundario.label });
+    await expect(cta).toHaveAttribute("href", "#revision");
+    await cta.click();
+    await expect(page).toHaveURL(/#revision$/);
+    const seccion = page.locator("section#revision");
+    await expect(seccion.getByRole("heading", { level: 2 })).toBeInViewport();
+    const alturaHeader = (await page.locator("header").first().boundingBox())!.height;
+    await expect.poll(async () => (await seccion.boundingBox())!.y).toBeGreaterThanOrEqual(alturaHeader - 1);
   });
 
   test("hexágono: enfocar un frente lo resalta", async ({ page }) => {
