@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { site } from "@/content/data/site";
 import { Turnstile } from "@/components/ui/Turnstile";
-import { CONTACT_LIMITS, HONEYPOT_FIELD, INTERESES, type ContactRequest } from "@/lib/contact";
+import { CONTACT_LIMITS, ETIQUETA_INTERES, HONEYPOT_FIELD, INTERESES, type ContactRequest } from "@/lib/contact";
 
 const INPUT_CLASS =
   "px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors aria-[invalid=true]:border-red-400";
@@ -152,7 +152,7 @@ export function ContactoSection() {
                   <label htmlFor="contacto-interes" className={LABEL_CLASS}>¿Qué te interesa?</label>
                   <select id="contacto-interes" required name="interes" defaultValue="" className={INPUT_CLASS}>
                     <option value="" disabled>Selecciona una opción</option>
-                    {INTERESES.map((opcion) => <option key={opcion} value={opcion}>{opcion}</option>)}
+                    {INTERESES.map((valor) => <option key={valor} value={valor}>{ETIQUETA_INTERES[valor]}</option>)}
                   </select>
                 </div>
 

@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { INTERESES } from "../../src/lib/contact";
+import { ETIQUETA_INTERES, INTERESES } from "../../src/lib/contact";
 
 /** Servidor simulado de tests/e2e/support/servicios-simulados.mjs (ver playwright.config.ts). */
 const SIMULADOS = "http://localhost:3101";
@@ -58,8 +58,14 @@ test("selector con las opciones nuevas, casilla sin marcar y enlace a la políti
   await preparar(page);
   await page.goto("/");
   const form = page.locator("section#contacto form");
-  const opciones = await form.getByLabel("¿Qué te interesa?").locator("option:not([disabled])").allTextContents();
-  expect(opciones).toEqual([...INTERESES]);
+  const selector = form.getByLabel("¿Qué te interesa?").locator("option:not([disabled])");
+  // Las 6 opciones de antes con sus mismos valores, más Shopify y Diagnóstico de automatización.
+  expect(await selector.evaluateAll((os) => os.map((o) => (o as HTMLOptionElement).value))).toEqual([
+    "Knowledge Engine", "Support Engine", "IA Lab", "Signal Engine",
+    "E-commerce en Shopify", "Diagnóstico de automatización", "Diagnóstico gratuito", "Otro",
+  ]);
+  expect(await selector.allTextContents()).toEqual(INTERESES.map((v) => ETIQUETA_INTERES[v]));
+  await expect(form.locator('option[value="Diagnóstico gratuito"]')).toHaveText("Llamada de 20 minutos");
   const casilla = form.getByRole("checkbox", { name: /Autorizo a Mundo Lógico/ });
   await expect(casilla).not.toBeChecked();
   await expect(form.getByRole("link", { name: "política de privacidad" })).toHaveAttribute("href", "/privacidad");

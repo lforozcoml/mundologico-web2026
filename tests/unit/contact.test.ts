@@ -41,7 +41,7 @@ describe("validateContact", () => {
   });
 
   test("interés fuera de la lista es invalid, no spam", () => {
-    for (const interes of ["Knowledge Engine", "Diagnóstico gratuito", "", "otro", 42]) {
+    for (const interes of ["Llamada de 20 minutos", "Atención al cliente", "", "otro", 42]) {
       assert.equal(kind({ interes }), "invalid", String(interes));
     }
   });

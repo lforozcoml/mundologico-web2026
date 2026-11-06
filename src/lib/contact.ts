@@ -6,19 +6,33 @@
 
 /**
  * Opciones del selector de interés. Es la única lista: la usan el formulario y el servidor.
- * Make las escribe tal cual en el campo Interés de Airtable (selección única con estos mismos nombres).
+ * El valor es lo que viaja a Make (el escenario lo usa): no cambiar los existentes,
+ * solo agregar. Lo que ve la persona sale de ETIQUETA_INTERES.
  */
 export const INTERESES = [
+  "Knowledge Engine",
+  "Support Engine",
+  "IA Lab",
+  "Signal Engine",
   "E-commerce en Shopify",
   "Diagnóstico de automatización",
-  "Atención al cliente",
-  "Ventas y CRM",
-  "Operación y pedidos",
-  "Datos y reportes",
-  "Llamada de 20 minutos",
+  "Diagnóstico gratuito",
   "Otro",
 ] as const;
 export type Interes = (typeof INTERESES)[number];
+
+/** Texto visible de cada opción. */
+export const ETIQUETA_INTERES: Record<Interes, string> = {
+  "Knowledge Engine": "Knowledge Engine",
+  "Support Engine": "Support Engine",
+  "IA Lab": "IA Lab",
+  "Signal Engine": "Signal Engine",
+  "E-commerce en Shopify": "E-commerce en Shopify",
+  "Diagnóstico de automatización": "Diagnóstico de automatización",
+  // El valor se mantiene por compatibilidad con el escenario de Make.
+  "Diagnóstico gratuito": "Llamada de 20 minutos",
+  Otro: "Otro",
+};
 
 /** Orígenes permitidos del lead (query param `src`). Coinciden con el campo Fuente de Airtable. */
 export const FUENTES = ["web", "nfc", "rueda-2026-11"] as const;
