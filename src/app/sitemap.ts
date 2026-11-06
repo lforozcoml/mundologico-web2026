@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { casos } from "@/content/data/casos";
+import { PUBLICADO as ECOMMERCE_PUBLICADO, sitemapEntrada as ecommerceEntrada } from "@/content/data/ecommerce-shopify";
 
 const BASE = "https://mundologico.com";
 
@@ -19,5 +20,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...casoRoutes];
+  // Solo entra cuando la bandera PUBLICADO está en true.
+  const ecommerce = ecommerceEntrada(ECOMMERCE_PUBLICADO, BASE);
+
+  return [...staticRoutes, ...(ecommerce ? [ecommerce] : []), ...casoRoutes];
 }
