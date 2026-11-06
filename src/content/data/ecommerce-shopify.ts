@@ -60,6 +60,8 @@ export type ModuloOperacion = {
 
 export type Imagen = { src: string; width: number; height: number };
 
+export type ServicioTienda = "Desarrollo" | "Soporte mensual";
+
 export type Tienda = {
   id: string;
   nombre: string;
@@ -71,6 +73,11 @@ export type Tienda = {
   descripcion: string;
   /** false: la tarjeta no se renderiza. */
   autorizado: boolean;
+  /** Logo con fondo transparente, medidas reales del archivo. */
+  logo?: Imagen;
+  servicios: readonly ServicioTienda[];
+  /** true: la tarjeta muestra "Ver tienda" (si además hay url). */
+  mostrarEnlace: boolean;
   captura?: {
     desktop: Imagen;
     mobile: Imagen;
@@ -328,7 +335,11 @@ const tiendas: Tienda[] = [
     url: "https://parchita.com.co",
     desde: "Desde abril de 2022",
     descripcion: "Tienda completa en Colombia (pesos) y EE.UU. (dólares), con soporte mensual.",
+    // Consentimiento confirmado por Federico, 2026-11-06
     autorizado: true,
+    logo: { src: "/tiendas/logos/parchita.png", width: 164, height: 40 },
+    servicios: ["Desarrollo", "Soporte mensual"],
+    mostrarEnlace: true,
     captura: {
       desktop: { src: "/tiendas/parchita-desktop.webp", width: 1440, height: 900 },
       mobile: { src: "/tiendas/parchita-mobile.webp", width: 780, height: 1688 },
@@ -346,7 +357,11 @@ const tiendas: Tienda[] = [
     url: "https://autollantas.com.co",
     desde: "Desde 2023",
     descripcion: "Tienda de llantas con búsqueda por vehículo y por medida.",
-    autorizado: false,
+    // Consentimiento confirmado por Federico, 2026-11-06
+    autorizado: true,
+    logo: { src: "/tiendas/logos/autollantas.png", width: 377, height: 57 },
+    servicios: ["Desarrollo"],
+    mostrarEnlace: false,
   },
   {
     id: "formex",
@@ -354,13 +369,18 @@ const tiendas: Tienda[] = [
     dominios: ["formex.com.co"],
     desde: "Desde 2022",
     descripcion: "Tienda de insumos de refrigeración y aire acondicionado.",
-    autorizado: false,
+    // Consentimiento confirmado por Federico, 2026-11-06
+    autorizado: true,
+    logo: { src: "/tiendas/logos/formex.png", width: 195, height: 36 },
+    servicios: ["Desarrollo"],
+    mostrarEnlace: false,
   },
 ];
 
 export const tiendasSeccion = {
   id: "tiendas",
   titulo: "Tiendas que hemos desarrollado",
+  intro: "Negocios que nos confiaron el desarrollo de su tienda en Shopify.",
 } as const;
 
 export const faq = {
@@ -446,6 +466,11 @@ export function visibleTiendas(lista: readonly Tienda[] = tiendas): Tienda[] {
 /** La captura solo se usa en tiendas autorizadas que la tengan. */
 export function capturaDe(t: Tienda) {
   return t.autorizado ? t.captura : undefined;
+}
+
+/** Enlace "Ver tienda": solo con mostrarEnlace y url. */
+export function enlaceTienda(t: Tienda): string | undefined {
+  return t.mostrarEnlace ? t.url : undefined;
 }
 
 export function cifraVisible(t: Tienda): string | undefined {

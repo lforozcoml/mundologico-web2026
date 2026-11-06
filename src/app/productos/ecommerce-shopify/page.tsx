@@ -15,6 +15,7 @@ import {
 } from "@/content/data/ecommerce-shopify";
 import { MotionProvider } from "@/components/sections/ecommerce/MotionProvider";
 import { HeroEcommerce } from "@/components/sections/ecommerce/HeroEcommerce";
+import { FranjaLogos } from "@/components/sections/ecommerce/FranjaLogos";
 import { FormasTrabajo } from "@/components/sections/ecommerce/FormasTrabajo";
 import { RevisionTienda } from "@/components/sections/ecommerce/RevisionTienda";
 import { FlujoOperacion } from "@/components/sections/ecommerce/FlujoOperacion";
@@ -54,6 +55,7 @@ export default function EcommerceShopifyPage() {
       <main className="flex-1">
         <MotionProvider>
           <HeroEcommerce />
+          <FranjaLogos />
           <FormasTrabajo />
 
           <RevisionTienda />

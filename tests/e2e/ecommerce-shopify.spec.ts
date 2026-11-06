@@ -10,6 +10,7 @@ import {
   meta,
   operacion,
   revision,
+  tiendasSeccion,
   robotsPara,
   sitemapEntrada,
   visibleModulos,
@@ -272,6 +273,59 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     // Con teclado: enfocar el nodo 2 lo activa.
     await nodo(2).focus();
     await expect(tarjeta(2)).toHaveAttribute("data-activo", "true");
+  });
+
+  test("franja de logos justo después del hero, 3 logos con alt y medidas, sin priority", async ({ page }) => {
+    await page.goto(RUTA);
+    const franja = page.getByRole("region", { name: tiendasSeccion.titulo });
+    await expect(franja).toHaveCount(1);
+    const anterior = await franja.evaluate((el) => {
+      const prev = el.previousElementSibling;
+      return prev ? { tag: prev.tagName, h1: prev.querySelector("h1") !== null } : null;
+    });
+    expect(anterior).toEqual({ tag: "SECTION", h1: true });
+
+    const conLogo = visibleTiendas().filter((t) => t.logo);
+    const logos = franja.locator("img");
+    await expect(logos).toHaveCount(conLogo.length);
+    expect(conLogo).toHaveLength(3);
+    for (const [i, t] of conLogo.entries()) {
+      const img = logos.nth(i);
+      await expect(img).toHaveAttribute("alt", `Logo de ${t.nombre}`);
+      await expect(img).toHaveAttribute("width", String(t.logo!.width));
+      await expect(img).toHaveAttribute("height", String(t.logo!.height));
+      await expect(img).toHaveAttribute("loading", "lazy");
+      await expect(img).not.toHaveAttribute("fetchpriority", /.+/);
+    }
+    await expect(franja.locator("a")).toHaveCount(0);
+  });
+
+  test("#tiendas: tarjetas compactas sin marco de navegador y solo Parchita con Ver tienda", async ({ page }) => {
+    await page.goto(RUTA);
+    const seccion = page.locator("section#tiendas");
+    await expect(seccion.getByRole("heading", { level: 2 })).toHaveText(tiendasSeccion.titulo);
+    await expect(seccion.getByText(tiendasSeccion.intro)).toBeVisible();
+
+    const tiendas = visibleTiendas();
+    const tarjetas = seccion.locator("ul.grid > li");
+    await expect(tarjetas).toHaveCount(3);
+    for (const [i, t] of tiendas.entries()) {
+      const tarjeta = tarjetas.nth(i);
+      await expect(tarjeta.getByRole("heading", { level: 3 })).toHaveText(t.nombre);
+      for (const texto of [t.desde, t.descripcion, ...t.servicios]) await expect(tarjeta).toContainText(texto);
+      const enlaces = tarjeta.getByRole("link", { name: /Ver tienda/ });
+      if (t.id === "parchita") {
+        await expect(enlaces).toHaveCount(1);
+        await expect(enlaces).toHaveAttribute("href", t.url!);
+        await expect(enlaces).toHaveAttribute("rel", "noopener noreferrer");
+      } else {
+        await expect(enlaces).toHaveCount(0);
+      }
+    }
+    // Sin marco de navegador, sin capturas ni chips de dominio.
+    await expect(seccion.locator("img[src*='parchita-desktop'], img[src*='parchita-mobile']")).toHaveCount(0);
+    for (const t of tiendas) for (const d of t.dominios) await expect(seccion.getByText(d, { exact: true })).toHaveCount(0);
+    await expect(seccion.getByRole("link", { name: /Ver tienda/ })).toHaveCount(1);
   });
 
   test("a 390 px no hay scroll horizontal", async ({ page }) => {
