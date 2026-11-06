@@ -1,17 +1,40 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const PORT = 3100;
+const SIMULADOS_PORT = 3101;
+const SIMULADOS_URL = `http://localhost:${SIMULADOS_PORT}`;
 
 // Corre contra el build de producción (next start) para probar el .vcf estático tal como queda en Vercel.
+// /api/contact apunta a servicios simulados: los tests nunca llegan a Airtable, Make ni Cloudflare reales.
 export default defineConfig({
   testDir: "./tests/e2e",
   outputDir: "./test-results",
   use: { baseURL: `http://localhost:${PORT}` },
   projects: [{ name: "mobile", use: { ...devices["iPhone 13"], browserName: "chromium" } }],
-  webServer: {
-    command: `npm run build && npx next start -p ${PORT}`,
-    url: `http://localhost:${PORT}/contacto`,
-    reuseExistingServer: !process.env.CI,
-    timeout: 240_000,
-  },
+  webServer: [
+    {
+      command: `node tests/e2e/support/servicios-simulados.mjs`,
+      url: `${SIMULADOS_URL}/salud`,
+      env: { PORT: String(SIMULADOS_PORT) },
+      reuseExistingServer: false,
+    },
+    {
+      command: `npm run build && npx next start -p ${PORT}`,
+      url: `http://localhost:${PORT}/contacto`,
+      // process.env gana sobre .env.local, así que estos valores reemplazan los reales.
+      env: {
+        MAKE_WEBHOOK_URL: `${SIMULADOS_URL}/make`,
+        MAKE_WEBHOOK_SECRET: "secreto-de-prueba",
+        TURNSTILE_SECRET_KEY: "secreto-turnstile-de-prueba",
+        TURNSTILE_VERIFY_URL: `${SIMULADOS_URL}/turnstile`,
+        AIRTABLE_TOKEN: "token-de-prueba",
+        AIRTABLE_BASE_ID: "appPRUEBA",
+        AIRTABLE_LEADS_TABLE_ID: "tblPRUEBA",
+        AIRTABLE_API_URL: `${SIMULADOS_URL}/airtable`,
+      },
+      // Nunca reutilizar un servidor ya abierto: no tendría estas variables y enviaría leads reales.
+      reuseExistingServer: false,
+      timeout: 240_000,
+    },
+  ],
 });

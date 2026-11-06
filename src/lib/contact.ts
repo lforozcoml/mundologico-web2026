@@ -1,14 +1,37 @@
 /**
  * Contrato y validación del formulario de contacto. Lo usan el formulario
- * (límites de longitud) y /api/contact (validación en el servidor).
+ * (opciones y límites), /api/contact (validación en el servidor) y los tests.
+ * No importa nada para que los tests unitarios lo carguen con Node directamente.
  */
+
+/**
+ * Opciones del selector de interés. Es la única lista: la usan el formulario,
+ * el servidor y Airtable (campo Interés, selección única con estos mismos nombres).
+ */
+export const INTERESES = [
+  "E-commerce en Shopify",
+  "Diagnóstico de automatización",
+  "Atención al cliente",
+  "Ventas y CRM",
+  "Operación y pedidos",
+  "Datos y reportes",
+  "Llamada de 20 minutos",
+  "Otro",
+] as const;
+export type Interes = (typeof INTERESES)[number];
+
+/** Orígenes permitidos del lead (query param `src`). Coinciden con el campo Fuente de Airtable. */
+export const FUENTES = ["web", "nfc", "rueda-2026-11"] as const;
+export type Fuente = (typeof FUENTES)[number];
+export const FUENTE_POR_DEFECTO: Fuente = "web";
 
 export const CONTACT_LIMITS = {
   nombre: 80,
   apellidos: 80,
   empresa: 120,
   email: 254,
-  interes: 60,
+  telefono: 30,
+  telefonoMinDigitos: 7,
   mensajeMin: 10,
   mensaje: 4000,
 } as const;
@@ -28,8 +51,13 @@ export type ContactRequest = {
   apellidos: string;
   empresa: string;
   email: string;
+  /** Opcional: cadena vacía si no viene. */
+  telefono: string;
   interes: string;
   mensaje: string;
+  /** Valor crudo del query param `src`. El servidor lo normaliza a una Fuente. */
+  origen: string;
+  consentimiento: boolean;
   /** Campo trampa: debe llegar vacío. */
   [HONEYPOT_FIELD]: string;
   /** Milisegundos entre que se pintó el formulario y el envío. */
@@ -37,20 +65,42 @@ export type ContactRequest = {
   turnstileToken: string;
 };
 
-/** Lo que /api/contact manda al webhook de Make. */
+/** Datos del lead ya validados. */
+export type ContactData = {
+  nombre: string;
+  apellidos: string;
+  empresa: string;
+  email: string;
+  telefono: string;
+  interes: Interes;
+  mensaje: string;
+  fuente: Fuente;
+  consentimiento: true;
+};
+
+/**
+ * Lo que /api/contact manda al webhook de Make. Los campos de antes se mantienen
+ * con el mismo nombre (el escenario los usa); los nuevos solo se agregan.
+ */
 export type ContactPayload = {
   nombre: string;
   apellidos: string;
   empresa: string;
   email: string;
-  interes: string;
+  interes: Interes;
   mensaje: string;
-  origen: string;
+  /** Siempre "mundologico.com". El origen del lead va en `fuente`. */
+  origen: "mundologico.com";
   timestamp: string;
+  telefono: string;
+  fuente: Fuente;
+  consentimiento: true;
+  /** false si no quedó en Airtable: el correo debe pedir registrarlo a mano. */
+  guardado: boolean;
 };
 
 export type ContactValidation =
-  | { kind: "ok"; data: Omit<ContactPayload, "origen" | "timestamp">; token: string }
+  | { kind: "ok"; data: ContactData; token: string }
   /** Error que se le muestra al usuario. */
   | { kind: "invalid"; error: string }
   /** Bot detectado: se responde ok para que no se adapte, pero no se envía nada. */
@@ -59,9 +109,27 @@ export type ContactValidation =
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const LINK_RE = /(https?:\/\/|www\.)/i;
 const LINKS_RE = /(https?:\/\/|www\.)/gi;
+const TELEFONO_RE = /^[\d\s+\-()]+$/;
 
 function str(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
+}
+
+export function esInteres(value: string): value is Interes {
+  return (INTERESES as readonly string[]).includes(value);
+}
+
+/** Cualquier valor fuera de la lista, o ausente, se guarda como "web". */
+export function normalizarFuente(value: unknown): Fuente {
+  const v = str(value).toLowerCase();
+  return (FUENTES as readonly string[]).includes(v) ? (v as Fuente) : FUENTE_POR_DEFECTO;
+}
+
+/** Vacío es válido (el campo es opcional). Si viene: caracteres permitidos y mínimo 7 dígitos. */
+export function telefonoValido(value: string): boolean {
+  if (value === "") return true;
+  if (value.length > CONTACT_LIMITS.telefono || !TELEFONO_RE.test(value)) return false;
+  return value.replace(/\D/g, "").length >= CONTACT_LIMITS.telefonoMinDigitos;
 }
 
 export function validateContact(body: unknown): ContactValidation {
@@ -75,37 +143,48 @@ export function validateContact(body: unknown): ContactValidation {
     return { kind: "spam", reason: "too-fast" };
   }
 
-  const data = {
-    nombre: str(b.nombre),
-    apellidos: str(b.apellidos),
-    empresa: str(b.empresa),
-    email: str(b.email).toLowerCase(),
-    interes: str(b.interes),
-    mensaje: str(b.mensaje),
-  };
+  const nombre = str(b.nombre);
+  const apellidos = str(b.apellidos);
+  const empresa = str(b.empresa);
+  const email = str(b.email).toLowerCase();
+  const telefono = str(b.telefono);
+  const interes = str(b.interes);
+  const mensaje = str(b.mensaje);
 
-  if (!data.nombre || !data.apellidos || !data.email || !data.mensaje) {
+  if (!nombre || !apellidos || !email || !mensaje) {
     return { kind: "invalid", error: "Faltan campos requeridos: nombres, apellidos, email y mensaje." };
   }
   if (
-    data.nombre.length > CONTACT_LIMITS.nombre ||
-    data.apellidos.length > CONTACT_LIMITS.apellidos ||
-    data.empresa.length > CONTACT_LIMITS.empresa ||
-    data.email.length > CONTACT_LIMITS.email ||
-    data.interes.length > CONTACT_LIMITS.interes ||
-    data.mensaje.length > CONTACT_LIMITS.mensaje
+    nombre.length > CONTACT_LIMITS.nombre ||
+    apellidos.length > CONTACT_LIMITS.apellidos ||
+    empresa.length > CONTACT_LIMITS.empresa ||
+    email.length > CONTACT_LIMITS.email ||
+    mensaje.length > CONTACT_LIMITS.mensaje
   ) {
     return { kind: "invalid", error: "Uno de los campos es demasiado largo." };
   }
-  if (data.mensaje.length < CONTACT_LIMITS.mensajeMin) {
+  if (mensaje.length < CONTACT_LIMITS.mensajeMin) {
     return { kind: "invalid", error: "Cuéntanos un poco más sobre tu proceso." };
   }
-  if (!EMAIL_RE.test(data.email)) {
+  if (!EMAIL_RE.test(email)) {
     return { kind: "invalid", error: "El email no es válido." };
   }
+  if (!esInteres(interes)) {
+    return { kind: "invalid", error: "Selecciona qué te interesa." };
+  }
+  if (!telefonoValido(telefono)) {
+    return {
+      kind: "invalid",
+      error: "El teléfono no es válido. Usa al menos 7 dígitos y solo números, espacios, +, - o paréntesis.",
+    };
+  }
   // Los bots de spam meten enlaces en el nombre o llenan el mensaje de ellos.
-  if (LINK_RE.test(data.nombre + data.apellidos) || (data.mensaje.match(LINKS_RE)?.length ?? 0) > MAX_LINKS) {
+  if (LINK_RE.test(nombre + apellidos) || (mensaje.match(LINKS_RE)?.length ?? 0) > MAX_LINKS) {
     return { kind: "spam", reason: "links" };
+  }
+  // Tiene que ser exactamente true: ni "true" ni 1.
+  if (b.consentimiento !== true) {
+    return { kind: "invalid", error: "Debes autorizar el tratamiento de tus datos para enviar el mensaje." };
   }
 
   const token = str(b.turnstileToken);
@@ -113,5 +192,19 @@ export function validateContact(body: unknown): ContactValidation {
     return { kind: "invalid", error: "Completa la verificación de seguridad antes de enviar." };
   }
 
-  return { kind: "ok", data, token };
+  return {
+    kind: "ok",
+    data: {
+      nombre,
+      apellidos,
+      empresa,
+      email,
+      telefono,
+      interes,
+      mensaje,
+      fuente: normalizarFuente(b.origen),
+      consentimiento: true,
+    },
+    token,
+  };
 }
