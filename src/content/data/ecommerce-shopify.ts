@@ -37,7 +37,8 @@ export type Forma = {
   recibes: readonly string[];
   icono: IconoForma;
 };
-export type Frente = { titulo: string; descripcion: string; icono: IconoFrente };
+export type Frente = { titulo: string; pregunta: string; descripcion: string; icono: IconoFrente };
+export type PasoPlan = { titulo: string; texto: string };
 
 export type ModuloOperacion = {
   id: "pedidos" | "conciliacion" | "agente";
@@ -159,22 +160,67 @@ export const formas = {
 } as const;
 
 export const revision = {
-  titulo: "Revisión de tienda: seis frentes",
+  titulo: "Revisión de tienda: dónde se te escapan ventas, y qué corregir primero",
+  intro:
+    "Una tienda puede recibir visitas y aun así vender menos de lo esperado. A veces el problema está en el pago, a veces en la velocidad, en apps que se estorban o en procesos manuales detrás de la tienda. Revisamos seis frentes y te decimos cuál pesa más.",
   frentes: [
-    { titulo: "Conversión", descripcion: "Dónde se cae el embudo de sesiones, carrito, pago y compra.", icono: "funnel" },
-    { titulo: "Velocidad y celular", descripcion: "Qué tan rápido carga y qué la frena.", icono: "smartphone" },
-    { titulo: "SEO técnico", descripcion: "Títulos, colecciones, datos estructurados e indexación.", icono: "search" },
-    { titulo: "Apps y costos", descripcion: "Qué apps sobran, se solapan o frenan la tienda.", icono: "puzzle" },
-    { titulo: "Operación detrás de la tienda", descripcion: "Pedidos manuales, pagos, atención e inventario.", icono: "workflow" },
-    { titulo: "Analítica y cumplimiento", descripcion: "Medición bien configurada, consentimiento y políticas.", icono: "chart" },
+    {
+      titulo: "Conversión",
+      pregunta: "¿Dónde se cae la compra?",
+      descripcion:
+        "Analizamos el recorrido de sesión, carrito, pago y compra para ubicar en qué paso se pierden más clientes.",
+      icono: "funnel",
+    },
+    {
+      titulo: "Velocidad y celular",
+      pregunta: "¿Tu tienda carga rápido y se compra fácil desde el celular?",
+      descripcion: "Medimos qué tan rápido carga y qué la frena: imágenes, apps y código.",
+      icono: "smartphone",
+    },
+    {
+      titulo: "SEO técnico",
+      pregunta: "¿Google entiende tu tienda?",
+      descripcion:
+        "Revisamos títulos, colecciones, datos estructurados e indexación para que tus productos puedan encontrarse.",
+      icono: "search",
+    },
+    {
+      titulo: "Apps y costos",
+      pregunta: "¿Pagas por apps que no necesitas?",
+      descripcion: "Identificamos las que sobran, se solapan o frenan la tienda.",
+      icono: "puzzle",
+    },
+    {
+      titulo: "Operación detrás de la tienda",
+      pregunta: "¿Cuánto trabajo manual genera cada pedido?",
+      descripcion: "Revisamos cómo se manejan pedidos, pagos, atención e inventario después de la compra.",
+      icono: "workflow",
+    },
+    {
+      titulo: "Analítica y cumplimiento",
+      pregunta: "¿Puedes confiar en tus números?",
+      descripcion:
+        "Verificamos que la medición esté bien configurada, y que el consentimiento de cookies y las políticas estén bien implementados.",
+      icono: "chart",
+    },
   ] satisfies Frente[],
-  entregable:
-    "Informe en lenguaje de negocio, hallazgos priorizados por impacto y esfuerzo, plan a 30, 60 y 90 días.",
-} as const;
-
-export const embudo = {
-  etapas: ["Sesiones", "Carrito", "Pago", "Compra"],
-  leyenda: "Ilustración, no son datos reales",
+  recibesTitulo: "Qué recibes al final",
+  recibesTexto:
+    "Un informe en lenguaje de negocio, con hallazgos priorizados por impacto y esfuerzo, y un plan a 30, 60 y 90 días.",
+  plan: [
+    {
+      titulo: "Primeros 30 días",
+      texto: "Lo que más impacto tiene con menos esfuerzo: correcciones que se notan pronto.",
+    },
+    { titulo: "Días 31 a 60", texto: "Mejoras que requieren más trabajo de desarrollo o de configuración." },
+    {
+      titulo: "Días 61 a 90",
+      texto: "Cambios de fondo y, si aplica, conectar la operación detrás de la tienda.",
+    },
+  ] satisfies PasoPlan[],
+  nota: "Trabajamos con acceso de colaborador y permisos mínimos. No cambiamos nada sin tu aprobación.",
+  cta: "Agenda una llamada de 20 minutos →",
+  apoyo: "La llamada no tiene costo. Ahí definimos si la revisión es lo que tu tienda necesita.",
 } as const;
 
 export const incluye = {

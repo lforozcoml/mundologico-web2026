@@ -94,7 +94,7 @@ export function HexagonoRevision() {
               key={f.titulo}
               id={idItem(i)}
               onMouseEnter={() => setActivo(i)}
-              className={`rounded-xl border px-5 py-3 transition-colors duration-300 ${
+              className={`rounded-xl border px-4 py-2.5 transition-colors duration-300 ${
                 on ? "border-mundo-blue bg-white shadow-sm" : "border-transparent"
               }`}
             >
@@ -102,7 +102,8 @@ export function HexagonoRevision() {
                 <span className="mr-2 text-gray-600">{i + 1}.</span>
                 {f.titulo}
               </p>
-              <p className="mt-1 text-[15px] leading-relaxed text-gray-600">{f.descripcion}</p>
+              <p className="mt-0.5 text-[15px] font-semibold leading-snug text-mundo-dark">{f.pregunta}</p>
+              <p className="mt-0.5 text-[15px] leading-relaxed text-gray-600">{f.descripcion}</p>
             </li>
           );
         })}

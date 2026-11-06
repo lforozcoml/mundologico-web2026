@@ -9,7 +9,6 @@ import {
   RUTA,
   faq,
   meta,
-  revision,
   robotsPara,
   visibleModulos,
   visibleTiendas,
@@ -17,8 +16,7 @@ import {
 import { MotionProvider } from "@/components/sections/ecommerce/MotionProvider";
 import { HeroEcommerce } from "@/components/sections/ecommerce/HeroEcommerce";
 import { FormasTrabajo } from "@/components/sections/ecommerce/FormasTrabajo";
-import { HexagonoRevision } from "@/components/sections/ecommerce/HexagonoRevision";
-import { EmbudoIlustrativo } from "@/components/sections/ecommerce/EmbudoIlustrativo";
+import { RevisionTienda } from "@/components/sections/ecommerce/RevisionTienda";
 import { FlujoOperacion } from "@/components/sections/ecommerce/FlujoOperacion";
 import { ComoTrabajamos, Incluye, SoporteMensual } from "@/components/sections/ecommerce/BloquesServicio";
 import { TiendasDesarrolladas } from "@/components/sections/ecommerce/TiendasDesarrolladas";
@@ -58,18 +56,7 @@ export default function EcommerceShopifyPage() {
           <HeroEcommerce />
           <FormasTrabajo />
 
-          <section id="revision" className="scroll-mt-24 py-20 md:py-28">
-            <div className="mx-auto max-w-7xl px-6">
-              <h2 className="mb-12 max-w-2xl text-3xl font-black leading-tight text-mundo-dark md:text-4xl">
-                {revision.titulo}
-              </h2>
-              <HexagonoRevision />
-              <div className="mt-16 grid items-center gap-10 md:grid-cols-2">
-                <EmbudoIlustrativo />
-                <p className="text-xl font-bold leading-snug text-mundo-dark md:text-2xl">{revision.entregable}</p>
-              </div>
-            </div>
-          </section>
+          <RevisionTienda />
 
           <Incluye />
           {modulos.length > 0 && <FlujoOperacion modulos={modulos} />}

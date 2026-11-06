@@ -9,6 +9,7 @@ import {
   leyendaCaptura,
   meta,
   operacion,
+  revision,
   robotsPara,
   sitemapEntrada,
   visibleModulos,
@@ -204,6 +205,35 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     await expect(seccion.getByRole("heading", { level: 2 })).toBeInViewport();
     const alturaHeader = (await page.locator("header").first().boundingBox())!.height;
     await expect.poll(async () => (await seccion.boundingBox())!.y).toBeGreaterThanOrEqual(alturaHeader - 1);
+  });
+
+  test("Revisión de tienda: h2 nuevo, 6 frentes con pregunta, plan 30/60/90, CTA al calendario y sin la ilustración anterior", async ({ page }) => {
+    await page.goto(RUTA);
+    const seccion = page.locator("section#revision");
+    await expect(seccion.getByRole("heading", { level: 2 })).toHaveText(revision.titulo);
+    await expect(seccion.getByText(revision.intro)).toBeVisible();
+
+    const frentes = seccion.locator("ol").first().locator(":scope > li");
+    await expect(frentes).toHaveCount(6);
+    for (const [i, f] of revision.frentes.entries()) {
+      await expect(frentes.nth(i)).toContainText(f.titulo);
+      await expect(frentes.nth(i)).toContainText(f.pregunta);
+      await expect(frentes.nth(i)).toContainText(f.descripcion);
+    }
+
+    const plan = seccion.locator("ol").nth(1).locator(":scope > li");
+    await expect(plan).toHaveCount(3);
+    for (const [i, paso] of revision.plan.entries()) await expect(plan.nth(i)).toContainText(paso.titulo);
+
+    const cta = seccion.getByRole("link", { name: revision.cta });
+    await expect(cta).toHaveCount(1);
+    await expect(cta).toHaveAttribute("href", /calendar\.google\.com/);
+    await expect(cta).toHaveAttribute("target", "_blank");
+    await expect(cta).toHaveAttribute("rel", "noopener noreferrer");
+    await expect(seccion.getByText(revision.apoyo)).toBeVisible();
+    await expect(seccion.getByText(revision.nota)).toBeVisible();
+
+    expect(await page.content()).not.toContain("Ilustración, no son datos reales");
   });
 
   test("hexágono: enfocar un frente lo resalta", async ({ page }) => {
