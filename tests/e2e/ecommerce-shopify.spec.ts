@@ -14,6 +14,7 @@ import {
   tiendasSeccion,
   robotsPara,
   sitemapEntrada,
+  soporte,
   visibleModulos,
   visibleTiendas,
 } from "../../src/content/data/ecommerce-shopify";
@@ -386,6 +387,35 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     expect(await page.content()).not.toContain("Tienda desde cero: qué incluye");
   });
 
+  test("Soporte mensual: h2, tres elementos del paquete, se cotiza aparte y enlace al calendario", async ({ page }) => {
+    await page.goto(RUTA);
+    const seccion = page.locator(`section#${soporte.id}`);
+    await expect(seccion.getByRole("heading", { level: 2 })).toHaveText(soporte.titulo);
+    await expect(seccion.getByText(soporte.intro)).toBeVisible();
+
+    const dentro = seccion.getByRole("heading", { name: soporte.dentroTitulo }).locator("xpath=following-sibling::ul[1]/li");
+    await expect(dentro).toHaveCount(3);
+    for (const [i, d] of soporte.dentro.entries()) await expect(dentro.nth(i)).toHaveText(d);
+
+    await expect(seccion.getByRole("heading", { name: soporte.aparteTitulo })).toBeVisible();
+    await expect(seccion.getByText(soporte.aparteTexto)).toBeVisible();
+    await expect(seccion.getByText(soporte.respuestaTexto)).toBeVisible();
+
+    const cta = seccion.getByRole("link", { name: soporte.cta });
+    await expect(cta).toHaveCount(1);
+    await expect(cta).toHaveAttribute("href", /calendar\.google\.com/);
+    await expect(cta).toHaveAttribute("target", "_blank");
+    await expect(cta).toHaveAttribute("rel", "noopener noreferrer");
+    await expect(seccion.getByText(soporte.apoyo)).toBeVisible();
+
+    // La ilustración es decorativa y tiene su equivalente para lectores de pantalla.
+    await expect(seccion.locator('[aria-hidden="true"]').getByText(soporte.ilustracion.paquete)).toHaveCount(1);
+    await expect(seccion.locator(".sr-only")).toContainText(soporte.ilustracion.paquete);
+
+    const html = await page.content();
+    expect(html).not.toContain("mejoras y campañas");
+  });
+
   test("a 390 px no hay scroll horizontal", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto(RUTA);
@@ -393,6 +423,15 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     for (let y = 0; y < h; y += 600) await page.evaluate((v) => window.scrollTo(0, v), y);
     const ancho = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(ancho).toBeLessThanOrEqual(390);
+  });
+
+  test("a 1280 px no hay scroll horizontal", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(RUTA);
+    const h = await page.evaluate(() => document.body.scrollHeight);
+    for (let y = 0; y < h; y += 800) await page.evaluate((v) => window.scrollTo(0, v), y);
+    const ancho = await page.evaluate(() => document.documentElement.scrollWidth);
+    expect(ancho).toBeLessThanOrEqual(1280);
   });
 
   test("imágenes: alt descriptivo, medidas y priority solo en el hero", async ({ page }) => {

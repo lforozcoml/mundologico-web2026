@@ -384,9 +384,23 @@ export const comoTrabajamos = {
 } as const;
 
 export const soporte = {
-  titulo: "Soporte mensual",
-  texto:
-    "Tu tienda sigue evolucionando después de lanzar. Soporte por horas de trabajo para correcciones, mejoras y campañas, con primera respuesta en horario hábil.",
+  id: "soporte",
+  titulo: "Soporte mensual: tu tienda sigue cuidada después del lanzamiento",
+  intro: "Un paquete mensual de horas con un equipo que ya conoce tu tienda.",
+  dentroTitulo: "Dentro del paquete de horas",
+  dentro: ["Correcciones", "Ajustes", "Seguimiento de la tienda"],
+  aparteTitulo: "Se cotiza aparte",
+  aparteTexto: "Funcionalidades nuevas, con alcance acordado por escrito.",
+  respuestaTitulo: "Cómo respondemos",
+  respuestaTexto: "Primera respuesta en horario hábil, de lunes a viernes, hora de Colombia.",
+  /** Ilustración decorativa de la bolsa de horas. Sin números. */
+  ilustracion: {
+    paquete: "Tu paquete mensual de horas",
+    segmentos: ["Correcciones", "Ajustes", "Seguimiento"],
+    aparte: "Funcionalidades nuevas: se cotizan aparte",
+  },
+  cta: "Hablemos del soporte de tu tienda →",
+  apoyo: "La llamada de 20 minutos no tiene costo.",
 } as const;
 
 const tiendas: Tienda[] = [
