@@ -306,9 +306,9 @@ const modulos: ModuloOperacion[] = [
 ];
 
 export const operacion = {
-  titulo: "Operación conectada",
+  titulo: "Operación conectada: que vender no genere trabajo manual",
   flujo: ["Tienda", "Pedido", "Pago", "Bodega", "Factura", "Cliente"],
-  intro: "Según el caso conectamos:",
+  intro: "Según el caso, conectamos tu tienda con lo que pasa después de la compra:",
   nota: "Cada módulo se muestra solo si lo tenemos funcionando en un cliente.",
 } as const;
 
