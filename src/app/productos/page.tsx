@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/Footer";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { CALENDARIO_URL } from "@/content/data/site";
 import { StackPill } from "@/components/ui/StackPill";
+import { PUBLICADO as ECOMMERCE_PUBLICADO, RUTA as ECOMMERCE_RUTA, meta as ecommerceMeta } from "@/content/data/ecommerce-shopify";
 
 export const metadata: Metadata = pageMetadata({
   title: "Productos",
@@ -404,6 +405,18 @@ export default function ProductosPage() {
             </section>
           );
         })}
+
+        {/* Enlace a la página de e-commerce: solo cuando esté publicada. */}
+        {ECOMMERCE_PUBLICADO && (
+          <div className="max-w-7xl mx-auto px-6 pb-16">
+            <Link
+              href={ECOMMERCE_RUTA}
+              className="inline-flex min-h-12 items-center gap-2 rounded-full border border-gray-200 px-6 text-base font-semibold text-mundo-dark hover:border-mundo-dark transition-colors"
+            >
+              {ecommerceMeta.title} →
+            </Link>
+          </div>
+        )}
 
         <CtaBand
           titulo="¿Cuál de estos productos es para tu empresa?"
