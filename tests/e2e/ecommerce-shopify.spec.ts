@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import {
   PUBLICADO,
   RUTA,
+  ULTIMA_ACTUALIZACION,
   _todasLasTiendas,
   _todosLosModulos,
   bandaFinal,
@@ -92,7 +93,7 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     if (PUBLICADO) {
       await expect(robots).toHaveAttribute("content", "index, follow");
       expect(sitemap).toContain(`<loc>${SITE}${RUTA}</loc>`);
-      expect(sitemap).toMatch(new RegExp(`${RUTA}</loc>\\s*<lastmod>`));
+      expect(sitemap).toMatch(new RegExp(`${RUTA}</loc>\\s*<lastmod>${ULTIMA_ACTUALIZACION}`));
     } else {
       await expect(robots).toHaveAttribute("content", "noindex, nofollow");
       expect(sitemap).not.toContain(RUTA);
@@ -522,6 +523,10 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     await page.goto("/productos");
     const enlace = page.locator(`main a[href="${RUTA}"]`);
     await expect(enlace).toHaveCount(PUBLICADO ? 1 : 0);
+    if (PUBLICADO) {
+      await enlace.scrollIntoViewIfNeeded();
+      await expect(enlace).toBeVisible();
+    }
   });
 });
 

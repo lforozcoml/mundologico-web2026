@@ -8,7 +8,7 @@
 // ── Banderas ────────────────────────────────────────────────────────────────
 
 /** false: noindex, nofollow, fuera del sitemap y sin enlace desde /productos. */
-export const PUBLICADO = false;
+export const PUBLICADO = true;
 
 /** Cada módulo de operación conectada se muestra solo si está funcionando en un cliente. */
 export const MODULO_PEDIDOS = false;
