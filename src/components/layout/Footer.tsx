@@ -3,9 +3,14 @@ import Image from "next/image";
 import { site, partnerBadges } from "@/content/data/site";
 import { PartnerBadge } from "@/components/ui/PartnerBadge";
 import { CookieSettingsButton } from "@/components/layout/CookieBanner";
+import { PUBLICADO as ECOMMERCE_PUBLICADO, RUTA as ECOMMERCE_RUTA, entrada } from "@/content/data/ecommerce-shopify";
 
-const footerLinks = {
+type EnlacePie = { label: string; href: string; cta?: string };
+
+const footerLinks: Record<string, EnlacePie[]> = {
   Productos: [
+    // Solo con la página de e-commerce publicada.
+    ...(ECOMMERCE_PUBLICADO ? [{ label: entrada.pie, href: ECOMMERCE_RUTA, cta: "footer-ecommerce" }] : []),
     { label: "IA Lab",           href: "/productos#ia-lab" },
     { label: "Knowledge Engine", href: "/productos#knowledge-engine" },
     { label: "Support Engine",   href: "/productos#support-engine" },
@@ -46,8 +51,8 @@ export function Footer() {
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
               <h4 className="text-[13px] font-bold uppercase tracking-widest text-white/55 mb-4">{title}</h4>
-              {links.map(({ label, href }) => (
-                <Link key={label} href={href}
+              {links.map(({ label, href, cta }) => (
+                <Link key={label} href={href} data-cta={cta}
                   className="block text-[14px] text-white/80 hover:text-white transition-colors mb-2.5">
                   {label}
                 </Link>

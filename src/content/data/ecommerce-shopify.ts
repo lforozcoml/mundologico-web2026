@@ -465,6 +465,50 @@ export const tiendasSeccion = {
   intro: "Negocios que nos confiaron el desarrollo de su tienda en Shopify.",
 } as const;
 
+/**
+ * Entradas a esta página desde el resto del sitio (home, /productos y pie).
+ * Todas se muestran solo con PUBLICADO en true.
+ */
+export const entrada = {
+  anclaje: "Conocer el desarrollo de e-commerce en Shopify →",
+  shopify: {
+    eyebrow: "E-commerce",
+    titulo: "Tu tienda en Shopify",
+    texto: "Para vender en línea o mejorar la tienda que ya tienes, conectada a tu operación.",
+    servicios: ["Tienda nueva", "Revisión de tienda", "Soporte mensual"],
+  },
+  automatizacion: {
+    eyebrow: "Automatización",
+    titulo: "Automatiza tus procesos con IA",
+    texto: "Para quitarle trabajo manual a la atención al cliente, la operación y los datos.",
+    cta: "Ver productos de automatización ↓",
+    href: "#automatizacion",
+  },
+  puente: {
+    texto: "Si vendes en línea, también puedes revisar cómo conectar tu tienda con tu operación.",
+    enlace: "Ver cómo revisamos una tienda",
+    href: "/productos/ecommerce-shopify#revision",
+  },
+  hub: {
+    h1a: "Vende mejor en línea,",
+    h1b: "y automatiza lo que te quita tiempo",
+    texto:
+      "Dos formas de empezar: una tienda en Shopify bien construida, o la automatización de los procesos que hoy se hacen a mano.",
+    description: "Tiendas en Shopify conectadas a tu operación y automatización de procesos con IA para tu empresa.",
+  },
+  home: {
+    eyebrow: "E-commerce",
+    titulo: "¿Vendes en línea? Una tienda en Shopify que no complica tu operación",
+    texto: "Desarrollamos, optimizamos y damos soporte a tiendas conectadas con lo que pasa después de la compra.",
+  },
+  seccionAutomatizacion: {
+    titulo: "Automatización con IA",
+    texto:
+      "Cada producto resuelve un problema concreto. No son demos ni conceptos: son sistemas funcionando con arquitectura real, métricas verificables y soporte continuo.",
+  },
+  pie: "Desarrollo de e-commerce en Shopify",
+} as const;
+
 /** Banda final de la página (props de CtaBand; el CTA principal usa su valor por defecto). */
 export const bandaFinal = {
   titulo: "¿Tienes una tienda en Shopify o vas a abrir una?",

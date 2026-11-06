@@ -7,12 +7,13 @@ import { Footer } from "@/components/layout/Footer";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { CALENDARIO_URL } from "@/content/data/site";
 import { StackPill } from "@/components/ui/StackPill";
-import { PUBLICADO as ECOMMERCE_PUBLICADO, RUTA as ECOMMERCE_RUTA, meta as ecommerceMeta } from "@/content/data/ecommerce-shopify";
+import { PUBLICADO as ECOMMERCE_PUBLICADO, RUTA as ECOMMERCE_RUTA, entrada } from "@/content/data/ecommerce-shopify";
 
 export const metadata: Metadata = pageMetadata({
   title: "Productos",
-  description:
-    "Soluciones de automatización con IA para tu empresa. Knowledge Engine, Support Engine, IA Lab y Signal Engine.",
+  description: ECOMMERCE_PUBLICADO
+    ? entrada.hub.description
+    : "Soluciones de automatización con IA para tu empresa. Knowledge Engine, Support Engine, IA Lab y Signal Engine.",
   path: "/productos",
 });
 
@@ -231,6 +232,60 @@ function XIcon() {
   );
 }
 
+const FOCO = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mundo-blue";
+
+/** Dos puertas: e-commerce y automatización. Solo con la página de e-commerce publicada. */
+function PuertasHub() {
+  return (
+    <section aria-label="Dos formas de empezar" className="bg-white pt-12 md:pt-16">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid gap-6 md:grid-cols-2">
+          <article id="ecommerce" className="scroll-mt-24 flex flex-col rounded-3xl bg-mundo-dark p-8 text-white md:p-10">
+            <p className="mb-3 text-[13px] font-extrabold uppercase tracking-widest text-mundo-teal">{entrada.shopify.eyebrow}</p>
+            <h2 className="mb-3 text-3xl font-black leading-tight">{entrada.shopify.titulo}</h2>
+            <p className="mb-6 text-[17px] leading-relaxed text-white/80">{entrada.shopify.texto}</p>
+            <ul className="mb-8 flex flex-wrap gap-2" aria-label="Servicios">
+              {entrada.shopify.servicios.map((s) => (
+                <li key={s} className="rounded-full bg-white/10 px-4 py-1.5 text-[14px] font-semibold text-white">
+                  {s}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href={ECOMMERCE_RUTA}
+              data-cta="hub-puerta-ecommerce"
+              className="mt-auto inline-flex min-h-12 w-fit items-center rounded-full bg-white px-7 py-3 text-base font-semibold text-mundo-dark transition-colors hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              {entrada.anclaje}
+            </Link>
+          </article>
+          <article className="flex flex-col rounded-3xl border border-gray-200 bg-white p-8 md:p-10">
+            <p className="mb-3 text-[13px] font-extrabold uppercase tracking-widest text-mundo-blue">{entrada.automatizacion.eyebrow}</p>
+            <h2 className="mb-3 text-3xl font-black leading-tight text-mundo-dark">{entrada.automatizacion.titulo}</h2>
+            <p className="mb-8 text-[17px] leading-relaxed text-gray-600">{entrada.automatizacion.texto}</p>
+            <a
+              href={entrada.automatizacion.href}
+              data-cta="hub-puerta-automatizacion"
+              className={`mt-auto inline-flex min-h-12 w-fit items-center rounded-full bg-mundo-dark px-7 py-3 text-base font-semibold text-white transition-colors hover:bg-mundo-blue ${FOCO}`}
+            >
+              {entrada.automatizacion.cta}
+            </a>
+          </article>
+        </div>
+        <p className="mt-6 text-[15px] leading-relaxed text-gray-600">
+          {entrada.puente.texto}{" "}
+          <Link
+            href={entrada.puente.href}
+            className={`inline-flex min-h-11 items-center rounded font-semibold text-mundo-blue underline underline-offset-4 hover:text-mundo-dark ${FOCO}`}
+          >
+            {entrada.puente.enlace}
+          </Link>
+        </p>
+      </div>
+    </section>
+  );
+}
+
 export default function ProductosPage() {
   return (
     <>
@@ -242,15 +297,41 @@ export default function ProductosPage() {
           <div className="max-w-7xl mx-auto px-6">
             <Image src="/isotipo-separador.svg" alt="" width={28} height={28} className="mb-4" />
             <p className="text-[13px] font-extrabold uppercase tracking-widest text-gray-400 mb-4">Nuestros productos</p>
-            <h1 className="text-5xl md:text-6xl font-black text-mundo-dark leading-tight mb-6">
-              Automatización con IA,<br />
-              <span className="text-mundo-blue">lista para tu operación</span>
-            </h1>
-            <p className="text-xl text-gray-600 max-w-2xl leading-relaxed">
-              Cada producto resuelve un problema concreto. No son demos ni conceptos — son sistemas funcionando con arquitectura real, métricas verificables y soporte continuo.
-            </p>
+            {ECOMMERCE_PUBLICADO ? (
+              <>
+                <h1 className="text-5xl md:text-6xl font-black text-mundo-dark leading-tight mb-6">
+                  {entrada.hub.h1a}<br />
+                  <span className="text-mundo-blue">{entrada.hub.h1b}</span>
+                </h1>
+                <p className="text-xl text-gray-600 max-w-2xl leading-relaxed">{entrada.hub.texto}</p>
+              </>
+            ) : (
+              <>
+                <h1 className="text-5xl md:text-6xl font-black text-mundo-dark leading-tight mb-6">
+                  Automatización con IA,<br />
+                  <span className="text-mundo-blue">lista para tu operación</span>
+                </h1>
+                <p className="text-xl text-gray-600 max-w-2xl leading-relaxed">
+                  Cada producto resuelve un problema concreto. No son demos ni conceptos — son sistemas funcionando con arquitectura real, métricas verificables y soporte continuo.
+                </p>
+              </>
+            )}
           </div>
         </section>
+
+        {ECOMMERCE_PUBLICADO && (
+          <>
+            <PuertasHub />
+            <section id="automatizacion" className="scroll-mt-24 bg-white pt-20">
+              <div className="max-w-7xl mx-auto px-6">
+                <h2 className="text-4xl md:text-5xl font-black text-mundo-dark leading-tight mb-5">
+                  {entrada.seccionAutomatizacion.titulo}
+                </h2>
+                <p className="text-xl text-gray-600 max-w-2xl leading-relaxed">{entrada.seccionAutomatizacion.texto}</p>
+              </div>
+            </section>
+          </>
+        )}
 
         {/* Products */}
         {productos.map((p, idx) => {
@@ -405,18 +486,6 @@ export default function ProductosPage() {
             </section>
           );
         })}
-
-        {/* Enlace a la página de e-commerce: solo cuando esté publicada. */}
-        {ECOMMERCE_PUBLICADO && (
-          <div className="max-w-7xl mx-auto px-6 pb-16">
-            <Link
-              href={ECOMMERCE_RUTA}
-              className="inline-flex min-h-12 items-center gap-2 rounded-full border border-gray-200 px-6 text-base font-semibold text-mundo-dark hover:border-mundo-dark transition-colors"
-            >
-              {ecommerceMeta.title} →
-            </Link>
-          </div>
-        )}
 
         <CtaBand
           titulo="¿Cuál de estos productos es para tu empresa?"

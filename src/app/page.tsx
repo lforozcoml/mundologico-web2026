@@ -6,6 +6,8 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { LogosStrip } from "@/components/sections/LogosStrip";
 import { ProductosSection } from "@/components/sections/ProductosSection";
 import { IALabSection } from "@/components/sections/IALabSection";
+import { EntradaEcommerce } from "@/components/sections/EntradaEcommerce";
+import { PUBLICADO as ECOMMERCE_PUBLICADO } from "@/content/data/ecommerce-shopify";
 import { CasosSection } from "@/components/sections/CasosSection";
 import { ContactoSection } from "@/components/sections/ContactoSection";
 
@@ -25,6 +27,7 @@ export default function Home() {
         <HeroSection />
         <LogosStrip />
         <ProductosSection />
+        {ECOMMERCE_PUBLICADO && <EntradaEcommerce />}
         <IALabSection />
         <CasosSection />
         <ContactoSection />
