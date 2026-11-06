@@ -5,8 +5,8 @@
  */
 
 /**
- * Opciones del selector de interés. Es la única lista: la usan el formulario,
- * el servidor y Airtable (campo Interés, selección única con estos mismos nombres).
+ * Opciones del selector de interés. Es la única lista: la usan el formulario y el servidor.
+ * Make las escribe tal cual en el campo Interés de Airtable (selección única con estos mismos nombres).
  */
 export const INTERESES = [
   "E-commerce en Shopify",
@@ -95,8 +95,6 @@ export type ContactPayload = {
   telefono: string;
   fuente: Fuente;
   consentimiento: true;
-  /** false si no quedó en Airtable: el correo debe pedir registrarlo a mano. */
-  guardado: boolean;
 };
 
 export type ContactValidation =

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { validateContact, type ContactData, type ContactPayload } from "@/lib/contact";
-import { guardarLead, leerConfigAirtable } from "@/lib/leads";
 import { log, motivoError } from "@/lib/log";
 import { site } from "@/content/data/site";
 
@@ -63,7 +62,7 @@ async function notificarMake(webhookUrl: string, payload: ContactPayload): Promi
   }
 }
 
-function payloadMake(data: ContactData, timestamp: string, guardado: boolean): ContactPayload {
+function payloadMake(data: ContactData, timestamp: string): ContactPayload {
   return {
     nombre: data.nombre,
     apellidos: data.apellidos,
@@ -76,13 +75,12 @@ function payloadMake(data: ContactData, timestamp: string, guardado: boolean): C
     telefono: data.telefono,
     fuente: data.fuente,
     consentimiento: data.consentimiento,
-    guardado,
   };
 }
 
 /**
- * Orden: validar, Turnstile, guardar en Airtable (fuente de verdad), notificar a Make.
- * Solo se le responde error al usuario si el lead no quedó en ninguna parte.
+ * Orden: validar, Turnstile, enviar a Make. Make es quien escribe el lead en Airtable
+ * y manda los correos; el sitio no habla con Airtable.
  */
 export async function POST(req: NextRequest) {
   const ip =
@@ -99,23 +97,17 @@ export async function POST(req: NextRequest) {
 
   const webhookUrl = process.env.MAKE_WEBHOOK_URL;
   const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
-  const airtable = leerConfigAirtable();
 
-  if (!webhookUrl || !turnstileSecret || (ES_PRODUCCION && airtable.kind === "faltante")) {
+  if (!webhookUrl || !turnstileSecret) {
     log.error("contacto.config_incompleta", {
       MAKE_WEBHOOK_URL: Boolean(webhookUrl),
       TURNSTILE_SECRET_KEY: Boolean(turnstileSecret),
-      airtable_faltan: airtable.kind === "faltante" ? airtable.faltan.join(",") : "",
       vercel_env: process.env.VERCEL_ENV,
     });
     return NextResponse.json(
       { error: "Configuración incompleta en el servidor" },
       { status: 500 }
     );
-  }
-  if (airtable.kind === "faltante") {
-    // Fuera de producción se sigue solo con Make para no frenar el desarrollo local.
-    log.warn("contacto.airtable_sin_configurar", { faltan: airtable.faltan.join(","), vercel_env: process.env.VERCEL_ENV });
   }
 
   let body: unknown;
@@ -159,27 +151,15 @@ export async function POST(req: NextRequest) {
   const fecha = new Date().toISOString();
   const contexto = { id, fuente: data.fuente, interes: data.interes };
 
-  // 1. Airtable.
-  let guardado = false;
-  if (airtable.kind === "ok") {
-    const r = await guardarLead(airtable.config, data, fecha);
-    guardado = r.ok;
-    if (r.ok) log.info("contacto.airtable_ok", { ...contexto, record_id: r.recordId });
-    else log.error("contacto.airtable_error", { ...contexto, motivo: r.motivo });
-  }
-
-  // 2. Make (solo notificación). Con guardado: false el correo avisa que hay que registrarlo a mano.
-  const make = await notificarMake(webhookUrl, payloadMake(data, fecha, guardado));
-  if (make.ok) log.info("contacto.make_ok", { ...contexto, guardado });
-  else log.error("contacto.make_error", { ...contexto, guardado, motivo: make.motivo });
-
-  if (!guardado && !make.ok) {
-    log.error("contacto.lead_perdido", contexto);
+  const make = await notificarMake(webhookUrl, payloadMake(data, fecha));
+  if (!make.ok) {
+    log.error("contacto.make_error", { ...contexto, motivo: make.motivo });
     return NextResponse.json(
       { error: `No pudimos registrar tu mensaje. Intenta de nuevo o escríbenos a ${site.contacto.email}.` },
       { status: 502 }
     );
   }
+  log.info("contacto.make_ok", contexto);
 
   return NextResponse.json({ ok: true }, { status: 200 });
 }

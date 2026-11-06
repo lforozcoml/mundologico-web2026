@@ -5,7 +5,7 @@ const SIMULADOS_PORT = 3101;
 const SIMULADOS_URL = `http://localhost:${SIMULADOS_PORT}`;
 
 // Corre contra el build de producción (next start) para probar el .vcf estático tal como queda en Vercel.
-// /api/contact apunta a servicios simulados: los tests nunca llegan a Airtable, Make ni Cloudflare reales.
+// /api/contact apunta a servicios simulados: los tests nunca llegan a Make ni a Cloudflare reales.
 export default defineConfig({
   testDir: "./tests/e2e",
   outputDir: "./test-results",
@@ -27,10 +27,6 @@ export default defineConfig({
         MAKE_WEBHOOK_SECRET: "secreto-de-prueba",
         TURNSTILE_SECRET_KEY: "secreto-turnstile-de-prueba",
         TURNSTILE_VERIFY_URL: `${SIMULADOS_URL}/turnstile`,
-        AIRTABLE_TOKEN: "token-de-prueba",
-        AIRTABLE_BASE_ID: "appPRUEBA",
-        AIRTABLE_LEADS_TABLE_ID: "tblPRUEBA",
-        AIRTABLE_API_URL: `${SIMULADOS_URL}/airtable`,
       },
       // Nunca reutilizar un servidor ya abierto: no tendría estas variables y enviaría leads reales.
       reuseExistingServer: false,

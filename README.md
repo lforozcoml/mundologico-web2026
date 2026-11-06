@@ -16,30 +16,22 @@ npm run dev                  # http://localhost:3000
 
 | Variable | Obligatoria | Para qué |
 |---|---|---|
-| `MAKE_WEBHOOK_URL` | Sí | Webhook de Make que envía los correos de aviso de cada lead. |
+| `MAKE_WEBHOOK_URL` | Sí | Webhook de Make que registra cada lead en Airtable y envía los correos de aviso. |
 | `MAKE_WEBHOOK_SECRET` | No | Se manda en el header `x-ml-secret`; el escenario descarta lo que no lo traiga. |
 | `TURNSTILE_SECRET_KEY` | Sí | Secret de Cloudflare Turnstile (anti-bots del formulario). |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | No | Solo para usar las llaves de prueba de Cloudflare en local. |
-| `AIRTABLE_TOKEN` | En producción | Token personal de Airtable para guardar leads. |
-| `AIRTABLE_BASE_ID` | En producción | Base "Seguimiento de Proyectos" (`app...`). |
-| `AIRTABLE_LEADS_TABLE_ID` | En producción | Tabla Leads (`tbl...`). |
 
 En Vercel se configuran en Project Settings > Environment Variables, para Production y Preview.
 
-### Crear el token de Airtable
-
-1. Entrar a https://airtable.com/create/tokens y crear un token nuevo con un nombre claro (por ejemplo `mundologico-web-leads`).
-2. Scope: solo `data.records:write`.
-3. Access: solo la base **Seguimiento de Proyectos**. No darle acceso a todo el workspace.
-4. Copiar el token (se muestra una sola vez) en `AIRTABLE_TOKEN` de Vercel y de `.env.local`.
-
 ## Formulario de contacto
 
-`POST /api/contact` valida (contrato en `src/lib/contact.ts`), verifica Turnstile, guarda el lead en Airtable y después notifica a Make. Airtable es la fuente de verdad: si Make falla, el lead ya quedó guardado y el usuario ve éxito. Si Airtable falla y Make responde, Make recibe `guardado: false` para que el correo pida registrarlo a mano. Solo si fallan los dos el usuario ve un error.
+`POST /api/contact` valida (contrato en `src/lib/contact.ts`), verifica Turnstile y envía el lead al webhook de Make. Make es quien lo escribe en la tabla Leads de Airtable y manda los correos: el sitio no tiene credenciales de Airtable. Si Make no responde 2xx, el usuario ve un error y puede reintentar. El escenario debe responder (módulo Webhook response) después de crear el registro en Airtable, para que el éxito del formulario signifique que el lead quedó guardado.
 
-El origen del lead sale del query param `src` (`web`, `nfc`, `rueda-2026-11`; cualquier otro valor se guarda como `web`). Para agregar un origen nuevo hay que sumarlo en `FUENTES` de `src/lib/contact.ts` y como opción del campo Fuente en Airtable. Lo mismo con las opciones de interés (`INTERESES` y el campo Interés).
+El payload a Make lleva `nombre`, `apellidos`, `empresa`, `email`, `interes`, `mensaje`, `origen` (siempre `mundologico.com`), `timestamp`, `telefono`, `fuente` y `consentimiento`.
 
-Los logs son JSON de una línea (`src/lib/log.ts`) y nunca llevan nombre, email, teléfono ni mensaje: solo un id por envío, la fuente, el interés y el resultado de cada paso. Busca `contacto.lead_perdido` en los logs de Vercel para ver envíos que no quedaron en ninguna parte.
+El origen del lead sale del query param `src` (`web`, `nfc`, `rueda-2026-11`; cualquier otro valor se guarda como `web`). Para agregar un origen nuevo hay que sumarlo en `FUENTES` de `src/lib/contact.ts` y como opción del campo Fuente en Airtable (Make lo escribe tal cual). Lo mismo con las opciones de interés (`INTERESES` y el campo Interés).
+
+Los logs son JSON de una línea (`src/lib/log.ts`) y nunca llevan nombre, email, teléfono ni mensaje: solo un id por envío, la fuente, el interés y el resultado. Busca `contacto.make_error` en los logs de Vercel para ver envíos que Make no recibió.
 
 ## Tests
 
@@ -48,12 +40,11 @@ npm run test:unit   # validación del formulario (node:test, sin dependencias)
 npm run test:e2e    # Playwright: build + next start en :3100
 ```
 
-Los e2e levantan `tests/e2e/support/servicios-simulados.mjs` en el puerto 3101 y apuntan ahí Turnstile, Airtable y Make, así que nunca tocan los servicios reales. Las variables `AIRTABLE_API_URL` y `TURNSTILE_VERIFY_URL` existen solo para eso y se ignoran en producción.
+Los e2e levantan `tests/e2e/support/servicios-simulados.mjs` en el puerto 3101 y apuntan ahí Turnstile y Make, así que nunca tocan los servicios reales. La variable `TURNSTILE_VERIFY_URL` existe solo para eso y se ignora en producción.
 
 ## Errores comunes
 
-- **El formulario responde "Configuración incompleta en el servidor" (500):** falta `MAKE_WEBHOOK_URL` o `TURNSTILE_SECRET_KEY`, o en producción falta alguna de las tres de Airtable. El log `contacto.config_incompleta` dice cuál.
-- **`contacto.airtable_error` con `http-422:INVALID_MULTIPLE_CHOICE_OPTIONS`:** un valor de Interés o Fuente no existe como opción en Airtable. Agrégalo en la tabla con el mismo texto de `src/lib/contact.ts`.
-- **`contacto.airtable_error` con `http-401` o `http-403`:** el token venció o no tiene acceso a la base.
+- **El formulario responde "Configuración incompleta en el servidor" (500):** falta `MAKE_WEBHOOK_URL` o `TURNSTILE_SECRET_KEY`. El log `contacto.config_incompleta` dice cuál.
+- **El formulario muestra "No pudimos registrar tu mensaje":** Make respondió con error o no respondió en 8 s (`contacto.make_error` en los logs, con el motivo). Revisa el historial del escenario en Make.
 - **`npm run test:e2e` falla con "port 3100 is already in use":** hay un `next start` o `next dev` abierto en ese puerto. Ciérralo; los tests no reutilizan servidores para no enviar leads reales.
 - **`npm run test:unit` falla con un error de sintaxis:** la versión de Node es anterior a 22.18.
