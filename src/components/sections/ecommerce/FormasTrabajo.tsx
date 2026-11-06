@@ -1,11 +1,13 @@
 "use client";
 
 import { m } from "framer-motion";
-import { Gauge, LifeBuoy, Store, type LucideIcon } from "lucide-react";
+import { Check, Gauge, LifeBuoy, Store, type LucideIcon } from "lucide-react";
 import { formas, type IconoForma } from "@/content/data/ecommerce-shopify";
 
 const ICONOS: Record<IconoForma, LucideIcon> = { store: Store, gauge: Gauge, lifebuoy: LifeBuoy };
 const COLORES = ["#176BEC", "#04BCA6", "#513EF5"] as const;
+/** Versión del color para texto sobre blanco con contraste AA (el teal no alcanza 4.5:1). */
+const COLORES_TEXTO = ["#176BEC", "#037F70", "#513EF5"] as const;
 
 /** Ilustraciones propias, decorativas. */
 function Ilustracion({ icono, color }: { icono: IconoForma; color: string }) {
@@ -47,12 +49,14 @@ export function FormasTrabajo() {
   return (
     <section className="bg-gray-50 py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-6">
-        <h2 className="mb-12 max-w-2xl text-3xl font-black leading-tight text-mundo-dark md:text-4xl">{formas.titulo}</h2>
+        <h2 className="mb-4 max-w-2xl text-3xl font-black leading-tight text-mundo-dark md:text-4xl">{formas.titulo}</h2>
+        <p className="mb-12 max-w-2xl text-lg leading-relaxed text-gray-600">{formas.intro}</p>
 
         <ol className="grid gap-6 md:grid-cols-3">
           {formas.items.map((f, i) => {
             const Icono = ICONOS[f.icono];
             const color = COLORES[i % COLORES.length];
+            const colorTexto = COLORES_TEXTO[i % COLORES_TEXTO.length];
             return (
               <m.li
                 key={f.titulo}
@@ -63,13 +67,35 @@ export function FormasTrabajo() {
                 transition={{ duration: 0.5, delay: i * 0.1 }}
               >
                 <Ilustracion icono={f.icono} color={color} />
-                <div className="mt-5 mb-3 flex items-center gap-3">
-                  <span className="flex size-10 items-center justify-center rounded-xl text-white" style={{ background: color }}>
+                <p
+                  className="mt-5 text-[13px] font-extrabold uppercase tracking-widest"
+                  style={{ color: colorTexto }}
+                >
+                  {f.eyebrow}
+                </p>
+                <div className="mt-2 mb-4 flex items-center gap-3">
+                  <span
+                    className="flex size-10 shrink-0 items-center justify-center rounded-xl text-white"
+                    style={{ background: color }}
+                  >
                     <Icono aria-hidden className="size-5" />
                   </span>
                   <h3 className="text-xl font-extrabold leading-snug text-mundo-dark">{f.titulo}</h3>
                 </div>
-                <p className="text-[16px] leading-relaxed text-gray-600">{f.descripcion}</p>
+                <div className="mb-4 rounded-xl bg-gray-50 px-4 py-3">
+                  <p className="mb-1 text-[12px] font-bold uppercase tracking-wider text-gray-600">Para quién</p>
+                  <p className="text-[15px] leading-relaxed text-mundo-dark">{f.paraQuien}</p>
+                </div>
+                <p className="mb-5 text-[16px] leading-relaxed text-gray-600">{f.descripcion}</p>
+                <p className="mb-3 text-[13px] font-bold uppercase tracking-wider text-mundo-dark">Qué recibes</p>
+                <ul className="grid gap-2.5">
+                  {f.recibes.map((r) => (
+                    <li key={r} className="flex gap-2.5 text-[15px] leading-relaxed text-gray-600">
+                      <Check aria-hidden className="mt-1 size-4 shrink-0" style={{ color: colorTexto }} strokeWidth={3} />
+                      <span>{r}</span>
+                    </li>
+                  ))}
+                </ul>
               </m.li>
             );
           })}

@@ -28,7 +28,15 @@ export const RUTA = "/productos/ecommerce-shopify";
 export type IconoForma = "store" | "gauge" | "lifebuoy";
 export type IconoFrente = "funnel" | "smartphone" | "search" | "puzzle" | "workflow" | "chart";
 
-export type Forma = { titulo: string; descripcion: string; icono: IconoForma };
+export type Forma = {
+  /** Texto pequeño sobre el título. */
+  eyebrow: string;
+  titulo: string;
+  paraQuien: string;
+  descripcion: string;
+  recibes: readonly string[];
+  icono: IconoForma;
+};
 export type Frente = { titulo: string; descripcion: string; icono: IconoFrente };
 
 export type ModuloOperacion = {
@@ -84,15 +92,53 @@ export const hero = {
 
 export const formas = {
   titulo: "Tres formas de trabajar contigo",
+  intro:
+    "Cada negocio llega en un punto distinto. Puedes empezar una tienda nueva, mejorar la que ya vende o dejar su mantenimiento en manos de un equipo que conoce tu operación.",
   items: [
-    { titulo: "Tu tienda desde cero", descripcion: "Diseño, desarrollo y lanzamiento de una tienda nueva en Shopify.", icono: "store" },
     {
-      titulo: "Optimizamos la tienda que ya tienes",
+      eyebrow: "Tienda desde cero",
+      titulo: "Construimos tu tienda",
+      paraQuien:
+        "Para negocios que van a vender en línea por primera vez o que quieren rehacer su tienda sobre bases sólidas.",
       descripcion:
-        "Sea nuestra o de otro equipo, empezamos con una revisión y te entregamos un plan a 30, 60 y 90 días. Después mejoramos lo que más impacto tiene.",
+        "Diseñamos y desarrollamos tu tienda en Shopify pensando, desde el inicio, en el catálogo, los pagos, los envíos y la forma en que se conectará con tu operación.",
+      recibes: [
+        "Arquitectura del catálogo: colecciones, filtros y atributos.",
+        "Diseño y desarrollo sobre Shopify, pensado para celular y escritorio.",
+        "Medios de pago y envíos de tu mercado, en una o varias monedas.",
+        "Lanzamiento con la cuenta, el dominio y los datos a nombre de tu empresa.",
+      ],
+      icono: "store",
+    },
+    {
+      eyebrow: "Tienda existente",
+      titulo: "Optimizamos tu tienda",
+      paraQuien:
+        "Para tiendas que ya venden, hechas por nosotros o por otro equipo, y que rinden menos de lo que podrían.",
+      descripcion:
+        "Empezamos con una Revisión de tienda en seis frentes, sin tocar nada sin tu aprobación. Con los hallazgos priorizamos y mejoramos primero lo que más impacto tiene.",
+      recibes: [
+        "Informe en lenguaje de negocio, no solo técnico.",
+        "Hallazgos priorizados por impacto y esfuerzo.",
+        "Plan a 30, 60 y 90 días.",
+        "Ejecución de las mejoras que decidas, con alcance acordado por escrito.",
+      ],
       icono: "gauge",
     },
-    { titulo: "Soporte mensual", descripcion: "Mantenemos y hacemos evolucionar tu tienda por horas de trabajo.", icono: "lifebuoy" },
+    {
+      eyebrow: "Soporte mensual",
+      titulo: "Cuidamos tu tienda",
+      paraQuien:
+        "Para tiendas en operación que necesitan un equipo de confianza para corregir, ajustar y evolucionar.",
+      descripcion: "Un paquete mensual de horas de trabajo para mantener la tienda sana y mejorarla de forma continua.",
+      recibes: [
+        "Correcciones y ajustes dentro del paquete de horas.",
+        "Seguimiento de la tienda.",
+        "Primera respuesta en horario hábil.",
+        "Funcionalidades nuevas cotizadas aparte, con alcance acordado por escrito.",
+      ],
+      icono: "lifebuoy",
+    },
   ] satisfies Forma[],
   cierre: "Después de cualquiera de las tres, podemos conectar la operación de tu tienda.",
   /** Peldaños de la escalera visual (definidos en el brief de la página). */
