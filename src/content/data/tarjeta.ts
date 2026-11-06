@@ -1,56 +1,140 @@
 /**
- * Tarjeta de contacto digital (/contacto). Fuente única de verdad: de aquí
- * salen la página, los enlaces tel:, mailto: y wa.me, y el archivo .vcf.
+ * Tarjetas de contacto digitales (/contacto/[slug]). Fuente única de verdad:
+ * de aquí salen las páginas, los enlaces tel:, mailto: y wa.me, los .vcf y
+ * las redirecciones de next.config.ts.
+ *
+ * Para agregar a alguien: sumar un objeto a `personas`.
+ * Cuando alguien se va: quitarlo de `personas` y poner su slug en
+ * `slugsRetirados`. Su tag NFC seguirá funcionando y abrirá la tarjeta general.
  */
-export type TarjetaContacto = {
-  nombre: string;
-  apellidos: string;
+
+type Comunes = {
+  /** Parte de la URL: /contacto/<slug>. Minúsculas, números y guiones. */
+  slug: string;
   empresa: string;
   /** Formato E.164 sin espacios, por ejemplo +573128315581. */
   celular: string;
   email: string;
   url: string;
-  /** Nombre del archivo .vcf que descarga el celular. */
-  archivoVcf: string;
+  /** false agrega noindex: el celular no queda en buscadores. */
+  indexable: boolean;
 };
+
+export type TarjetaPersona = Comunes & {
+  tipo: "persona";
+  nombre: string;
+  apellidos: string;
+  cargo?: string;
+};
+
+export type TarjetaEmpresa = Comunes & { tipo: "empresa" };
+
+export type Tarjeta = TarjetaPersona | TarjetaEmpresa;
+
+const EMPRESA = "Mundo Lógico SAS";
+const URL_SITIO = "https://mundologico.com";
+
+/** Tarjeta general. Destino de los slugs retirados. */
+const general: TarjetaEmpresa = {
+  tipo: "empresa",
+  slug: "mundo-logico",
+  empresa: EMPRESA,
+  celular: "+573128315581",
+  email: "hola@mundologico.com",
+  url: URL_SITIO,
+  indexable: true,
+};
+
+const personas: TarjetaPersona[] = [
+  {
+    tipo: "persona",
+    slug: "federico-orozco",
+    nombre: "Federico",
+    apellidos: "Orozco Galeano",
+    empresa: EMPRESA,
+    celular: "+573128315581",
+    email: "lforozco@mundologico.com",
+    url: URL_SITIO,
+    indexable: true,
+  },
+  {
+    tipo: "persona",
+    slug: "angela-arias",
+    nombre: "Angela Maria",
+    apellidos: "Arias Montoya",
+    cargo: "Líder Administrativa",
+    empresa: EMPRESA,
+    celular: "+573127860531",
+    email: "amarias@mundologico.com",
+    url: URL_SITIO,
+    indexable: false,
+  },
+];
+
+/** Slugs de personas que ya no están. Redirigen a la tarjeta general. */
+const slugsRetirados: string[] = [];
+
+/** Tarjeta que abre /contacto (el primer tag NFC grabado apunta ahí). */
+const SLUG_PRINCIPAL = "federico-orozco";
+
+// Validación: corre al cargar el módulo, así que un dato malo rompe el build.
 
 const E164 = /^\+[1-9]\d{7,14}$/;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
-const ARCHIVO_VCF = /^[a-z0-9-]+\.vcf$/;
+const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-/** Valida los datos una sola vez. Si algo está mal, el build falla. */
-function validarTarjeta(t: TarjetaContacto): TarjetaContacto {
-  const errores: string[] = [];
-  for (const campo of ["nombre", "apellidos", "empresa"] as const) {
-    if (!t[campo].trim()) errores.push(`${campo} vacío`);
+function erroresDe(t: Tarjeta): string[] {
+  const e: string[] = [];
+  if (!SLUG.test(t.slug)) e.push(`slug "${t.slug}" no es válido`);
+  if (!t.empresa.trim()) e.push("empresa vacía");
+  if (t.tipo === "persona") {
+    if (!t.nombre.trim()) e.push("nombre vacío");
+    if (!t.apellidos.trim()) e.push("apellidos vacíos");
+    if (t.cargo !== undefined && !t.cargo.trim()) e.push("cargo vacío (quitarlo si no aplica)");
   }
-  if (!E164.test(t.celular)) errores.push(`celular "${t.celular}" no es E.164`);
-  if (!EMAIL.test(t.email)) errores.push(`email "${t.email}" no es válido`);
+  if (!E164.test(t.celular)) e.push(`celular "${t.celular}" no es E.164`);
+  if (!EMAIL.test(t.email)) e.push(`email "${t.email}" no es válido`);
   try {
-    if (new URL(t.url).protocol !== "https:") errores.push("url debe ser https");
+    if (new URL(t.url).protocol !== "https:") e.push("url debe ser https");
   } catch {
-    errores.push(`url "${t.url}" no es válida`);
+    e.push(`url "${t.url}" no es válida`);
   }
-  if (!ARCHIVO_VCF.test(t.archivoVcf)) errores.push(`archivoVcf "${t.archivoVcf}" no es válido`);
-  if (errores.length) throw new Error(`tarjetaContacto inválida: ${errores.join(", ")}`);
-  return t;
+  return e.map((m) => `[${t.slug}] ${m}`);
 }
 
-export const tarjetaContacto = validarTarjeta({
-  nombre: "Federico",
-  apellidos: "Orozco Galeano",
-  empresa: "Mundo Lógico SAS",
-  celular: "+573128315581",
-  email: "lforozco@mundologico.com",
-  url: "https://mundologico.com",
-  archivoVcf: "federico-orozco.vcf",
-});
+function validar(): readonly Tarjeta[] {
+  const todas: Tarjeta[] = [general, ...personas];
+  const errores = todas.flatMap(erroresDe);
+  const vistos = new Set<string>();
+  for (const s of [...todas.map((t) => t.slug), ...slugsRetirados]) {
+    if (vistos.has(s)) errores.push(`slug "${s}" repetido (activo o retirado)`);
+    vistos.add(s);
+  }
+  for (const s of slugsRetirados) if (!SLUG.test(s)) errores.push(`slug retirado "${s}" no es válido`);
+  if (!personas.some((p) => p.slug === SLUG_PRINCIPAL)) errores.push(`SLUG_PRINCIPAL "${SLUG_PRINCIPAL}" no existe`);
+  if (errores.length) throw new Error(`Tarjetas inválidas:\n- ${errores.join("\n- ")}`);
+  return todas;
+}
 
-/** Derivados. No escribir estos valores a mano en ningún otro lado. */
-export const tarjetaDerivados = {
-  nombreCompleto: `${tarjetaContacto.nombre} ${tarjetaContacto.apellidos}`,
-  telHref: `tel:${tarjetaContacto.celular}`,
-  emailHref: `mailto:${tarjetaContacto.email}`,
-  whatsappHref: `https://wa.me/${tarjetaContacto.celular.slice(1)}`,
-  vcfHref: `/contacto/${tarjetaContacto.archivoVcf}`,
-} as const;
+export const tarjetas = validar();
+export const tarjetaGeneral = general;
+export const slugPrincipal = SLUG_PRINCIPAL;
+export const tarjetasRetiradas: readonly string[] = slugsRetirados;
+
+export function getTarjeta(slug: string): Tarjeta | undefined {
+  return tarjetas.find((t) => t.slug === slug);
+}
+
+/** Valores calculados. No escribirlos a mano en ningún otro lado. */
+export function derivados(t: Tarjeta) {
+  const nombreVisible = t.tipo === "persona" ? `${t.nombre} ${t.apellidos}` : t.empresa;
+  return {
+    nombreVisible,
+    ruta: `/contacto/${t.slug}`,
+    telHref: `tel:${t.celular}`,
+    emailHref: `mailto:${t.email}`,
+    whatsappHref: `https://wa.me/${t.celular.slice(1)}`,
+    vcfHref: `/contacto/${t.slug}/contacto.vcf`,
+    archivoVcf: `${t.slug}.vcf`,
+  } as const;
+}

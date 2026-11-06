@@ -1,4 +1,4 @@
-import type { TarjetaContacto } from "@/content/data/tarjeta";
+import type { Tarjeta } from "@/content/data/tarjeta";
 
 const CRLF = "\r\n";
 const MAX_OCTETOS = 75;
@@ -31,13 +31,26 @@ function plegar(linea: string): string {
 }
 
 /** vCard 3.0 con saltos CRLF. Sin foto embebida. */
-export function buildVCard(t: TarjetaContacto): string {
+export function buildVCard(t: Tarjeta): string {
+  const identidad =
+    t.tipo === "persona"
+      ? [
+          `N:${escapar(t.apellidos)};${escapar(t.nombre)};;;`,
+          `FN:${escapar(`${t.nombre} ${t.apellidos}`)}`,
+          `ORG:${escapar(t.empresa)}`,
+          ...(t.cargo ? [`TITLE:${escapar(t.cargo)}`] : []),
+        ]
+      : [
+          "N:;;;;",
+          `FN:${escapar(t.empresa)}`,
+          `ORG:${escapar(t.empresa)}`,
+          // iOS y macOS lo muestran como empresa y no como persona.
+          "X-ABShowAs:COMPANY",
+        ];
   const lineas = [
     "BEGIN:VCARD",
     "VERSION:3.0",
-    `N:${escapar(t.apellidos)};${escapar(t.nombre)};;;`,
-    `FN:${escapar(`${t.nombre} ${t.apellidos}`)}`,
-    `ORG:${escapar(t.empresa)}`,
+    ...identidad,
     `TEL;TYPE=CELL:${t.celular}`,
     `EMAIL;TYPE=INTERNET:${escapar(t.email)}`,
     `URL:${t.url}`,

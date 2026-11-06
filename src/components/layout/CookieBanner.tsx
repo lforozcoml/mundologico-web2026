@@ -25,11 +25,15 @@ const categorias: { key: keyof ConsentCategories; titulo: string; desc: string }
   },
 ];
 
-/** Rutas donde el banner sale en versión compacta para no tapar el contenido. */
+/** Prefijos de ruta donde el banner sale en versión compacta para no tapar el contenido. */
 const RUTAS_COMPACTAS: readonly string[] = ["/contacto"];
 
+function esCompacta(pathname: string): boolean {
+  return RUTAS_COMPACTAS.some((r) => pathname === r || pathname.startsWith(`${r}/`));
+}
+
 export function CookieBanner() {
-  const compacto = RUTAS_COMPACTAS.includes(usePathname());
+  const compacto = esCompacta(usePathname());
   // En el servidor se asume que ya hay decisión para no pintar el banner en el HTML estático.
   const hayDecision = useSyncExternalStore(subscribeConsent, () => readConsent() !== null, () => true);
   const [abierto, setAbierto] = useState(false);

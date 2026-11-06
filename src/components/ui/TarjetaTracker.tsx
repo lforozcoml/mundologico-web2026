@@ -26,20 +26,20 @@ function leerSrc(): string | null {
  * (tarjeta_contacto_click) de la tarjeta. Los eventos solo llegan a GA4 si en
  * GTM hay un trigger y una etiqueta configurados para ellos.
  */
-export function TarjetaTracker() {
+export function TarjetaTracker({ slug }: { slug: string }) {
   useEffect(() => {
     const src = leerSrc();
-    push({ event: "tarjeta_contacto_vista", tarjeta_src: src ?? "directo" });
+    push({ event: "tarjeta_contacto_vista", tarjeta_slug: slug, tarjeta_src: src ?? "directo" });
 
     const onClick = (e: MouseEvent) => {
       const el = (e.target as Element | null)?.closest<HTMLElement>("[data-tarjeta-accion]");
       const accion = el?.dataset.tarjetaAccion as TarjetaAccion | undefined;
       if (!accion || !ACCIONES.includes(accion)) return;
-      push({ event: "tarjeta_contacto_click", tarjeta_accion: accion, tarjeta_src: src ?? "directo" });
+      push({ event: "tarjeta_contacto_click", tarjeta_slug: slug, tarjeta_accion: accion, tarjeta_src: src ?? "directo" });
     };
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);
-  }, []);
+  }, [slug]);
 
   return null;
 }
