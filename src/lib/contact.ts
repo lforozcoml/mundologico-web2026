@@ -16,7 +16,6 @@ export const INTERESES = [
   "Signal Engine",
   "E-commerce en Shopify",
   "Diagnóstico de automatización",
-  "Diagnóstico gratuito",
   "Otro",
 ] as const;
 export type Interes = (typeof INTERESES)[number];
@@ -29,8 +28,6 @@ export const ETIQUETA_INTERES: Record<Interes, string> = {
   "Signal Engine": "Signal Engine",
   "E-commerce en Shopify": "E-commerce en Shopify",
   "Diagnóstico de automatización": "Diagnóstico de automatización",
-  // El valor se mantiene por compatibilidad con el escenario de Make.
-  "Diagnóstico gratuito": "Llamada de 20 minutos",
   Otro: "Otro",
 };
 
