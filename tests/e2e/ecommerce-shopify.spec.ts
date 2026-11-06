@@ -14,6 +14,8 @@ import {
 } from "../../src/content/data/ecommerce-shopify";
 
 const SITE = "https://mundologico.com";
+/** Em dash escrito como escape para que el archivo no lo contenga literal. */
+const EM_DASH = "\u2014";
 
 /** Simula que el usuario ya decidió sobre cookies para que el banner no tape nada. */
 async function sinBanner(page: Page) {
@@ -52,7 +54,7 @@ test.describe("Banderas (funciones puras, ambos estados)", () => {
 
   test("description de 155 caracteres o menos y sin em dash", () => {
     expect(meta.description.length).toBeLessThanOrEqual(155);
-    expect(meta.description).not.toContain("—");
+    expect(meta.description).not.toContain(EM_DASH);
   });
 });
 
@@ -96,7 +98,7 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     const todo = JSON.stringify(datos);
     expect(todo).not.toMatch(/"Review"|"AggregateRating"/);
     const faqLd = datos.find((d) => d["@type"] === "FAQPage") as { mainEntity: { name: string; acceptedAnswer: { text: string } }[] };
-    expect(faqLd.mainEntity.map((q) => [q.name, q.acceptedAnswer.text])).toEqual(faq.items.map((q) => [q.pregunta, q.respuesta]));
+    expect(faqLd.mainEntity.map((q) => [q.name, q.acceptedAnswer.text])).toEqual(faq.items.map((q) => [q.pregunta, q.respuesta.join(" ")]));
     const migas = datos.find((d) => d["@type"] === "BreadcrumbList") as { itemListElement: { item: string }[] };
     expect(migas.itemListElement.at(-1)?.item).toBe(`${SITE}${RUTA}`);
   });
@@ -108,7 +110,7 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     for (const prohibido of ["[A DEFINIR]", "A DEFINIR", "PLACEHOLDER"]) {
       expect(html).not.toContain(prohibido);
     }
-    expect(texto).not.toContain("—");
+    expect(texto).not.toContain(EM_DASH);
   });
 
   test("banderas en false no dejan nada en el DOM", async ({ page }) => {
@@ -133,11 +135,11 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     await primera.scrollIntoViewIfNeeded();
     await primera.focus();
     await expect(primera).toHaveAttribute("aria-expanded", "false");
-    await expect(page.getByText(faq.items[0].respuesta)).toBeHidden();
+    await expect(page.getByText(faq.items[0].respuesta[0])).toBeHidden();
 
     await page.keyboard.press("Enter");
     await expect(primera).toHaveAttribute("aria-expanded", "true");
-    await expect(page.getByText(faq.items[0].respuesta)).toBeVisible();
+    for (const parrafo of faq.items[0].respuesta) await expect(page.getByText(parrafo)).toBeVisible();
 
     await page.keyboard.press("Tab");
     const segunda = page.getByRole("button", { name: faq.items[1].pregunta });
@@ -148,6 +150,39 @@ test.describe("Página /productos/ecommerce-shopify", () => {
 
     await page.keyboard.press("Space");
     await expect(segunda).toHaveAttribute("aria-expanded", "false");
+  });
+
+  test("FAQ: 9 preguntas, un <p> por párrafo y contenido en el DOM aunque esté cerrado", async ({ page }) => {
+    await page.goto(RUTA);
+    expect(faq.items).toHaveLength(9);
+    for (const item of faq.items) {
+      const boton = page.getByRole("button", { name: item.pregunta, exact: true });
+      await expect(boton).toHaveAttribute("aria-expanded", "false");
+      const panel = page.locator(`#${await boton.getAttribute("aria-controls")}`);
+      await expect(panel).toHaveAttribute("hidden", "");
+      await expect(panel).toHaveAttribute("role", "region");
+      await expect(panel).toHaveAttribute("aria-labelledby", (await boton.getAttribute("id"))!);
+      await expect(panel.locator("p")).toHaveText([...item.respuesta]);
+    }
+  });
+
+  test("FAQ a 390 px: con todo abierto no hay desborde", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto(RUTA);
+    for (const item of faq.items) {
+      const boton = page.getByRole("button", { name: item.pregunta, exact: true });
+      await boton.scrollIntoViewIfNeeded();
+      await boton.click();
+      // Abrir una cierra la anterior; se mide cada panel mientras está abierto.
+      const panel = page.locator(`#${await boton.getAttribute("aria-controls")}`);
+      await expect(panel).toBeVisible();
+      const caja = (await panel.boundingBox())!;
+      expect(caja.x).toBeGreaterThanOrEqual(0);
+      expect(caja.x + caja.width).toBeLessThanOrEqual(390);
+      const desborda = await panel.locator("p").evaluateAll((ps) => ps.some((p) => p.scrollWidth > p.clientWidth));
+      expect(desborda, item.pregunta).toBe(false);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+    }
   });
 
   test("hexágono: enfocar un frente lo resalta", async ({ page }) => {

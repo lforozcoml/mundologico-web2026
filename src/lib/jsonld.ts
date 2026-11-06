@@ -1,7 +1,8 @@
 import { SITE_NAME, SITE_URL } from "@/lib/metadata";
 
 export type Migaja = { nombre: string; ruta: string };
-export type ParPregunta = { pregunta: string; respuesta: string };
+/** respuesta: párrafos; en el JSON-LD se unen con un espacio, igual que el texto visible. */
+export type ParPregunta = { pregunta: string; respuesta: readonly string[] };
 
 /** Serializa JSON-LD escapando "<" para que no pueda cerrar el <script>. */
 export function jsonLdScript(data: object): string {
@@ -41,7 +42,7 @@ export function faqJsonLd(preguntas: readonly ParPregunta[]) {
     mainEntity: preguntas.map((p) => ({
       "@type": "Question",
       name: p.pregunta,
-      acceptedAnswer: { "@type": "Answer", text: p.respuesta },
+      acceptedAnswer: { "@type": "Answer", text: p.respuesta.join(" ") },
     })),
   };
 }

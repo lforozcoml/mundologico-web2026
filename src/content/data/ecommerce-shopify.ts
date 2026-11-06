@@ -59,7 +59,8 @@ export type Tienda = {
   cifra?: { texto: string; mostrar: boolean };
 };
 
-export type Pregunta = { pregunta: string; respuesta: string };
+/** Cada elemento de respuesta es un párrafo. */
+export type Pregunta = { pregunta: string; respuesta: readonly string[] };
 
 // ── Contenido ───────────────────────────────────────────────────────────────
 
@@ -204,15 +205,69 @@ export const tiendasSeccion = {
 export const faq = {
   titulo: "Preguntas frecuentes",
   items: [
-    { pregunta: "¿La tienda queda a mi nombre?", respuesta: "Sí. Tu tienda, tu dominio y tus pasarelas son de tu empresa." },
-    { pregunta: "¿Dan soporte después de lanzar?", respuesta: "Sí, mensual y por horas." },
+    {
+      pregunta: "¿La tienda, el dominio y los datos quedan a mi nombre?",
+      respuesta: [
+        "Sí. La cuenta de Shopify, el dominio, las pasarelas de pago y la información de tus clientes y pedidos pertenecen a tu empresa. Configuramos todo bajo tus cuentas y trabajamos con acceso de colaborador.",
+        "Si en algún momento decides continuar con otro equipo, basta con retirar nuestro acceso. La tienda no depende de nosotros para operar.",
+      ],
+    },
+    {
+      pregunta: "¿Qué pasa después del lanzamiento? ¿Dan soporte?",
+      respuesta: [
+        "Sí. El soporte mensual funciona por paquetes de horas de trabajo y cubre correcciones, ajustes y seguimiento de la tienda. Atendemos en horario hábil, de lunes a viernes, hora de Colombia, y la primera respuesta se da dentro de ese horario.",
+        "Las funcionalidades nuevas o los desarrollos de mayor alcance no consumen el paquete de horas: se definen y se cotizan aparte, con un alcance acordado por escrito.",
+      ],
+    },
     {
       pregunta: "¿Trabajan con tiendas que ya existen?",
-      respuesta: "Sí. Optimizamos tiendas hechas por nosotros o por otros equipos.",
+      respuesta: [
+        "Sí. Muchas tiendas llegan a nosotros ya construidas, por nuestro equipo o por otros. Para esos casos hacemos una Revisión de tienda en seis frentes y entregamos un plan priorizado a 30, 60 y 90 días, con lo que conviene corregir primero y por qué.",
+        "Para revisarla solo necesitamos acceso de colaborador con los permisos mínimos necesarios. No tocamos nada sin tu aprobación.",
+      ],
     },
     {
       pregunta: "¿Se conecta con mi sistema de facturación o ERP?",
-      respuesta: "Depende de que tu sistema tenga API. Lo revisamos en la llamada.",
+      respuesta: [
+        "Depende de tu sistema. Si tiene API o un conector disponible, normalmente es posible. En el diagnóstico definimos qué información debe viajar entre la tienda y tu sistema (pedidos, inventario, clientes, facturas), en qué dirección y con qué frecuencia.",
+        "Para la facturación electrónica ante la DIAN, conectamos la tienda con el proveedor tecnológico autorizado que ya uses o el que elijas.",
+        "Si tu sistema no permite integración, te lo decimos desde el inicio y proponemos una alternativa realista en lugar de prometer algo que no se puede sostener.",
+      ],
+    },
+    {
+      pregunta: "¿Cuánto cuesta y cuánto tarda?",
+      respuesta: [
+        "Depende del alcance: tamaño del catálogo, integraciones, mercados y monedas, contenido que ya tengas y nivel de personalización. Por eso no publicamos un precio único.",
+        "Después de una conversación inicial te entregamos una propuesta escrita con alcance, entregables, supuestos, exclusiones, cronograma y criterios de aceptación. Así sabes qué recibes y cuándo antes de comprometerte.",
+      ],
+    },
+    {
+      pregunta: "¿Qué necesito tener listo para empezar?",
+      respuesta: [
+        "Lo básico es tu marca (logo y colores), tu catálogo (productos, precios y fotos), la documentación legal de tu empresa para activar las pasarelas de pago, tus definiciones de envío y una persona con capacidad de decisión que sea nuestro punto de contacto.",
+        "Si algo de esto aún no está definido, lo trabajamos contigo al inicio del proyecto.",
+      ],
+    },
+    {
+      pregunta: "¿En qué se diferencian de una agencia que solo diseña la tienda?",
+      respuesta: [
+        "Una tienda que se ve bien es el punto de partida. Nosotros además diseñamos cómo se conecta con tu operación: pedidos, pagos, inventario y atención al cliente.",
+        "También definimos desde el inicio qué indicadores necesitas para tomar decisiones con tus propios datos. El objetivo es que la tienda no solo venda, sino que te permita leer el negocio.",
+      ],
+    },
+    {
+      pregunta: "¿Qué medios de pago y envíos se pueden configurar?",
+      respuesta: [
+        "Configuramos las pasarelas de pago y las opciones de envío disponibles en Shopify para tu país, según lo que elijas para tu negocio.",
+        "Si manejas varios medios de pago, evaluamos contigo cómo automatizar la conciliación para que cuadrar ventas y recaudos deje de ser un proceso manual.",
+      ],
+    },
+    {
+      pregunta: "¿Se puede vender en varios países o en varias monedas?",
+      respuesta: [
+        "Sí. Shopify permite operar en múltiples mercados y monedas. Lo que define el alcance real es la combinación de pasarelas de pago, impuestos y envíos de cada mercado, y eso lo revisamos en el diagnóstico.",
+        "Hemos operado tiendas en más de un mercado y moneda.",
+      ],
     },
   ] satisfies Pregunta[],
 } as const;

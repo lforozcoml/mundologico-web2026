@@ -35,8 +35,18 @@ export function FaqAcordeon() {
                     />
                   </button>
                 </h3>
-                <div id={idPanel} role="region" aria-labelledby={idBoton} hidden={!open} className="px-6 pb-5">
-                  <p className="text-[16px] leading-relaxed text-gray-600">{item.respuesta}</p>
+                <div
+                  id={idPanel}
+                  role="region"
+                  aria-labelledby={idBoton}
+                  hidden={!open}
+                  className="space-y-3 px-6 pb-6"
+                >
+                  {item.respuesta.map((parrafo) => (
+                    <p key={parrafo} className="text-[16px] leading-relaxed text-gray-600">
+                      {parrafo}
+                    </p>
+                  ))}
                 </div>
               </li>
             );
