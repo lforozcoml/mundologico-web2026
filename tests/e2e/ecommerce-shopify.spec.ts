@@ -207,21 +207,13 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     await expect.poll(async () => (await seccion.boundingBox())!.y).toBeGreaterThanOrEqual(alturaHeader - 1);
   });
 
-  test("Revisión de tienda: h2 nuevo, 6 frentes con pregunta, plan 30/60/90, CTA al calendario y sin la ilustración anterior", async ({ page }) => {
+  test("Revisión de tienda: h2 nuevo, plan 30/60/90, CTA al calendario y sin la ilustración anterior", async ({ page }) => {
     await page.goto(RUTA);
     const seccion = page.locator("section#revision");
     await expect(seccion.getByRole("heading", { level: 2 })).toHaveText(revision.titulo);
     await expect(seccion.getByText(revision.intro)).toBeVisible();
 
-    const frentes = seccion.locator("ol").first().locator(":scope > li");
-    await expect(frentes).toHaveCount(6);
-    for (const [i, f] of revision.frentes.entries()) {
-      await expect(frentes.nth(i)).toContainText(f.titulo);
-      await expect(frentes.nth(i)).toContainText(f.pregunta);
-      await expect(frentes.nth(i)).toContainText(f.descripcion);
-    }
-
-    const plan = seccion.locator("ol").nth(1).locator(":scope > li");
+    const plan = seccion.locator("ol").last().locator(":scope > li");
     await expect(plan).toHaveCount(3);
     for (const [i, paso] of revision.plan.entries()) await expect(plan.nth(i)).toContainText(paso.titulo);
 
@@ -236,12 +228,50 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     expect(await page.content()).not.toContain("Ilustración, no son datos reales");
   });
 
-  test("hexágono: enfocar un frente lo resalta", async ({ page }) => {
+  test("Revisión: 6 tarjetas siempre visibles con todo su texto, sin interacción", async ({ page }) => {
     await page.goto(RUTA);
-    const boton = page.getByRole("button", { name: "SEO técnico" });
-    await boton.focus();
-    await expect(boton).toHaveAttribute("aria-pressed", "true");
-    await expect(page.getByRole("button", { name: "Conversión" })).toHaveAttribute("aria-pressed", "false");
+    const tarjetas = page.locator("section#revision [data-activo]");
+    await expect(tarjetas).toHaveCount(6);
+    for (const [i, f] of revision.frentes.entries()) {
+      const t = tarjetas.nth(i);
+      await expect(t).toBeVisible();
+      for (const texto of [f.titulo, f.etapa, f.pregunta, ...f.revisamos, f.resultado]) await expect(t).toContainText(texto);
+      await expect(t.locator("ul > li")).toHaveCount(f.revisamos.length);
+    }
+  });
+
+  test("Revisión: esquema con 4 etapas y 2 capas, resalte compartido con las tarjetas", async ({ page }) => {
+    await page.goto(RUTA);
+    const seccion = page.locator("section#revision");
+    const nodos = seccion.getByRole("button", { name: /^Frente \d: / });
+    await expect(nodos).toHaveCount(6);
+    const etapas = revision.frentes.filter((f) => f.tipo === "etapa").length;
+    expect(etapas).toBe(4);
+    expect(revision.frentes.length - etapas).toBe(2);
+
+    const nodo = (n: number) => seccion.getByRole("button", { name: `Frente ${n}: ${revision.frentes[n - 1].titulo}` });
+    const tarjeta = (n: number) => seccion.locator("[data-activo]").nth(n - 1);
+
+    // Cada nodo describe su tarjeta.
+    for (let n = 1; n <= 6; n++) {
+      const id = await tarjeta(n).getAttribute("id");
+      await expect(nodo(n)).toHaveAttribute("aria-describedby", id!);
+    }
+
+    // Clic en el nodo 3 resalta la tarjeta 3.
+    await nodo(3).click();
+    await expect(nodo(3)).toHaveAttribute("aria-pressed", "true");
+    await expect(tarjeta(3)).toHaveAttribute("data-activo", "true");
+    await expect(tarjeta(1)).toHaveAttribute("data-activo", "false");
+
+    // Clic en la tarjeta 5 resalta la barra 5.
+    await tarjeta(5).click();
+    await expect(nodo(5)).toHaveAttribute("aria-pressed", "true");
+    await expect(nodo(3)).toHaveAttribute("aria-pressed", "false");
+
+    // Con teclado: enfocar el nodo 2 lo activa.
+    await nodo(2).focus();
+    await expect(tarjeta(2)).toHaveAttribute("data-activo", "true");
   });
 
   test("a 390 px no hay scroll horizontal", async ({ page }) => {

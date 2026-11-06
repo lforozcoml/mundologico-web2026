@@ -1,7 +1,7 @@
 import { ShieldCheck } from "lucide-react";
 import { CALENDARIO_URL } from "@/content/data/site";
 import { revision } from "@/content/data/ecommerce-shopify";
-import { HexagonoRevision } from "@/components/sections/ecommerce/HexagonoRevision";
+import { RevisionFrentes } from "@/components/sections/ecommerce/RevisionFrentes";
 import { PlanTreintaSesentaNoventa } from "@/components/sections/ecommerce/PlanTreintaSesentaNoventa";
 
 /** Sección Revisión de tienda. El id "revision" es el destino del CTA secundario del hero. */
@@ -14,7 +14,7 @@ export function RevisionTienda() {
         </h2>
         <p className="mb-12 max-w-2xl text-lg leading-relaxed text-gray-600">{revision.intro}</p>
 
-        <HexagonoRevision />
+        <RevisionFrentes />
 
         <div className="mt-16">
           <h3 className="mb-3 text-2xl font-black text-mundo-dark">{revision.recibesTitulo}</h3>

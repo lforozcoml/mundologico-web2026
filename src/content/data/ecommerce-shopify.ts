@@ -37,7 +37,19 @@ export type Forma = {
   recibes: readonly string[];
   icono: IconoForma;
 };
-export type Frente = { titulo: string; pregunta: string; descripcion: string; icono: IconoFrente };
+/**
+ * Un frente de la Revisión de tienda. "etapa": paso del recorrido del cliente;
+ * "capa": atraviesa toda la tienda. El orden del array define el número (1 a 6).
+ */
+export type Frente = {
+  titulo: string;
+  tipo: "etapa" | "capa";
+  etapa: string;
+  pregunta: string;
+  revisamos: readonly string[];
+  resultado: string;
+  icono: IconoFrente;
+};
 export type PasoPlan = { titulo: string; texto: string };
 
 export type ModuloOperacion = {
@@ -163,44 +175,88 @@ export const revision = {
   titulo: "Revisión de tienda: dónde se te escapan ventas, y qué corregir primero",
   intro:
     "Una tienda puede recibir visitas y aun así vender menos de lo esperado. A veces el problema está en el pago, a veces en la velocidad, en apps que se estorban o en procesos manuales detrás de la tienda. Revisamos seis frentes y te decimos cuál pesa más.",
+  recorridoTitulo: "El recorrido de tu cliente, y dónde mira cada frente",
+  recorridoNota: "Los números del esquema corresponden a las tarjetas.",
+  revisamosEtiqueta: "Qué revisamos",
+  resultadoEtiqueta: "Qué te dejamos claro",
   frentes: [
     {
-      titulo: "Conversión",
-      pregunta: "¿Dónde se cae la compra?",
-      descripcion:
-        "Analizamos el recorrido de sesión, carrito, pago y compra para ubicar en qué paso se pierden más clientes.",
-      icono: "funnel",
-    },
-    {
-      titulo: "Velocidad y celular",
-      pregunta: "¿Tu tienda carga rápido y se compra fácil desde el celular?",
-      descripcion: "Medimos qué tan rápido carga y qué la frena: imágenes, apps y código.",
-      icono: "smartphone",
-    },
-    {
       titulo: "SEO técnico",
-      pregunta: "¿Google entiende tu tienda?",
-      descripcion:
-        "Revisamos títulos, colecciones, datos estructurados e indexación para que tus productos puedan encontrarse.",
+      tipo: "etapa",
+      etapa: "Te encuentran",
+      pregunta: "¿Google entiende tu tienda y la muestra a quien busca lo que vendes?",
+      revisamos: [
+        "Títulos y descripciones de productos y colecciones.",
+        "Estructura de colecciones y enlaces internos.",
+        "Datos estructurados e indexación.",
+      ],
+      resultado: "Qué te impide aparecer en las búsquedas y qué corregir primero.",
       icono: "search",
     },
     {
-      titulo: "Apps y costos",
-      pregunta: "¿Pagas por apps que no necesitas?",
-      descripcion: "Identificamos las que sobran, se solapan o frenan la tienda.",
-      icono: "puzzle",
+      titulo: "Velocidad y celular",
+      tipo: "etapa",
+      etapa: "Navegan",
+      pregunta: "¿Tu tienda carga rápido y se compra fácil desde el celular?",
+      revisamos: [
+        "Tiempos de carga en celular.",
+        "Imágenes, apps y código que la frenan.",
+        "Uso del menú, los filtros y las fichas de producto.",
+      ],
+      resultado: "Qué hace lenta o incómoda la tienda y qué arreglar primero.",
+      icono: "smartphone",
+    },
+    {
+      titulo: "Conversión",
+      tipo: "etapa",
+      etapa: "Compran",
+      pregunta: "¿Dónde se cae la compra?",
+      revisamos: [
+        "El recorrido de sesión, carrito, pago y compra, paso a paso.",
+        "Fricciones en el pago y en los medios de pago.",
+        "Páginas de producto y carrito.",
+      ],
+      resultado: "En qué paso pierdes más clientes y qué cambios probar.",
+      icono: "funnel",
     },
     {
       titulo: "Operación detrás de la tienda",
+      tipo: "etapa",
+      etapa: "Después de comprar",
       pregunta: "¿Cuánto trabajo manual genera cada pedido?",
-      descripcion: "Revisamos cómo se manejan pedidos, pagos, atención e inventario después de la compra.",
+      revisamos: [
+        "Cómo pasa un pedido del pago a la bodega.",
+        "Conciliación de pagos y facturación.",
+        "Atención al cliente e inventario.",
+      ],
+      resultado: "Qué tareas repites a mano y cuáles se pueden automatizar.",
       icono: "workflow",
     },
     {
+      titulo: "Apps y costos",
+      tipo: "capa",
+      etapa: "En toda la tienda",
+      pregunta: "¿Pagas por apps que no necesitas?",
+      revisamos: [
+        "Qué apps tienes instaladas y qué hace cada una.",
+        "Cuáles se solapan o duplican funciones.",
+        "Cuáles frenan la tienda.",
+      ],
+      resultado: "Qué dejar, qué cambiar y qué quitar.",
+      icono: "puzzle",
+    },
+    {
       titulo: "Analítica y cumplimiento",
+      tipo: "capa",
+      etapa: "En todo el recorrido",
       pregunta: "¿Puedes confiar en tus números?",
-      descripcion:
-        "Verificamos que la medición esté bien configurada, y que el consentimiento de cookies y las políticas estén bien implementados.",
+      revisamos: [
+        "Que la medición esté bien configurada.",
+        "El consentimiento de cookies.",
+        "Las políticas de la tienda.",
+      ],
+      resultado:
+        "Si tus números son confiables y si el consentimiento y las políticas están bien implementados.",
       icono: "chart",
     },
   ] satisfies Frente[],
