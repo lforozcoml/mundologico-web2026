@@ -107,8 +107,10 @@ test("?src=nfc llega a Make como fuente nfc", async ({ page }) => {
   await page.goto("/?src=nfc");
   const email = emailUnico("home-nfc");
   const form = await llenar(page, email);
+  await expect(page.getByRole("link", { name: /Mira los demos/ })).toHaveCount(0);
   await form.getByRole("button", { name: BOTON }).click();
   await expect(page.getByRole("heading", { name: "Mensaje recibido" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Mira los demos/ })).toHaveAttribute("href", "/demos-ml?src=nfc");
   const [envio] = await enviosMake(page, email);
   expect(envio.cuerpo.fuente).toBe("nfc");
   expect(envio.cuerpo.origen).toBe("mundologico.com");
@@ -132,5 +134,6 @@ test("Make falla: error visible y el formulario se queda", async ({ page }) => {
   await form.getByRole("button", { name: BOTON }).click();
   await expect(form.getByText(/No pudimos registrar tu mensaje/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Mensaje recibido" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: /Mira los demos/ })).toHaveCount(0);
   expect(await enviosMake(page, email)).toHaveLength(1);
 });

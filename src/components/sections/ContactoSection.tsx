@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { site } from "@/content/data/site";
 import { Turnstile } from "@/components/ui/Turnstile";
-import { CONTACT_LIMITS, ETIQUETA_INTERES, HONEYPOT_FIELD, INTERESES } from "@/lib/contact";
+import { CONTACT_LIMITS, ETIQUETA_INTERES, HONEYPOT_FIELD, INTERESES, interesDesdeParam } from "@/lib/contact";
+import { RUTA_DEMOS, hrefConIdioma } from "@/lib/enlaces";
 import { useEnvioContacto } from "@/lib/useEnvioContacto";
 
 const INPUT_CLASS =
@@ -19,6 +20,15 @@ export function ContactoSection() {
   const [consentimientoTocado, setConsentimientoTocado] = useState(false);
   const consentimientoError = consentimientoTocado && !consentimiento;
   const { token, enviando: loading, verifyFailed, enviar, reiniciarVerificacion, turnstile } = useEnvioContacto();
+  const [hrefDemos, setHrefDemos] = useState("");
+  const interesRef = useRef<HTMLSelectElement>(null);
+
+  // ?interes=diagnostico (desde /demos-ml) deja la opción elegida. Se lee en el navegador
+  // y no con useSearchParams para que el formulario siga en el HTML estático del home.
+  useEffect(() => {
+    const interes = interesDesdeParam(new URLSearchParams(window.location.search).get("interes"));
+    if (interes && interesRef.current) interesRef.current.value = interes;
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -47,7 +57,10 @@ export function ContactoSection() {
       valor(HONEYPOT_FIELD),
     );
 
-    if (resultado.ok) setSent(true);
+    if (resultado.ok) {
+      setHrefDemos(hrefConIdioma(RUTA_DEMOS, new URLSearchParams(window.location.search).get("src"), "es"));
+      setSent(true);
+    }
     else if (resultado.status === 0) setError("No se pudo enviar el mensaje. Revisa tu conexión e intenta de nuevo.");
     else setError(resultado.mensajeServidor ?? "Ocurrió un error. Intenta de nuevo o escríbenos directamente.");
   }
@@ -89,6 +102,15 @@ export function ContactoSection() {
                 <div className="text-5xl mb-4">✅</div>
                 <h3 className="text-xl font-bold text-mundo-dark mb-2">Mensaje recibido</h3>
                 <p className="text-gray-600">Te respondemos en 24 a 48 horas para agendar la llamada.</p>
+                {hrefDemos && (
+                  <Link
+                    href={hrefDemos}
+                    data-cta="ver-demos"
+                    className="mt-4 inline-flex min-h-11 items-center font-semibold text-mundo-blue underline underline-offset-4"
+                  >
+                    Mira los demos →
+                  </Link>
+                )}
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="relative flex flex-col gap-5">
@@ -124,7 +146,7 @@ export function ContactoSection() {
 
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="contacto-interes" className={LABEL_CLASS}>¿Qué te interesa?</label>
-                  <select id="contacto-interes" required name="interes" defaultValue="" className={INPUT_CLASS}>
+                  <select ref={interesRef} id="contacto-interes" required name="interes" defaultValue="" className={INPUT_CLASS}>
                     <option value="" disabled>Selecciona una opción</option>
                     {INTERESES.map((valor) => <option key={valor} value={valor}>{ETIQUETA_INTERES[valor]}</option>)}
                   </select>

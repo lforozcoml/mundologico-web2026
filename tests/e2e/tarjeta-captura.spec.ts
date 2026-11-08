@@ -61,8 +61,11 @@ test("?src=nfc: llega a Make con fuente nfc, nombre partido y valores por defect
   await page.goto(`${RUTA}?src=nfc`);
   const email = emailUnico("tarjeta-nfc");
   const b = await llenar(page, ES, "Ana María Gómez", email);
+  // "Mira los demos" no se muestra antes del envío.
+  await expect(page.getByRole("link", { name: ES.captura.verDemos })).toHaveCount(0);
   await b.getByRole("button", { name: ES.captura.enviar }).click();
   await expect(b.getByRole("status")).toContainText(ES.captura.exito);
+  await expect(b.getByRole("link", { name: ES.captura.verDemos })).toHaveAttribute("href", "/demos-ml?src=nfc");
   // El botón de agendar sigue visible después del envío.
   await expect(page.getByRole("link", { name: ES.agendar })).toBeVisible();
 
@@ -148,6 +151,7 @@ test("?lang=en: tarjeta en inglés, lang del documento y llega idioma en", async
   const b = await llenar(page, EN, "John Smith", email);
   await b.getByRole("button", { name: EN.captura.enviar }).click();
   await expect(b.getByRole("status")).toContainText(EN.captura.exito);
+  await expect(b.getByRole("link", { name: EN.captura.verDemos })).toHaveAttribute("href", "/demos-ml?src=nfc&lang=en");
   const [envio] = await enviosMake(page, email);
   expect(envio.cuerpo).toMatchObject({ nombre: "John", apellidos: "Smith", idioma: "en", fuente: "nfc / federico-orozco" });
 });
@@ -207,6 +211,7 @@ test("si Make falla: error con alternativa de WhatsApp y correo", async ({ page 
     "mailto:lforozco@mundologico.com",
   );
   expect(await eventos(page, "generate_lead")).toHaveLength(0);
+  await expect(page.getByRole("link", { name: ES.captura.verDemos })).toHaveCount(0);
 });
 
 test("sin raya larga en los textos visibles de la tarjeta en ambos idiomas", async ({ page }) => {
