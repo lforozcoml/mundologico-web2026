@@ -37,6 +37,8 @@ export type TextosTarjeta = {
     enviando: string;
     verificando: string;
     exito: string;
+    /** Enlace a /demos-ml en el estado de éxito. */
+    verDemos: string;
     errorDatos: string;
     errorLimite: string;
     errorGeneral: string;
@@ -82,6 +84,7 @@ export const textosTarjeta: Record<Idioma, TextosTarjeta> = {
       enviando: "Enviando...",
       verificando: "Verificando...",
       exito: "Gracias, te escribimos en 24 a 48 horas.",
+      verDemos: "Mira los demos →",
       errorDatos: "Revisa tu nombre y tu correo e intenta de nuevo.",
       errorLimite: "Hubo muchos intentos seguidos. Espera un momento e intenta de nuevo.",
       errorGeneral: "No pudimos enviar tus datos.",
@@ -126,6 +129,7 @@ export const textosTarjeta: Record<Idioma, TextosTarjeta> = {
       enviando: "Sending...",
       verificando: "Verifying...",
       exito: "Thanks, we'll write to you within 24 to 48 hours.",
+      verDemos: "See the demos →",
       errorDatos: "Please check your name and email and try again.",
       errorLimite: "Too many attempts in a row. Wait a moment and try again.",
       errorGeneral: "We couldn't send your details.",

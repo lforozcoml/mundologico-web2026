@@ -4,13 +4,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarDays, Globe, MessageCircle, Phone, UserPlus } from "lucide-react";
 import { pageMetadata } from "@/lib/metadata";
-import { IDIOMAS, normalizarIdioma, type Idioma } from "@/lib/contact";
+import { normalizarIdioma, type Idioma } from "@/lib/contact";
 import { CALENDARIO_URL } from "@/content/data/site";
 import { derivados, getTarjeta, tarjetas } from "@/content/data/tarjeta";
 import { textosTarjeta } from "@/content/data/tarjeta-textos";
 import { TarjetaTracker, type TarjetaAccion } from "@/components/ui/TarjetaTracker";
 import { IdiomaDocumento } from "@/components/ui/IdiomaDocumento";
 import { TarjetaCaptura } from "@/components/sections/TarjetaCaptura";
+import { SelectorIdioma } from "@/components/ui/SelectorIdioma";
 
 export const dynamicParams = false;
 
@@ -24,16 +25,6 @@ function primero(v: string | string[] | undefined): string | undefined {
 /** Sin ?lang= es español. No se detecta el idioma del navegador. */
 function idiomaDe(q: Query): Idioma {
   return normalizarIdioma(primero(q.lang));
-}
-
-/** Enlace del selector: conserva src y pone lang solo para inglés. */
-function hrefIdioma(ruta: string, q: Query, idioma: Idioma): string {
-  const params = new URLSearchParams();
-  const src = primero(q.src);
-  if (src && /^[a-z0-9_-]{1,32}$/i.test(src)) params.set("src", src);
-  if (idioma !== "es") params.set("lang", idioma);
-  const query = params.toString();
-  return query ? `${ruta}?${query}` : ruta;
 }
 
 export function generateStaticParams() {
@@ -86,28 +77,13 @@ export default async function TarjetaPage({ params, searchParams }: Props) {
           <Link href="/" className="inline-flex min-h-11 items-center" aria-label={tx.irAlSitio}>
             <Image src="/logo-mundologico-blanco.png" alt="Mundo Lógico" width={160} height={36} className="h-8 w-auto" priority />
           </Link>
-          <nav aria-label={tx.selectorIdioma}>
-            <ul className="flex gap-1 rounded-full border border-white/25 p-1">
-              {IDIOMAS.map((opcion) => (
-                <li key={opcion}>
-                  <Link
-                    href={hrefIdioma(d.ruta, query, opcion)}
-                    lang={opcion}
-                    hrefLang={opcion}
-                    aria-label={tx.nombreIdioma[opcion]}
-                    aria-current={opcion === idioma ? "true" : undefined}
-                    replace
-                    scroll={false}
-                    className={`flex min-h-11 min-w-11 items-center justify-center rounded-full px-3 text-sm font-bold uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mundo-teal ${
-                      opcion === idioma ? "bg-white text-mundo-dark" : "text-white/80 hover:bg-white/10"
-                    }`}
-                  >
-                    {opcion}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <SelectorIdioma
+            ruta={d.ruta}
+            idioma={idioma}
+            src={primero(query.src)}
+            etiqueta={tx.selectorIdioma}
+            nombreIdioma={tx.nombreIdioma}
+          />
         </div>
 
         <h1 className="text-4xl font-black leading-tight">{d.nombreVisible}</h1>

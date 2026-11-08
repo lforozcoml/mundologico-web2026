@@ -76,8 +76,11 @@ export type ContactRequest = {
   consentimiento: boolean;
   /** Opcional. Cualquier valor fuera de IDIOMAS, o ausente, se guarda como "es". */
   idioma?: string;
-  /** Opcional: slug de la tarjeta digital desde la que se envía. El servidor confirma que exista. */
-  tarjeta?: string;
+  /**
+   * Opcional: página desde la que se envía (slug de una tarjeta digital o una de
+   * PAGINAS_CAPTURA). El servidor confirma que exista antes de sumarla a la fuente.
+   */
+  pagina?: string;
   /** Campo trampa: debe llegar vacío. */
   [HONEYPOT_FIELD]: string;
   /** Milisegundos entre que se pintó el formulario y el envío. */
@@ -97,8 +100,8 @@ export type ContactData = {
   fuente: Fuente;
   consentimiento: true;
   idioma: Idioma;
-  /** Slug con formato válido o null. Que la tarjeta exista lo revisa /api/contact. */
-  tarjeta: string | null;
+  /** Slug con formato válido o null. Que la página exista lo revisa /api/contact. */
+  pagina: string | null;
 };
 
 /**
@@ -116,7 +119,7 @@ export type ContactPayload = {
   origen: "mundologico.com";
   timestamp: string;
   telefono: string;
-  /** La Fuente, y si vino de una tarjeta, su slug: "nfc / federico-orozco". Ver fuenteParaMake. */
+  /** La Fuente y, si vino de una tarjeta o de /demos-ml, la página: "nfc / federico-orozco". Ver fuenteParaMake. */
   fuente: string;
   consentimiento: true;
   idioma: Idioma;
@@ -157,18 +160,39 @@ export function normalizarIdioma(value: unknown): Idioma {
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const SLUG_MAX = 60;
 
+/**
+ * Páginas con bloque de captura, además de las tarjetas digitales. Su slug se suma
+ * a la fuente igual que el de una tarjeta.
+ */
+export const PAGINAS_CAPTURA = ["demos-ml"] as const;
+
 /** Slug con formato válido, o null si no viene o no lo tiene. */
-export function normalizarTarjeta(value: unknown): string | null {
+export function normalizarPagina(value: unknown): string | null {
   const v = str(value).toLowerCase();
   return v.length <= SLUG_MAX && SLUG_RE.test(v) ? v : null;
 }
 
 /**
  * Valor de `fuente` que va a Make (y de ahí a la hoja Contacts): la fuente y,
- * si el lead llegó desde una tarjeta, de quién es. Ejemplo: "nfc / federico-orozco".
+ * si el lead llegó desde una tarjeta o desde /demos-ml, la página.
+ * Ejemplos: "nfc / federico-orozco", "rueda-2026-11 / demos-ml".
  */
-export function fuenteParaMake(fuente: Fuente, tarjeta: string | null): string {
-  return tarjeta ? `${fuente} / ${tarjeta}` : fuente;
+export function fuenteParaMake(fuente: Fuente, pagina: string | null): string {
+  return pagina ? `${fuente} / ${pagina}` : fuente;
+}
+
+/**
+ * Valores cortos de ?interes= que preseleccionan una opción del formulario.
+ * Es un alias: lo que viaja a Make sigue siendo el valor de INTERESES.
+ */
+export const INTERES_POR_PARAM: Readonly<Record<string, Interes>> = {
+  diagnostico: "Diagnóstico de automatización",
+};
+
+/** Interés de un ?interes= conocido, o null. */
+export function interesDesdeParam(value: unknown): Interes | null {
+  const v = str(value).toLowerCase();
+  return Object.hasOwn(INTERES_POR_PARAM, v) ? INTERES_POR_PARAM[v] : null;
 }
 
 /** Vacío es válido (el campo es opcional). Si viene: caracteres permitidos y mínimo 7 dígitos. */
@@ -251,7 +275,7 @@ export function validateContact(body: unknown): ContactValidation {
       fuente: normalizarFuente(b.origen),
       consentimiento: true,
       idioma: normalizarIdioma(b.idioma),
-      tarjeta: normalizarTarjeta(b.tarjeta),
+      pagina: normalizarPagina(b.pagina),
     },
     token,
   };
@@ -270,6 +294,8 @@ export function validateContact(body: unknown): ContactValidation {
 export const INTERES_TARJETA: Interes = "Otro";
 /** Mensaje que se manda desde la tarjeta. Si la persona escribe algo, va después. */
 export const MENSAJE_TARJETA = "Contacto desde tarjeta digital";
+/** Mensaje que se manda desde el bloque de captura de /demos-ml. */
+export const MENSAJE_DEMOS = "Contacto desde la página de demos";
 /** Apellidos cuando el nombre completo es una sola palabra. */
 export const APELLIDOS_VACIOS = "-";
 export const NOMBRE_COMPLETO_MAX = CONTACT_LIMITS.nombre + CONTACT_LIMITS.apellidos;
@@ -286,6 +312,10 @@ export type CamposTarjeta = {
   email: string;
   telefono: string;
   mensaje: string;
+  /** Por defecto INTERES_TARJETA ("Otro"). */
+  interes?: Interes;
+  /** Por defecto MENSAJE_TARJETA. */
+  mensajeBase?: string;
 };
 
 /** Arma los campos de contenido de ContactRequest para un envío de la tarjeta. */
@@ -294,12 +324,13 @@ export function camposDesdeTarjeta(c: CamposTarjeta): Pick<
   "nombre" | "apellidos" | "empresa" | "email" | "telefono" | "interes" | "mensaje"
 > {
   const extra = c.mensaje.trim().slice(0, MENSAJE_TARJETA_MAX);
+  const base = c.mensajeBase ?? MENSAJE_TARJETA;
   return {
     ...partirNombre(c.nombreCompleto),
     empresa: "",
     email: c.email,
     telefono: c.telefono,
-    interes: INTERES_TARJETA,
-    mensaje: extra ? `${MENSAJE_TARJETA}: ${extra}` : MENSAJE_TARJETA,
+    interes: c.interes ?? INTERES_TARJETA,
+    mensaje: extra ? `${base}: ${extra}` : base,
   };
 }

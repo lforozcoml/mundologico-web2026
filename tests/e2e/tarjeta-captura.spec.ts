@@ -124,7 +124,7 @@ test("una tarjeta que no existe no llega a la fuente", async ({ page }) => {
   const res = await page.request.post("/api/contact", {
     data: {
       nombre: "Ana", apellidos: "Gómez", empresa: "", email, telefono: "", interes: "Otro",
-      mensaje: MENSAJE_TARJETA, origen: "nfc", consentimiento: true, idioma: "es", tarjeta: "no-existe",
+      mensaje: MENSAJE_TARJETA, origen: "nfc", consentimiento: true, idioma: "es", pagina: "no-existe",
       website: "", elapsedMs: 5000, turnstileToken: "token-prueba",
     },
   });

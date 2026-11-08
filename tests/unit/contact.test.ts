@@ -8,7 +8,9 @@ import {
   MIN_FILL_MS,
   camposDesdeTarjeta,
   fuenteParaMake,
-  normalizarTarjeta,
+  interesDesdeParam,
+  normalizarPagina,
+  MENSAJE_DEMOS,
   partirNombre,
   validateContact,
 } from "../../src/lib/contact.ts";
@@ -168,23 +170,47 @@ describe("envío desde la tarjeta", () => {
   });
 });
 
-describe("tarjeta en la fuente", () => {
+describe("página en la fuente", () => {
   test("el slug con formato válido se conserva en minúsculas", () => {
-    const r = validateContact(envio({ tarjeta: " Federico-Orozco " }));
-    assert.equal(r.kind === "ok" && r.data.tarjeta, "federico-orozco");
+    const r = validateContact(envio({ pagina: " Federico-Orozco " }));
+    assert.equal(r.kind === "ok" && r.data.pagina, "federico-orozco");
   });
 
   test("sin tarjeta, o con un valor que no es slug, queda null sin rechazar el envío", () => {
-    for (const tarjeta of [undefined, "", "../admin", "a b", "x".repeat(61), 7, "-federico"]) {
-      const r = validateContact(envio({ tarjeta }));
-      assert.equal(r.kind, "ok", String(tarjeta));
-      if (r.kind === "ok") assert.equal(r.data.tarjeta, null, String(tarjeta));
+    for (const pagina of [undefined, "", "../admin", "a b", "x".repeat(61), 7, "-federico"]) {
+      const r = validateContact(envio({ pagina }));
+      assert.equal(r.kind, "ok", String(pagina));
+      if (r.kind === "ok") assert.equal(r.data.pagina, null, String(pagina));
     }
-    assert.equal(normalizarTarjeta(null), null);
+    assert.equal(normalizarPagina(null), null);
   });
 
   test("fuenteParaMake agrega la tarjeta solo si viene", () => {
     assert.equal(fuenteParaMake("nfc", "federico-orozco"), "nfc / federico-orozco");
     assert.equal(fuenteParaMake("web", null), "web");
+    assert.equal(fuenteParaMake("rueda-2026-11", "demos-ml"), "rueda-2026-11 / demos-ml");
+  });
+});
+
+describe("?interes= y captura de /demos-ml", () => {
+  test("diagnostico preselecciona el valor existente de INTERESES", () => {
+    assert.equal(interesDesdeParam("diagnostico"), "Diagnóstico de automatización");
+    assert.equal(interesDesdeParam(" Diagnostico "), "Diagnóstico de automatización");
+    assert.ok((INTERESES as readonly string[]).includes(interesDesdeParam("diagnostico")!));
+  });
+
+  test("un ?interes= desconocido no preselecciona nada", () => {
+    for (const v of [undefined, "", "otro", "toString", "__proto__", 3]) assert.equal(interesDesdeParam(v), null, String(v));
+  });
+
+  test("la captura de demos manda su mensaje y el interés elegido, y pasa la validación", () => {
+    const campos = camposDesdeTarjeta({
+      nombreCompleto: "Ana Gómez", email: "a@b.co", telefono: "", mensaje: "",
+      interes: "Diagnóstico de automatización", mensajeBase: MENSAJE_DEMOS,
+    });
+    assert.equal(campos.mensaje, MENSAJE_DEMOS);
+    assert.equal(campos.interes, "Diagnóstico de automatización");
+    const r = validateContact(envio({ ...campos, pagina: "demos-ml", origen: "rueda-2026-11" }));
+    assert.equal(r.kind === "ok" && fuenteParaMake(r.data.fuente, r.data.pagina), "rueda-2026-11 / demos-ml");
   });
 });

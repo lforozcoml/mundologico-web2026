@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fuenteParaMake, validateContact, type ContactData, type ContactPayload } from "@/lib/contact";
+import { PAGINAS_CAPTURA, fuenteParaMake, validateContact, type ContactData, type ContactPayload } from "@/lib/contact";
 import { log, motivoError } from "@/lib/log";
 import { site } from "@/content/data/site";
 import { getTarjeta } from "@/content/data/tarjeta";
@@ -64,9 +64,13 @@ async function notificarMake(webhookUrl: string, payload: ContactPayload): Promi
   }
 }
 
-/** Solo se acepta el slug de una tarjeta que exista; cualquier otro se ignora sin rechazar el envío. */
-function tarjetaValida(slug: string | null): string | null {
-  return slug && getTarjeta(slug) ? slug : null;
+/**
+ * Solo se acepta el slug de una tarjeta que exista o de una página de PAGINAS_CAPTURA;
+ * cualquier otro se ignora sin rechazar el envío.
+ */
+function paginaValida(slug: string | null): string | null {
+  if (!slug) return null;
+  return getTarjeta(slug) || (PAGINAS_CAPTURA as readonly string[]).includes(slug) ? slug : null;
 }
 
 function payloadMake(data: ContactData, timestamp: string): ContactPayload {
@@ -80,7 +84,7 @@ function payloadMake(data: ContactData, timestamp: string): ContactPayload {
     origen: "mundologico.com",
     timestamp,
     telefono: data.telefono,
-    fuente: fuenteParaMake(data.fuente, tarjetaValida(data.tarjeta)),
+    fuente: fuenteParaMake(data.fuente, paginaValida(data.pagina)),
     consentimiento: data.consentimiento,
     idioma: data.idioma,
   };
@@ -157,7 +161,7 @@ export async function POST(req: NextRequest) {
   const { data } = result;
   const id = crypto.randomUUID();
   const fecha = new Date().toISOString();
-  const contexto = { id, fuente: data.fuente, tarjeta: tarjetaValida(data.tarjeta), interes: data.interes, idioma: data.idioma };
+  const contexto = { id, fuente: data.fuente, pagina: paginaValida(data.pagina), interes: data.interes, idioma: data.idioma };
 
   const make = await notificarMake(webhookUrl, payloadMake(data, fecha));
   if (!make.ok) {
