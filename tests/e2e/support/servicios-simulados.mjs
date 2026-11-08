@@ -1,15 +1,15 @@
 // Servidor que simula Turnstile y Make para los tests de /api/contact.
 // next start apunta aquí por variables de entorno (ver playwright.config.ts): ningún test llega a los servicios reales.
+// Sin estado global por test: cada test usa un email propio y filtra el registro por ese email,
+// así los archivos de test pueden correr en paralelo.
 //
-//   POST /turnstile                   siempre success
-//   POST /make                        200, o 500 si modo.make = "falla"
-//   POST /__modo  {make}              cambia el modo y borra el registro
-//   GET  /__registro                  { make: [...] } con cuerpo y headers recibidos
+//   POST /turnstile               siempre success
+//   POST /make                    200, o 500 si el email contiene "falla-make"
+//   GET  /__registro?email=...    { make: [...] } con cuerpo y header secreto de ese email
 import { createServer } from "node:http";
 
 const PORT = Number(process.env.PORT ?? 3101);
-let modo = { make: "ok" };
-let registro = { make: [] };
+const make = [];
 
 function leer(req) {
   return new Promise((resolve) => {
@@ -29,17 +29,16 @@ createServer(async (req, res) => {
   const texto = await leer(req);
 
   if (req.method === "GET" && url.pathname === "/salud") return json(res, 200, { ok: true });
-  if (req.method === "GET" && url.pathname === "/__registro") return json(res, 200, registro);
-  if (req.method === "POST" && url.pathname === "/__modo") {
-    modo = { make: "ok", ...JSON.parse(texto || "{}") };
-    registro = { make: [] };
-    return json(res, 200, modo);
+  if (req.method === "GET" && url.pathname === "/__registro") {
+    const email = url.searchParams.get("email");
+    return json(res, 200, { make: make.filter((r) => r.cuerpo.email === email) });
   }
   if (req.method === "POST" && url.pathname === "/turnstile") return json(res, 200, { success: true });
 
   if (req.method === "POST" && url.pathname === "/make") {
-    registro.make.push({ secreto: req.headers["x-ml-secret"] ?? null, cuerpo: JSON.parse(texto) });
-    if (modo.make === "falla") return json(res, 500, { error: "falla simulada" });
+    const cuerpo = JSON.parse(texto);
+    make.push({ secreto: req.headers["x-ml-secret"] ?? null, cuerpo });
+    if (String(cuerpo.email).includes("falla-make")) return json(res, 500, { error: "falla simulada" });
     res.writeHead(200, { "Content-Type": "text/plain" });
     return res.end("Accepted");
   }

@@ -1,48 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
 import { ETIQUETA_INTERES, INTERESES } from "../../src/lib/contact";
+import { emailUnico, enviosMake, preparar } from "./support/contacto";
 
-/** Servidor simulado de tests/e2e/support/servicios-simulados.mjs (ver playwright.config.ts). */
-const SIMULADOS = "http://localhost:3101";
-
-type Registro = { make: { secreto: string | null; cuerpo: Record<string, unknown> }[] };
-
-// El servidor simulado guarda estado compartido: estos tests van en serie.
-test.describe.configure({ mode: "serial" });
-
-let ipSecuencia = 10;
-
-async function preparar(page: Page, modo: { make?: "ok" | "falla" } = {}) {
-  await page.request.post(`${SIMULADOS}/__modo`, { data: modo });
-  // IP distinta por test para no chocar con el límite de 3 envíos por minuto.
-  await page.setExtraHTTPHeaders({ "x-forwarded-for": `10.0.0.${ipSecuencia++}` });
-  await page.addInitScript(() =>
-    localStorage.setItem(
-      "ml-consent",
-      JSON.stringify({ version: 1, analytics: false, marketing: false, updatedAt: new Date().toISOString() }),
-    ),
-  );
-  // Turnstile simulado en el navegador: entrega un token apenas se pinta el widget.
-  await page.route("https://challenges.cloudflare.com/**", (route) =>
-    route.fulfill({
-      contentType: "application/javascript",
-      body: `window.turnstile = {
-        render: (el, o) => { setTimeout(() => o.callback("token-prueba"), 0); return "w1"; },
-        reset: () => {}, remove: () => {},
-      };`,
-    }),
-  );
-}
-
-async function registro(page: Page): Promise<Registro> {
-  return (await page.request.get(`${SIMULADOS}/__registro`)).json();
-}
-
-async function llenar(page: Page, { consentir = true } = {}) {
+async function llenar(page: Page, email: string, { consentir = true } = {}) {
   const form = page.locator("section#contacto form");
   await form.getByLabel("Nombres").fill("Ana");
   await form.getByLabel("Apellidos").fill("Gómez");
   await form.getByLabel("Empresa").fill("Tienda Prueba");
-  await form.getByLabel("Email").fill("ana@ejemplo.com");
+  await form.getByLabel("Email").fill(email);
   await form.getByLabel(/Teléfono o WhatsApp/).fill("+57 300 123 4567");
   await form.getByLabel("¿Qué te interesa?").selectOption("E-commerce en Shopify");
   await form.getByLabel("Cuéntanos tu proceso o problema").fill("Quiero conectar mi tienda con la facturación.");
@@ -74,14 +39,15 @@ test("selector con las opciones nuevas, casilla sin marcar y enlace a la políti
 test("flujo feliz: envía a Make el payload completo", async ({ page }) => {
   await preparar(page);
   await page.goto("/");
-  const form = await llenar(page);
+  const email = emailUnico("home-feliz");
+  const form = await llenar(page, email);
   await form.getByRole("button", { name: BOTON }).click();
   await expect(page.getByRole("heading", { name: "Mensaje recibido" })).toBeVisible();
 
-  const r = await registro(page);
-  expect(r.make).toHaveLength(1);
-  expect(r.make[0].secreto).toBe("secreto-de-prueba");
-  const make = r.make[0].cuerpo;
+  const envios = await enviosMake(page, email);
+  expect(envios).toHaveLength(1);
+  expect(envios[0].secreto).toBe("secreto-de-prueba");
+  const make = envios[0].cuerpo;
   // Campos de antes, con el mismo nombre, más los nuevos.
   expect(Object.keys(make).sort()).toEqual(
     ["nombre", "apellidos", "empresa", "email", "interes", "mensaje", "origen", "timestamp",
@@ -91,7 +57,7 @@ test("flujo feliz: envía a Make el payload completo", async ({ page }) => {
     nombre: "Ana",
     apellidos: "Gómez",
     empresa: "Tienda Prueba",
-    email: "ana@ejemplo.com",
+    email,
     interes: "E-commerce en Shopify",
     mensaje: "Quiero conectar mi tienda con la facturación.",
     origen: "mundologico.com",
@@ -107,7 +73,8 @@ test("flujo feliz: envía a Make el payload completo", async ({ page }) => {
 test("sin consentimiento no se puede enviar y el error es accesible", async ({ page }) => {
   await preparar(page);
   await page.goto("/");
-  const form = await llenar(page, { consentir: false });
+  const email = emailUnico("home-sin-consentimiento");
+  const form = await llenar(page, email, { consentir: false });
   const boton = form.getByRole("button", { name: BOTON });
   await expect(boton).toBeDisabled();
   await expect(form.getByText("Para enviar, marca la autorización de tratamiento de datos.")).toBeVisible();
@@ -124,43 +91,46 @@ test("sin consentimiento no se puede enviar y el error es accesible", async ({ p
 
   // El servidor también lo rechaza aunque alguien salte el formulario.
   const res = await page.request.post("/api/contact", {
-    headers: { "x-forwarded-for": "10.0.1.1" },
+    headers: { "x-forwarded-for": "10.251.0.1" },
     data: {
-      nombre: "Ana", apellidos: "Gómez", empresa: "", email: "ana@ejemplo.com", telefono: "",
+      nombre: "Ana", apellidos: "Gómez", empresa: "", email, telefono: "",
       interes: "Otro", mensaje: "Mensaje de prueba largo.", origen: "", consentimiento: false,
       website: "", elapsedMs: 5000, turnstileToken: "token-prueba",
     },
   });
   expect(res.status()).toBe(422);
-  expect((await registro(page)).make).toHaveLength(0);
+  expect(await enviosMake(page, email)).toHaveLength(0);
 });
 
 test("?src=nfc llega a Make como fuente nfc", async ({ page }) => {
   await preparar(page);
   await page.goto("/?src=nfc");
-  const form = await llenar(page);
+  const email = emailUnico("home-nfc");
+  const form = await llenar(page, email);
   await form.getByRole("button", { name: BOTON }).click();
   await expect(page.getByRole("heading", { name: "Mensaje recibido" })).toBeVisible();
-  const r = await registro(page);
-  expect(r.make[0].cuerpo.fuente).toBe("nfc");
-  expect(r.make[0].cuerpo.origen).toBe("mundologico.com");
+  const [envio] = await enviosMake(page, email);
+  expect(envio.cuerpo.fuente).toBe("nfc");
+  expect(envio.cuerpo.origen).toBe("mundologico.com");
 });
 
 test("?src desconocido se guarda como web", async ({ page }) => {
   await preparar(page);
   await page.goto("/?src=instagram");
-  const form = await llenar(page);
+  const email = emailUnico("home-src-desconocido");
+  const form = await llenar(page, email);
   await form.getByRole("button", { name: BOTON }).click();
   await expect(page.getByRole("heading", { name: "Mensaje recibido" })).toBeVisible();
-  expect((await registro(page)).make[0].cuerpo.fuente).toBe("web");
+  expect((await enviosMake(page, email))[0].cuerpo.fuente).toBe("web");
 });
 
 test("Make falla: error visible y el formulario se queda", async ({ page }) => {
-  await preparar(page, { make: "falla" });
+  await preparar(page);
   await page.goto("/");
-  const form = await llenar(page);
+  const email = emailUnico("home", { fallaMake: true });
+  const form = await llenar(page, email);
   await form.getByRole("button", { name: BOTON }).click();
   await expect(form.getByText(/No pudimos registrar tu mensaje/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Mensaje recibido" })).toHaveCount(0);
-  expect((await registro(page)).make).toHaveLength(1);
+  expect(await enviosMake(page, email)).toHaveLength(1);
 });
