@@ -76,7 +76,7 @@ test("?src=nfc: llega a Make con fuente nfc, nombre partido y valores por defect
     interes: "Otro",
     mensaje: MENSAJE_TARJETA,
     origen: "mundologico.com",
-    fuente: "nfc",
+    fuente: "nfc / federico-orozco",
     consentimiento: true,
     idioma: "es",
   });
@@ -106,8 +106,30 @@ test("?src=qr con teléfono y mensaje opcionales", async ({ page }) => {
     apellidos: "-",
     telefono: "+57 300 123 4567",
     mensaje: `${MENSAJE_TARJETA}: Hola`,
-    fuente: "qr",
+    fuente: "qr / federico-orozco",
   });
+});
+
+test("la fuente lleva la tarjeta desde la que se envió, sin src cae a web", async ({ page }) => {
+  await page.goto("/contacto/angela-arias");
+  const email = emailUnico("tarjeta-angela");
+  const b = await llenar(page, ES, "Ana Gómez", email);
+  await b.getByRole("button", { name: ES.captura.enviar }).click();
+  await expect(b.getByRole("status")).toBeVisible();
+  expect((await enviosMake(page, email))[0].cuerpo.fuente).toBe("web / angela-arias");
+});
+
+test("una tarjeta que no existe no llega a la fuente", async ({ page }) => {
+  const email = emailUnico("tarjeta-inexistente");
+  const res = await page.request.post("/api/contact", {
+    data: {
+      nombre: "Ana", apellidos: "Gómez", empresa: "", email, telefono: "", interes: "Otro",
+      mensaje: MENSAJE_TARJETA, origen: "nfc", consentimiento: true, idioma: "es", tarjeta: "no-existe",
+      website: "", elapsedMs: 5000, turnstileToken: "token-prueba",
+    },
+  });
+  expect(res.status()).toBe(200);
+  expect((await enviosMake(page, email))[0].cuerpo.fuente).toBe("nfc");
 });
 
 test("?lang=en: tarjeta en inglés, lang del documento y llega idioma en", async ({ page }) => {
@@ -127,7 +149,7 @@ test("?lang=en: tarjeta en inglés, lang del documento y llega idioma en", async
   await b.getByRole("button", { name: EN.captura.enviar }).click();
   await expect(b.getByRole("status")).toContainText(EN.captura.exito);
   const [envio] = await enviosMake(page, email);
-  expect(envio.cuerpo).toMatchObject({ nombre: "John", apellidos: "Smith", idioma: "en", fuente: "nfc" });
+  expect(envio.cuerpo).toMatchObject({ nombre: "John", apellidos: "Smith", idioma: "en", fuente: "nfc / federico-orozco" });
 });
 
 test("el selector ES/EN conserva src y cambia el idioma", async ({ page }) => {

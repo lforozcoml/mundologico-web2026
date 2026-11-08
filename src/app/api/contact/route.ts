@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateContact, type ContactData, type ContactPayload } from "@/lib/contact";
+import { fuenteParaMake, validateContact, type ContactData, type ContactPayload } from "@/lib/contact";
 import { log, motivoError } from "@/lib/log";
 import { site } from "@/content/data/site";
+import { getTarjeta } from "@/content/data/tarjeta";
 
 // Rate limiter in-memory: 10 envíos por IP cada 60 segundos.
 // Solo vive dentro de una instancia caliente del serverless; la protección real es Turnstile.
@@ -63,6 +64,11 @@ async function notificarMake(webhookUrl: string, payload: ContactPayload): Promi
   }
 }
 
+/** Solo se acepta el slug de una tarjeta que exista; cualquier otro se ignora sin rechazar el envío. */
+function tarjetaValida(slug: string | null): string | null {
+  return slug && getTarjeta(slug) ? slug : null;
+}
+
 function payloadMake(data: ContactData, timestamp: string): ContactPayload {
   return {
     nombre: data.nombre,
@@ -74,7 +80,7 @@ function payloadMake(data: ContactData, timestamp: string): ContactPayload {
     origen: "mundologico.com",
     timestamp,
     telefono: data.telefono,
-    fuente: data.fuente,
+    fuente: fuenteParaMake(data.fuente, tarjetaValida(data.tarjeta)),
     consentimiento: data.consentimiento,
     idioma: data.idioma,
   };
@@ -151,7 +157,7 @@ export async function POST(req: NextRequest) {
   const { data } = result;
   const id = crypto.randomUUID();
   const fecha = new Date().toISOString();
-  const contexto = { id, fuente: data.fuente, interes: data.interes, idioma: data.idioma };
+  const contexto = { id, fuente: data.fuente, tarjeta: tarjetaValida(data.tarjeta), interes: data.interes, idioma: data.idioma };
 
   const make = await notificarMake(webhookUrl, payloadMake(data, fecha));
   if (!make.ok) {

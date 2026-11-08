@@ -76,6 +76,8 @@ export type ContactRequest = {
   consentimiento: boolean;
   /** Opcional. Cualquier valor fuera de IDIOMAS, o ausente, se guarda como "es". */
   idioma?: string;
+  /** Opcional: slug de la tarjeta digital desde la que se envía. El servidor confirma que exista. */
+  tarjeta?: string;
   /** Campo trampa: debe llegar vacío. */
   [HONEYPOT_FIELD]: string;
   /** Milisegundos entre que se pintó el formulario y el envío. */
@@ -95,6 +97,8 @@ export type ContactData = {
   fuente: Fuente;
   consentimiento: true;
   idioma: Idioma;
+  /** Slug con formato válido o null. Que la tarjeta exista lo revisa /api/contact. */
+  tarjeta: string | null;
 };
 
 /**
@@ -112,7 +116,8 @@ export type ContactPayload = {
   origen: "mundologico.com";
   timestamp: string;
   telefono: string;
-  fuente: Fuente;
+  /** La Fuente, y si vino de una tarjeta, su slug: "nfc / federico-orozco". Ver fuenteParaMake. */
+  fuente: string;
   consentimiento: true;
   idioma: Idioma;
 };
@@ -147,6 +152,23 @@ export function normalizarFuente(value: unknown): Fuente {
 export function normalizarIdioma(value: unknown): Idioma {
   const v = str(value).toLowerCase();
   return (IDIOMAS as readonly string[]).includes(v) ? (v as Idioma) : IDIOMA_POR_DEFECTO;
+}
+
+const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const SLUG_MAX = 60;
+
+/** Slug con formato válido, o null si no viene o no lo tiene. */
+export function normalizarTarjeta(value: unknown): string | null {
+  const v = str(value).toLowerCase();
+  return v.length <= SLUG_MAX && SLUG_RE.test(v) ? v : null;
+}
+
+/**
+ * Valor de `fuente` que va a Make (y de ahí a la hoja Contacts): la fuente y,
+ * si el lead llegó desde una tarjeta, de quién es. Ejemplo: "nfc / federico-orozco".
+ */
+export function fuenteParaMake(fuente: Fuente, tarjeta: string | null): string {
+  return tarjeta ? `${fuente} / ${tarjeta}` : fuente;
 }
 
 /** Vacío es válido (el campo es opcional). Si viene: caracteres permitidos y mínimo 7 dígitos. */
@@ -229,6 +251,7 @@ export function validateContact(body: unknown): ContactValidation {
       fuente: normalizarFuente(b.origen),
       consentimiento: true,
       idioma: normalizarIdioma(b.idioma),
+      tarjeta: normalizarTarjeta(b.tarjeta),
     },
     token,
   };

@@ -33,7 +33,7 @@ El payload a Make lleva `nombre`, `apellidos`, `empresa`, `email`, `interes`, `m
 
 | Param | Valores | Dónde | Qué hace |
 |---|---|---|---|
-| `src` | `web`, `nfc`, `qr`, `rueda-2026-11` | Home y tarjetas | Se manda como `fuente`. Cualquier otro valor, o ausente, se guarda como `web`. `nfc` es el tag NFC; `qr` es el QR del one-pager. |
+| `src` | `web`, `nfc`, `qr`, `rueda-2026-11` | Home y tarjetas | Se manda como `fuente`. Cualquier otro valor, o ausente, se guarda como `web`. `nfc` es el tag NFC; `qr` es el QR del one-pager. Desde una tarjeta, `fuente` lleva además de quién es: `nfc / federico-orozco`. |
 | `lang` | `en` | Tarjetas `/contacto/[slug]` | Tarjeta en inglés y `idioma: "en"` en el envío. Sin el param es español; no se detecta el idioma del navegador. El selector ES/EN conserva `src`. |
 
 El servidor valida `fuente` e `idioma` contra listas cerradas (`FUENTES` e `IDIOMAS` en `src/lib/contact.ts`); un valor desconocido cae a `web` y `es`, sin rechazar el envío. Para agregar un origen nuevo hay que sumarlo en `FUENTES` de `src/lib/contact.ts`. Las opciones de interés están en `INTERESES` del mismo archivo; los valores de las que ya existían no se cambian porque Make los usa.
@@ -42,7 +42,7 @@ Los logs son JSON de una línea (`src/lib/log.ts`) y nunca llevan nombre, email,
 
 ### Tarjeta digital
 
-`/contacto/[slug]` tiene el bloque "Déjanos tus datos" (`TarjetaCaptura`), que envía a `/api/contact` con el mismo hook que la home (`useEnvioContacto`: Turnstile, honeypot y tiempo mínimo). Pide nombre completo, correo y consentimiento; teléfono y mensaje van colapsados. Como `validateContact` exige apellidos, interés y mensaje, la tarjeta usa valores fijos solo en ese flujo (`camposDesdeTarjeta`): la primera palabra del nombre va a `nombre` y el resto a `apellidos` (o `-`), `interes` es `Otro` y `mensaje` es "Contacto desde tarjeta digital" más lo que escriba la persona.
+`/contacto/[slug]` tiene el bloque "Déjanos tus datos" (`TarjetaCaptura`), que envía a `/api/contact` con el mismo hook que la home (`useEnvioContacto`: Turnstile, honeypot y tiempo mínimo). Pide nombre completo, correo y consentimiento; teléfono y mensaje van colapsados. Como `validateContact` exige apellidos, interés y mensaje, la tarjeta usa valores fijos solo en ese flujo (`camposDesdeTarjeta`): la primera palabra del nombre va a `nombre` y el resto a `apellidos` (o `-`), `interes` es `Otro` y `mensaje` es "Contacto desde tarjeta digital" más lo que escriba la persona. La tarjeta manda también su slug en `tarjeta`; el servidor confirma que exista en `src/content/data/tarjeta.ts` y lo agrega a `fuente` (`fuenteParaMake`), por ejemplo `qr / angela-arias`. Un slug que no existe se ignora y la fuente queda sola.
 
 Los textos en español e inglés están en `src/content/data/tarjeta-textos.ts`. Por leer `?lang=` la página se renderiza en cada visita; el `.vcf` sigue siendo estático. Eventos a GTM: `tarjeta_contacto_vista`, `tarjeta_contacto_click`, `cta_agenda_click` (`ubicacion: "tarjeta"`) y `generate_lead` al enviar con éxito, todos sin datos personales. Llegan a GA4 solo si GTM tiene su trigger y su etiqueta.
 

@@ -65,6 +65,7 @@ export function TarjetaCaptura({ slug, idioma, whatsappHref, email }: Props) {
         origen,
         consentimiento,
         idioma,
+        tarjeta: slug,
       },
       valor(HONEYPOT_FIELD),
     );

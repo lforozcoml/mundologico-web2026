@@ -7,6 +7,8 @@ import {
   MENSAJE_TARJETA,
   MIN_FILL_MS,
   camposDesdeTarjeta,
+  fuenteParaMake,
+  normalizarTarjeta,
   partirNombre,
   validateContact,
 } from "../../src/lib/contact.ts";
@@ -163,5 +165,26 @@ describe("envío desde la tarjeta", () => {
   test("la validación del formulario principal sigue exigiendo apellidos y mensaje", () => {
     assert.equal(kind({ apellidos: "" }), "invalid");
     assert.equal(kind({ mensaje: "x".repeat(CONTACT_LIMITS.mensajeMin - 1) }), "invalid");
+  });
+});
+
+describe("tarjeta en la fuente", () => {
+  test("el slug con formato válido se conserva en minúsculas", () => {
+    const r = validateContact(envio({ tarjeta: " Federico-Orozco " }));
+    assert.equal(r.kind === "ok" && r.data.tarjeta, "federico-orozco");
+  });
+
+  test("sin tarjeta, o con un valor que no es slug, queda null sin rechazar el envío", () => {
+    for (const tarjeta of [undefined, "", "../admin", "a b", "x".repeat(61), 7, "-federico"]) {
+      const r = validateContact(envio({ tarjeta }));
+      assert.equal(r.kind, "ok", String(tarjeta));
+      if (r.kind === "ok") assert.equal(r.data.tarjeta, null, String(tarjeta));
+    }
+    assert.equal(normalizarTarjeta(null), null);
+  });
+
+  test("fuenteParaMake agrega la tarjeta solo si viene", () => {
+    assert.equal(fuenteParaMake("nfc", "federico-orozco"), "nfc / federico-orozco");
+    assert.equal(fuenteParaMake("web", null), "web");
   });
 });
