@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { site } from "@/content/data/site";
 import { Turnstile } from "@/components/ui/Turnstile";
-import { CONTACT_LIMITS, ETIQUETA_INTERES, HONEYPOT_FIELD, INTERESES, type ContactRequest } from "@/lib/contact";
+import { CONTACT_LIMITS, ETIQUETA_INTERES, HONEYPOT_FIELD, INTERESES } from "@/lib/contact";
+import { useEnvioContacto } from "@/lib/useEnvioContacto";
 
 const INPUT_CLASS =
   "px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-[14px] text-mundo-dark outline-none focus:border-mundo-blue focus:bg-white transition-colors aria-[invalid=true]:border-red-400";
@@ -12,21 +13,12 @@ const LABEL_CLASS = "text-[13px] font-semibold text-mundo-dark";
 
 export function ContactoSection() {
   const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [resetSignal, setResetSignal] = useState(0);
-  const [verifyFailed, setVerifyFailed] = useState(false);
   const [consentimiento, setConsentimiento] = useState(false);
   // El error de la casilla aparece cuando la persona la desmarca o sale de ella sin marcarla.
   const [consentimientoTocado, setConsentimientoTocado] = useState(false);
   const consentimientoError = consentimientoTocado && !consentimiento;
-  // Momento en que se pintó el formulario: los bots envían en milisegundos.
-  const startedAtRef = useRef(0);
-
-  useEffect(() => {
-    startedAtRef.current = Date.now();
-  }, []);
+  const { token, enviando: loading, verifyFailed, enviar, reiniciarVerificacion, turnstile } = useEnvioContacto();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,48 +26,30 @@ export function ContactoSection() {
       setConsentimientoTocado(true);
       return;
     }
-    setLoading(true);
     setError(null);
 
     const form = e.currentTarget;
-    const data: ContactRequest = {
-      nombre:    (form.elements.namedItem("nombre")    as HTMLInputElement).value,
-      apellidos: (form.elements.namedItem("apellidos") as HTMLInputElement).value,
-      empresa:   (form.elements.namedItem("empresa")   as HTMLInputElement).value,
-      email:     (form.elements.namedItem("email")     as HTMLInputElement).value,
-      telefono:  (form.elements.namedItem("telefono")  as HTMLInputElement).value,
-      interes:   (form.elements.namedItem("interes")   as HTMLSelectElement).value,
-      mensaje:   (form.elements.namedItem("mensaje")   as HTMLTextAreaElement).value,
-      // Se lee al enviar y no con useSearchParams: así el formulario sigue en el HTML estático del home.
-      origen:    new URLSearchParams(window.location.search).get("src") ?? "",
-      consentimiento,
-      [HONEYPOT_FIELD]: (form.elements.namedItem(HONEYPOT_FIELD) as HTMLInputElement).value,
-      elapsedMs: Date.now() - startedAtRef.current,
-      turnstileToken: token ?? "",
-    };
+    const valor = (nombre: string) =>
+      (form.elements.namedItem(nombre) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement).value;
+    const resultado = await enviar(
+      {
+        nombre: valor("nombre"),
+        apellidos: valor("apellidos"),
+        empresa: valor("empresa"),
+        email: valor("email"),
+        telefono: valor("telefono"),
+        interes: valor("interes"),
+        mensaje: valor("mensaje"),
+        // Se lee al enviar y no con useSearchParams: así el formulario sigue en el HTML estático del home.
+        origen: new URLSearchParams(window.location.search).get("src") ?? "",
+        consentimiento,
+      },
+      valor(HONEYPOT_FIELD),
+    );
 
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!res.ok) {
-        const { error: msg } = await res.json().catch(() => ({}));
-        setError(msg ?? "Ocurrió un error. Intenta de nuevo o escríbenos directamente.");
-        // El token de Turnstile ya se usó: hay que pedir uno nuevo.
-        setResetSignal((n) => n + 1);
-        return;
-      }
-
-      setSent(true);
-    } catch {
-      setError("No se pudo enviar el mensaje. Revisa tu conexión e intenta de nuevo.");
-      setResetSignal((n) => n + 1);
-    } finally {
-      setLoading(false);
-    }
+    if (resultado.ok) setSent(true);
+    else if (resultado.status === 0) setError("No se pudo enviar el mensaje. Revisa tu conexión e intenta de nuevo.");
+    else setError(resultado.mensajeServidor ?? "Ocurrió un error. Intenta de nuevo o escríbenos directamente.");
   }
 
   return (
@@ -202,24 +176,14 @@ export function ContactoSection() {
                   </label>
                 </div>
 
-                <Turnstile
-                  onToken={(t) => {
-                    setToken(t);
-                    if (t) setVerifyFailed(false);
-                  }}
-                  onError={() => setVerifyFailed(true)}
-                  resetSignal={resetSignal}
-                />
+                <Turnstile {...turnstile} />
 
                 {verifyFailed && (
                   <p className="text-[13px] text-mundo-dark bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 leading-relaxed">
                     ⚠️ No pudimos verificar tu navegador.{" "}
                     <button
                       type="button"
-                      onClick={() => {
-                        setVerifyFailed(false);
-                        setResetSignal((n) => n + 1);
-                      }}
+                      onClick={reiniciarVerificacion}
                       className="font-semibold text-mundo-blue hover:underline"
                     >
                       Intentar de nuevo

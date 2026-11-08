@@ -9,6 +9,7 @@ type TurnstileApi = {
     options: {
       sitekey: string;
       language?: string;
+      theme?: "light" | "dark" | "auto";
       callback: (token: string) => void;
       "expired-callback": () => void;
       "error-callback": () => void;
@@ -52,10 +53,14 @@ type Props = {
   resetSignal: number;
   /** La verificación no pudo completarse (navegador bloqueado o script sin cargar). */
   onError: () => void;
+  /** Idioma del widget. Por defecto "es". */
+  idioma?: "es" | "en";
+  /** "dark" para fondos oscuros como la tarjeta digital. Por defecto "auto". */
+  tema?: "light" | "dark" | "auto";
 };
 
 /** Verificación anti-bots de Cloudflare. En modo Managed casi nunca le pide nada a una persona. */
-export function Turnstile({ onToken, resetSignal, onError }: Props) {
+export function Turnstile({ onToken, resetSignal, onError, idioma = "es", tema = "auto" }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
   const onTokenRef = useRef(onToken);
@@ -73,7 +78,8 @@ export function Turnstile({ onToken, resetSignal, onError }: Props) {
         if (cancelled || !containerRef.current || !window.turnstile) return;
         widgetIdRef.current = window.turnstile.render(containerRef.current, {
           sitekey: TURNSTILE_SITE_KEY,
-          language: "es",
+          language: idioma,
+          theme: tema,
           callback: (token) => onTokenRef.current(token),
           "expired-callback": () => onTokenRef.current(null),
           "error-callback": () => {
@@ -92,6 +98,8 @@ export function Turnstile({ onToken, resetSignal, onError }: Props) {
       if (widgetIdRef.current && window.turnstile) window.turnstile.remove(widgetIdRef.current);
       widgetIdRef.current = null;
     };
+    // El widget se pinta una vez; cambiar idioma o tema no lo vuelve a crear.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
