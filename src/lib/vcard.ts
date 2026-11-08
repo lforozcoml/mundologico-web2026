@@ -1,4 +1,4 @@
-import type { Tarjeta } from "@/content/data/tarjeta";
+import { NOTA_VCF, type Tarjeta } from "@/content/data/tarjeta";
 
 const CRLF = "\r\n";
 const MAX_OCTETOS = 75;
@@ -54,6 +54,7 @@ export function buildVCard(t: Tarjeta): string {
     `TEL;TYPE=CELL:${t.celular}`,
     `EMAIL;TYPE=INTERNET:${escapar(t.email)}`,
     `URL:${t.url}`,
+    `NOTE:${escapar(NOTA_VCF)}`,
     "END:VCARD",
   ];
   return lineas.map(plegar).join(CRLF) + CRLF;

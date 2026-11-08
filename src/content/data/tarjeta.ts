@@ -32,6 +32,8 @@ export type TarjetaEmpresa = Comunes & { tipo: "empresa" };
 export type Tarjeta = TarjetaPersona | TarjetaEmpresa;
 
 const EMPRESA = "Mundo Lógico SAS";
+/** NOTE de todos los .vcf. Genérica: no depende del idioma ni del query string. */
+export const NOTA_VCF = "Mundo Lógico: automatización e IA para empresas";
 const URL_SITIO = "https://mundologico.com";
 
 /** Tarjeta general. Destino de los slugs retirados. */
@@ -51,11 +53,13 @@ const personas: TarjetaPersona[] = [
     slug: "federico-orozco",
     nombre: "Federico",
     apellidos: "Orozco Galeano",
+    cargo: "CEO",
     empresa: EMPRESA,
     celular: "+573128315581",
     email: "lforozco@mundologico.com",
     url: URL_SITIO,
-    indexable: true,
+    // Su celular es personal: no debe aparecer en buscadores.
+    indexable: false,
   },
   {
     tipo: "persona",

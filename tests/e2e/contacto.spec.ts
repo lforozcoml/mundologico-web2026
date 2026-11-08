@@ -55,9 +55,11 @@ test.describe("Tag NFC original", () => {
         "N:Orozco Galeano;Federico;;;",
         "FN:Federico Orozco Galeano",
         "ORG:Mundo Lógico SAS",
+        "TITLE:CEO",
         "TEL;TYPE=CELL:+573128315581",
         "EMAIL;TYPE=INTERNET:lforozco@mundologico.com",
         "URL:https://mundologico.com",
+        "NOTE:Mundo Lógico: automatización e IA para empresas",
         "END:VCARD",
         "",
       ].join("\r\n"),
@@ -84,6 +86,9 @@ for (const t of tarjetas) {
       expect(body.endsWith("END:VCARD\r\n")).toBe(true);
       expect(body).toContain(`TEL;TYPE=CELL:${t.celular}\r\n`);
       expect(body).toContain(`EMAIL;TYPE=INTERNET:${t.email}\r\n`);
+      expect(body).toContain(`URL:${t.url}\r\n`);
+      expect(body).toContain("NOTE:Mundo Lógico: automatización e IA para empresas\r\n");
+      expect(body).toMatch(/\r\nFN:.+\r\nORG:.+\r\n/);
       expect(body.replace(/\r\n/g, "")).not.toMatch(/[\r\n]/);
       for (const linea of body.split("\r\n")) expect(Buffer.byteLength(linea, "utf-8")).toBeLessThanOrEqual(75);
     });
@@ -98,6 +103,13 @@ test("tarjeta de Angela: cargo, noindex y .vcf con TITLE", async ({ page, reques
   await expect(page.getByRole("link", { name: "WhatsApp", exact: true })).toHaveAttribute("href", "https://wa.me/573127860531");
   const body = (await (await request.get("/contacto/angela-arias/contacto.vcf")).body()).toString("utf-8");
   expect(body).toContain("N:Arias Montoya;Angela Maria;;;\r\nFN:Angela Maria Arias Montoya\r\nORG:Mundo Lógico SAS\r\nTITLE:Líder Administrativa\r\n");
+});
+
+test("la tarjeta de Federico no se indexa y ninguna tarjeta no indexable entra al sitemap", async ({ page, request }) => {
+  await page.goto("/contacto/federico-orozco");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, nofollow");
+  const sitemap = await (await request.get("/sitemap.xml")).text();
+  for (const t of tarjetas.filter((x) => !x.indexable)) expect(sitemap).not.toContain(derivados(t).ruta);
 });
 
 test("slug desconocido da 404", async ({ request }) => {
