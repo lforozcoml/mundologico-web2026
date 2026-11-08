@@ -1,5 +1,5 @@
 // Servidor que simula Turnstile y Make para los tests de /api/contact.
-// next start apunta aquí por variables de entorno (ver playwright.config.ts): ningún test llega a los servicios reales (ni, por lo tanto, a Airtable).
+// next start apunta aquí por variables de entorno (ver playwright.config.ts): ningún test llega a los servicios reales.
 //
 //   POST /turnstile                   siempre success
 //   POST /make                        200, o 500 si modo.make = "falla"

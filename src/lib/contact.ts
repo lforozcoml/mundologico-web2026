@@ -31,7 +31,7 @@ export const ETIQUETA_INTERES: Record<Interes, string> = {
   Otro: "Otro",
 };
 
-/** Orígenes permitidos del lead (query param `src`). Coinciden con el campo Fuente de Airtable. */
+/** Orígenes permitidos del lead (query param `src`). Make los escribe tal cual en Google Sheets. */
 export const FUENTES = ["web", "nfc", "rueda-2026-11"] as const;
 export type Fuente = (typeof FUENTES)[number];
 export const FUENTE_POR_DEFECTO: Fuente = "web";

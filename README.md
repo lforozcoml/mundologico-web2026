@@ -16,7 +16,7 @@ npm run dev                  # http://localhost:3000
 
 | Variable | Obligatoria | Para qué |
 |---|---|---|
-| `MAKE_WEBHOOK_URL` | Sí | Webhook de Make que registra cada lead en Airtable y envía los correos de aviso. |
+| `MAKE_WEBHOOK_URL` | Sí | Webhook de Make que guarda cada lead en Google Sheets y envía los correos de aviso. |
 | `MAKE_WEBHOOK_SECRET` | No | Se manda en el header `x-ml-secret`; el escenario descarta lo que no lo traiga. |
 | `TURNSTILE_SECRET_KEY` | Sí | Secret de Cloudflare Turnstile (anti-bots del formulario). |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | No | Solo para usar las llaves de prueba de Cloudflare en local. |
@@ -25,11 +25,11 @@ En Vercel se configuran en Project Settings > Environment Variables, para Produc
 
 ## Formulario de contacto
 
-`POST /api/contact` valida (contrato en `src/lib/contact.ts`), verifica Turnstile y envía el lead al webhook de Make. Make es quien lo escribe en la tabla Leads de Airtable y manda los correos: el sitio no tiene credenciales de Airtable. Si Make no responde 2xx, el usuario ve un error y puede reintentar. El escenario debe responder (módulo Webhook response) después de crear el registro en Airtable, para que el éxito del formulario signifique que el lead quedó guardado.
+`POST /api/contact` valida (contrato en `src/lib/contact.ts`), verifica Turnstile y envía el lead al webhook de Make. Make (escenario "Form-Web Mundo Logico") es quien lo guarda en la hoja Contacts de Google Sheets y manda los correos: el sitio no escribe en ninguna base de datos. Si el email ya existe en la hoja, Make actualiza esa fila en vez de crear una nueva. Si Make no responde 2xx, el usuario ve un error y puede reintentar.
 
 El payload a Make lleva `nombre`, `apellidos`, `empresa`, `email`, `interes`, `mensaje`, `origen` (siempre `mundologico.com`), `timestamp`, `telefono`, `fuente` y `consentimiento`.
 
-El origen del lead sale del query param `src` (`web`, `nfc`, `rueda-2026-11`; cualquier otro valor se guarda como `web`). Para agregar un origen nuevo hay que sumarlo en `FUENTES` de `src/lib/contact.ts` y como opción del campo Fuente en Airtable (Make lo escribe tal cual). Lo mismo con las opciones de interés (`INTERESES` y el campo Interés).
+El origen del lead sale del query param `src` (`web`, `nfc`, `rueda-2026-11`; cualquier otro valor se guarda como `web`). Para agregar un origen nuevo hay que sumarlo en `FUENTES` de `src/lib/contact.ts`. Las opciones de interés están en `INTERESES` del mismo archivo; los valores de las que ya existían no se cambian porque Make los usa.
 
 Los logs son JSON de una línea (`src/lib/log.ts`) y nunca llevan nombre, email, teléfono ni mensaje: solo un id por envío, la fuente, el interés y el resultado. Busca `contacto.make_error` en los logs de Vercel para ver envíos que Make no recibió.
 

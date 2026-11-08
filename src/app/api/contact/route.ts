@@ -79,8 +79,8 @@ function payloadMake(data: ContactData, timestamp: string): ContactPayload {
 }
 
 /**
- * Orden: validar, Turnstile, enviar a Make. Make es quien escribe el lead en Airtable
- * y manda los correos; el sitio no habla con Airtable.
+ * Orden: validar, Turnstile, enviar a Make. Make es quien guarda el lead
+ * (hoy en Google Sheets, escenario "Form-Web Mundo Logico") y manda los correos.
  */
 export async function POST(req: NextRequest) {
   const ip =
