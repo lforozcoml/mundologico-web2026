@@ -26,7 +26,7 @@ const categorias: { key: keyof ConsentCategories; titulo: string; desc: string }
 ];
 
 /** Prefijos de ruta donde el banner sale en versión compacta para no tapar el contenido. */
-const RUTAS_COMPACTAS: readonly string[] = ["/contacto"];
+const RUTAS_COMPACTAS: readonly string[] = ["/contacto", "/demos-ml"];
 
 function esCompacta(pathname: string): boolean {
   return RUTAS_COMPACTAS.some((r) => pathname === r || pathname.startsWith(`${r}/`));
