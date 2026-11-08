@@ -32,9 +32,14 @@ export const ETIQUETA_INTERES: Record<Interes, string> = {
 };
 
 /** Orígenes permitidos del lead (query param `src`). Make los escribe tal cual en Google Sheets. */
-export const FUENTES = ["web", "nfc", "rueda-2026-11"] as const;
+export const FUENTES = ["web", "nfc", "qr", "rueda-2026-11"] as const;
 export type Fuente = (typeof FUENTES)[number];
 export const FUENTE_POR_DEFECTO: Fuente = "web";
+
+/** Idioma en que la persona usó el sitio, para responderle en ese idioma. */
+export const IDIOMAS = ["es", "en"] as const;
+export type Idioma = (typeof IDIOMAS)[number];
+export const IDIOMA_POR_DEFECTO: Idioma = "es";
 
 export const CONTACT_LIMITS = {
   nombre: 80,
@@ -69,6 +74,8 @@ export type ContactRequest = {
   /** Valor crudo del query param `src`. El servidor lo normaliza a una Fuente. */
   origen: string;
   consentimiento: boolean;
+  /** Opcional. Cualquier valor fuera de IDIOMAS, o ausente, se guarda como "es". */
+  idioma?: string;
   /** Campo trampa: debe llegar vacío. */
   [HONEYPOT_FIELD]: string;
   /** Milisegundos entre que se pintó el formulario y el envío. */
@@ -87,6 +94,7 @@ export type ContactData = {
   mensaje: string;
   fuente: Fuente;
   consentimiento: true;
+  idioma: Idioma;
 };
 
 /**
@@ -106,6 +114,7 @@ export type ContactPayload = {
   telefono: string;
   fuente: Fuente;
   consentimiento: true;
+  idioma: Idioma;
 };
 
 export type ContactValidation =
@@ -132,6 +141,12 @@ export function esInteres(value: string): value is Interes {
 export function normalizarFuente(value: unknown): Fuente {
   const v = str(value).toLowerCase();
   return (FUENTES as readonly string[]).includes(v) ? (v as Fuente) : FUENTE_POR_DEFECTO;
+}
+
+/** Cualquier valor fuera de la lista, o ausente, se guarda como "es". */
+export function normalizarIdioma(value: unknown): Idioma {
+  const v = str(value).toLowerCase();
+  return (IDIOMAS as readonly string[]).includes(v) ? (v as Idioma) : IDIOMA_POR_DEFECTO;
 }
 
 /** Vacío es válido (el campo es opcional). Si viene: caracteres permitidos y mínimo 7 dígitos. */
@@ -213,7 +228,55 @@ export function validateContact(body: unknown): ContactValidation {
       mensaje,
       fuente: normalizarFuente(b.origen),
       consentimiento: true,
+      idioma: normalizarIdioma(b.idioma),
     },
     token,
+  };
+}
+
+/*
+ * Envío desde la tarjeta digital (/contacto/[slug]).
+ *
+ * El bloque de la tarjeta solo pide nombre completo, correo y consentimiento
+ * (teléfono y mensaje opcionales). validateContact exige además apellidos,
+ * interés y mensaje, y no se relaja para no debilitar el formulario de la home:
+ * estos valores por defecto se usan SOLO en este flujo.
+ */
+
+/** Interés que se manda desde la tarjeta. Es un valor existente de INTERESES. */
+export const INTERES_TARJETA: Interes = "Otro";
+/** Mensaje que se manda desde la tarjeta. Si la persona escribe algo, va después. */
+export const MENSAJE_TARJETA = "Contacto desde tarjeta digital";
+/** Apellidos cuando el nombre completo es una sola palabra. */
+export const APELLIDOS_VACIOS = "-";
+export const NOMBRE_COMPLETO_MAX = CONTACT_LIMITS.nombre + CONTACT_LIMITS.apellidos;
+export const MENSAJE_TARJETA_MAX = 1000;
+
+/** Primera palabra al nombre, el resto a los apellidos (o "-" si no hay más). */
+export function partirNombre(nombreCompleto: string): { nombre: string; apellidos: string } {
+  const [nombre = "", ...resto] = nombreCompleto.trim().split(/\s+/);
+  return { nombre, apellidos: resto.length ? resto.join(" ") : APELLIDOS_VACIOS };
+}
+
+export type CamposTarjeta = {
+  nombreCompleto: string;
+  email: string;
+  telefono: string;
+  mensaje: string;
+};
+
+/** Arma los campos de contenido de ContactRequest para un envío de la tarjeta. */
+export function camposDesdeTarjeta(c: CamposTarjeta): Pick<
+  ContactRequest,
+  "nombre" | "apellidos" | "empresa" | "email" | "telefono" | "interes" | "mensaje"
+> {
+  const extra = c.mensaje.trim().slice(0, MENSAJE_TARJETA_MAX);
+  return {
+    ...partirNombre(c.nombreCompleto),
+    empresa: "",
+    email: c.email,
+    telefono: c.telefono,
+    interes: INTERES_TARJETA,
+    mensaje: extra ? `${MENSAJE_TARJETA}: ${extra}` : MENSAJE_TARJETA,
   };
 }

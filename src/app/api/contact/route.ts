@@ -3,11 +3,12 @@ import { validateContact, type ContactData, type ContactPayload } from "@/lib/co
 import { log, motivoError } from "@/lib/log";
 import { site } from "@/content/data/site";
 
-// Rate limiter in-memory: 3 envíos por IP cada 60 segundos.
+// Rate limiter in-memory: 10 envíos por IP cada 60 segundos.
 // Solo vive dentro de una instancia caliente del serverless; la protección real es Turnstile.
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const WINDOW_MS = 60_000;
-const MAX_PER_WINDOW = 3;
+// 10 y no 3: en eventos (Rueda de Negocios) mucha gente comparte el WiFi y la misma IP pública.
+const MAX_PER_WINDOW = 10;
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
@@ -75,6 +76,7 @@ function payloadMake(data: ContactData, timestamp: string): ContactPayload {
     telefono: data.telefono,
     fuente: data.fuente,
     consentimiento: data.consentimiento,
+    idioma: data.idioma,
   };
 }
 
@@ -149,7 +151,7 @@ export async function POST(req: NextRequest) {
   const { data } = result;
   const id = crypto.randomUUID();
   const fecha = new Date().toISOString();
-  const contexto = { id, fuente: data.fuente, interes: data.interes };
+  const contexto = { id, fuente: data.fuente, interes: data.interes, idioma: data.idioma };
 
   const make = await notificarMake(webhookUrl, payloadMake(data, fecha));
   if (!make.ok) {

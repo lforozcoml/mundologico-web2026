@@ -85,7 +85,7 @@ test("flujo feliz: envía a Make el payload completo", async ({ page }) => {
   // Campos de antes, con el mismo nombre, más los nuevos.
   expect(Object.keys(make).sort()).toEqual(
     ["nombre", "apellidos", "empresa", "email", "interes", "mensaje", "origen", "timestamp",
-     "telefono", "fuente", "consentimiento"].sort(),
+     "telefono", "fuente", "consentimiento", "idioma"].sort(),
   );
   expect(make).toMatchObject({
     nombre: "Ana",
@@ -98,6 +98,8 @@ test("flujo feliz: envía a Make el payload completo", async ({ page }) => {
     telefono: "+57 300 123 4567",
     fuente: "web",
     consentimiento: true,
+    // La home no manda idioma: el servidor lo guarda como "es".
+    idioma: "es",
   });
   expect(String(make.timestamp)).toMatch(/^\d{4}-\d{2}-\d{2}T/);
 });
