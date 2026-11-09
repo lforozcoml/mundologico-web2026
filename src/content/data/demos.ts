@@ -81,24 +81,27 @@ const DEMOS: Demo[] = [
   {
     id: "agente-conversacional",
     tipo: "web",
-    // TODO: activar cuando Federico entregue la URL y el texto final.
+    // Página propia con el widget de voz de ElevenLabs. Además de este flag, la página
+    // solo carga el widget si la bandera de Make (MAKE_DEMO_ESTADO_URL) está prendida.
+    // Textos en borrador: revisarlos antes de activar.
     activo: false,
-    url: "",
+    url: "/demos-ml/sofia",
     textos: {
-      // TODO: textos provisionales. Reemplazar por los definitivos antes de activar.
       es: {
-        etiqueta: "Demo en vivo · Web",
-        titulo: "Agente conversacional",
-        descripcion: "Texto provisional.",
-        paraTuEmpresa: "Texto provisional.",
-        boton: "Probar el agente",
+        etiqueta: "Demo en vivo · Voz",
+        titulo: "Sofía, un agente de voz con IA",
+        descripcion: "Habla con Sofía desde tu navegador y hazle preguntas como se las harías a alguien de tu equipo.",
+        paraTuEmpresa: "Así puede atender un agente de voz las llamadas de tus clientes, con respuestas claras y en su idioma.",
+        boton: "Hablar con Sofía",
+        nota: "Necesitas micrófono. La conversación se graba y se transcribe.",
       },
       en: {
-        etiqueta: "Live demo · Web",
-        titulo: "Conversational agent",
-        descripcion: "Placeholder text.",
-        paraTuEmpresa: "Placeholder text.",
-        boton: "Try the agent",
+        etiqueta: "Live demo · Voice",
+        titulo: "Sofía, an AI voice agent",
+        descripcion: "Talk to Sofía from your browser and ask her questions the way you would ask someone on your team.",
+        paraTuEmpresa: "This is how a voice agent can handle your customers' calls, with clear answers in their language.",
+        boton: "Talk to Sofía",
+        nota: "You'll need a microphone. The conversation is recorded and transcribed.",
       },
     },
   },
@@ -236,6 +239,11 @@ export const demos = validar(DEMOS);
 /** Los que se muestran: activos y con url. */
 export function demosVisibles(lista: readonly Demo[] = demos): Demo[] {
   return lista.filter((d) => d.activo && d.url !== "");
+}
+
+/** Ruta local del sitio: se abre en la misma pestaña. Las externas, en una nueva. */
+export function esRutaLocal(url: string): boolean {
+  return RUTA_LOCAL.test(url);
 }
 
 /** Enlace del botón. En WhatsApp lleva el mensaje del idioma, codificado. */

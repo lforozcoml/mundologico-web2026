@@ -1,5 +1,6 @@
 import { ExternalLink, MessageCircle } from "lucide-react";
-import { enlaceDemo, type Demo } from "@/content/data/demos";
+import { enlaceDemo, esRutaLocal, type Demo } from "@/content/data/demos";
+import { hrefConIdioma } from "@/lib/enlaces";
 import { textosDemos } from "@/content/data/demos-textos";
 import type { Idioma } from "@/lib/contact";
 import { VideoDemo } from "@/components/demos/VideoDemo";
@@ -8,10 +9,13 @@ const BOTON =
   "flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-mundo-blue px-6 text-base font-bold text-white transition-colors hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mundo-blue";
 
 /** Tarjeta de un demo visible (activo y con url). */
-export function TarjetaDemo({ demo, idioma }: { demo: Demo; idioma: Idioma }) {
+export function TarjetaDemo({ demo, idioma, src }: { demo: Demo; idioma: Idioma; src?: string | null }) {
   const t = demo.textos[idioma];
   const Icono = demo.tipo === "whatsapp" ? MessageCircle : ExternalLink;
   const idTitulo = `demo-${demo.id}`;
+  const local = demo.tipo === "web" && esRutaLocal(demo.url);
+  // En rutas locales se conservan src e idioma (sin ?lang= es español).
+  const href = local ? hrefConIdioma(demo.url, src, idioma) : enlaceDemo(demo, idioma);
 
   return (
     <article
@@ -32,9 +36,8 @@ export function TarjetaDemo({ demo, idioma }: { demo: Demo; idioma: Idioma }) {
           <VideoDemo demo={demo} idioma={idioma} />
         ) : (
           <a
-            href={enlaceDemo(demo, idioma)}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={href}
+            {...(local ? {} : { target: "_blank", rel: "noopener noreferrer" })}
             data-demo-id={demo.id}
             data-demo-tipo={demo.tipo}
             data-cta={`demo-${demo.id}`}

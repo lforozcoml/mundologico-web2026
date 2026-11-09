@@ -27,6 +27,10 @@ export default defineConfig({
         MAKE_WEBHOOK_SECRET: "secreto-de-prueba",
         TURNSTILE_SECRET_KEY: "secreto-turnstile-de-prueba",
         TURNSTILE_VERIFY_URL: `${SIMULADOS_URL}/turnstile`,
+        // Bandera del demo de voz: el fetch es server-side, así que se simula aquí y no con page.route.
+        MAKE_DEMO_ESTADO_URL: `${SIMULADOS_URL}/demo-estado`,
+        // Se fija en el build (npm run build corre con este env). No es un agente real.
+        NEXT_PUBLIC_ELEVENLABS_AGENT_ID: "agente_de_prueba",
       },
       // Nunca reutilizar un servidor ya abierto: no tendría estas variables y enviaría leads reales.
       reuseExistingServer: false,

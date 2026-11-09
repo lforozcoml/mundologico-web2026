@@ -93,7 +93,7 @@ export default async function DemosPage({ searchParams }: Props) {
           <ul className="flex flex-wrap justify-center gap-6">
             {visibles.map((demo) => (
               <li key={demo.id} className="flex w-full md:w-[calc(50%-0.75rem)] md:max-w-md lg:w-[calc(33.333%-1rem)]">
-                <TarjetaDemo demo={demo} idioma={idioma} />
+                <TarjetaDemo demo={demo} idioma={idioma} src={src} />
               </li>
             ))}
           </ul>
