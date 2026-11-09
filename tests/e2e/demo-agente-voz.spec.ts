@@ -97,7 +97,7 @@ test("prendido: aviso con voz clonada antes de la llamada y el widget solo carga
   await expect(aviso).toBeVisible();
   // Divulgación completa: IA, voz clonada con autorización y grabación.
   await expect(aviso).toContainText("Vas a hablar con una inteligencia artificial, no con una persona.");
-  await expect(aviso).toContainText("Usa una réplica de la voz de Federico Orozco, con su autorización.");
+  await expect(aviso).toContainText("Usa una réplica de la voz de Federico Orozco, con autorización de Federico Orozco.");
   await expect(aviso).toContainText("La conversación se graba y se transcribe");
   await expect(page.getByRole("link", { name: ES.aviso.enlace })).toHaveAttribute("href", "/privacidad");
   const hablar = page.getByRole("button", { name: ES.hablar });

@@ -64,7 +64,7 @@ export const textosAgenteVoz: Record<Idioma, TextosAgenteVoz> = {
     aviso: {
       titulo: "Antes de empezar",
       antesDelEnlace:
-        "Vas a hablar con una inteligencia artificial, no con una persona. Usa una réplica de la voz de Federico Orozco, con su autorización. La conversación se graba y se transcribe para operar el demo y mejorar el servicio. No compartas datos sensibles. Más detalles en nuestra ",
+        "Vas a hablar con una inteligencia artificial, no con una persona. Usa una réplica de la voz de Federico Orozco, con autorización de Federico Orozco. La conversación se graba y se transcribe para operar el demo y mejorar el servicio. No compartas datos sensibles. Más detalles en nuestra ",
       enlace: "política de privacidad",
       despuesDelEnlace: ".",
     },
