@@ -60,7 +60,7 @@ mundo-lavender:#6F6DFB
 | `/casos` | `src/app/casos/page.tsx` |
 | `/casos/[slug]` | `src/app/casos/[slug]/page.tsx` |
 | `/demos-ml` (no listada) | `src/app/demos-ml/page.tsx` (datos en `src/content/data/demos.ts`) |
-| `/demos-ml/sofia` (no listada) | `src/app/demos-ml/sofia/page.tsx` (textos en `src/content/data/demo-sofia.ts`) |
+| `/demos-ml/agente-voz` (no listada) | `src/app/demos-ml/agente-voz/page.tsx` (textos en `src/content/data/demo-agente-voz.ts`) |
 | `/terminos` | `src/app/terminos/page.tsx` |
 | `/privacidad` | `src/app/privacidad/page.tsx` |
 | `POST /api/contact` | `src/app/api/contact/route.ts` |
@@ -75,7 +75,7 @@ mundo-lavender:#6F6DFB
 - **Metadata**: cada página usa `pageMetadata()` de `src/lib/metadata.ts` (canonical, openGraph, twitter). No definir canonical ni openGraph en el layout: Next mezcla la metadata de forma superficial y las páginas heredarían los del home.
 - **Imagen social**: `src/app/opengraph-image.tsx`, referenciada explícitamente desde `pageMetadata()`.
 - **Cookies**: banner propio con Google Consent Mode v2 (`src/lib/consent.ts`, `CookieBanner.tsx`). Analítica activa por defecto con opción de rechazo, marketing apagado hasta aceptar. Para opt-in estricto: `analytics: false` en `CONSENT_DEFAULTS`. GTM: `GTM-MM4PSS2`.
-- **Demo de voz Sofía**: `/demos-ml/sofia` carga el widget de ElevenLabs (script con versión fija en `demo-sofia.ts`) solo si la bandera de Make (`MAKE_DEMO_ESTADO_URL`, `src/lib/demo-estado.ts`) responde exactamente `enabled: true` y hay `NEXT_PUBLIC_ELEVENLABS_AGENT_ID`. Falla cerrado. El widget se monta después de aceptar el aviso de IA y grabación. La tarjeta en `/demos-ml` es aparte: `activo` en `demos.ts`.
+- **Agente de voz Federico**: `/demos-ml/agente-voz` es un agente de IA con la voz clonada de Federico Orozco (agente "Federico" en ElevenLabs). Carga el widget de ElevenLabs (script con versión fija en `demo-agente-voz.ts`) solo si la bandera de Make (`MAKE_DEMO_ESTADO_URL`, `src/lib/demo-estado.ts`) responde exactamente `enabled: true` y hay `NEXT_PUBLIC_ELEVENLABS_AGENT_ID`. Falla cerrado. El widget se monta después de aceptar el aviso de IA, voz clonada y grabación (texto `[REVISAR LEGAL]`). La ruta es neutra a propósito: no depende del nombre del agente. La tarjeta en `/demos-ml` es aparte: `activo` en `demos.ts`.
 
 ## Producto e-commerce Shopify
 
@@ -111,8 +111,8 @@ Página `/productos/ecommerce-shopify`. Todo el contenido sale de `src/content/d
 | Variable | Descripción |
 |---|---|
 | `MAKE_WEBHOOK_URL` | URL del webhook de Make para el formulario de contacto |
-| `MAKE_DEMO_ESTADO_URL` | Solo servidor. GET de Make que responde `{"enabled": true\|false}`: bandera del demo de voz `/demos-ml/sofia`. Si falta o falla, el demo queda apagado |
-| `NEXT_PUBLIC_ELEVENLABS_AGENT_ID` | ID del agente de voz de ElevenLabs para `/demos-ml/sofia`. Se fija en el build: cambiarlo exige redeploy. Sin él, el demo queda apagado |
+| `MAKE_DEMO_ESTADO_URL` | Solo servidor. GET de Make que responde `{"enabled": true\|false}`: bandera del agente de voz Federico (`/demos-ml/agente-voz`). Si falta o falla, el demo queda apagado |
+| `NEXT_PUBLIC_ELEVENLABS_AGENT_ID` | ID del agente de voz de ElevenLabs para el agente de voz Federico (`/demos-ml/agente-voz`). Se fija en el build: cambiarlo exige redeploy. Sin él, el demo queda apagado |
 
 En `.env.local` para desarrollo. Agregar en Vercel antes del deploy.
 

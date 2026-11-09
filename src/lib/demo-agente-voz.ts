@@ -1,5 +1,5 @@
 /**
- * Personalización opcional de /demos-ml/sofia: ?u=<nombre>&c=<empresa> se pasan al
+ * Personalización opcional de /demos-ml/agente-voz: ?u=<nombre>&c=<empresa> se pasan al
  * agente como variables dinámicas user_name y company_name.
  *
  * Reglas: máximo 60 caracteres; solo letras, números, espacios y puntuación básica;
@@ -25,13 +25,13 @@ export function personalizacionSegura(valor: unknown): string | null {
   return limpio;
 }
 
-export type VariablesSofia = { user_name: string; company_name: string };
+export type VariablesAgenteVoz = { user_name: string; company_name: string };
 
-export function variablesSofia(
+export function variablesAgenteVoz(
   u: unknown,
   c: unknown,
   genericos: { userName: string; companyName: string },
-): VariablesSofia {
+): VariablesAgenteVoz {
   return {
     user_name: personalizacionSegura(u) ?? genericos.userName,
     company_name: personalizacionSegura(c) ?? genericos.companyName,

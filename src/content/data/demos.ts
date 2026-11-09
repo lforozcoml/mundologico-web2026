@@ -85,23 +85,25 @@ const DEMOS: Demo[] = [
     // solo carga el widget si la bandera de Make (MAKE_DEMO_ESTADO_URL) está prendida.
     // Textos en borrador: revisarlos antes de activar.
     activo: false,
-    url: "/demos-ml/sofia",
+    url: "/demos-ml/agente-voz",
     textos: {
       es: {
         etiqueta: "Demo en vivo · Voz",
-        titulo: "Sofía, un agente de voz con IA",
-        descripcion: "Habla con Sofía desde tu navegador y hazle preguntas como se las harías a alguien de tu equipo.",
+        titulo: "Federico en versión IA: un agente de voz",
+        descripcion:
+          "Habla desde tu navegador con un agente de IA que usa la voz clonada de Federico Orozco, fundador de Mundo Lógico. No es él en persona.",
         paraTuEmpresa: "Así puede atender un agente de voz las llamadas de tus clientes, con respuestas claras y en su idioma.",
-        boton: "Hablar con Sofía",
-        nota: "Necesitas micrófono. La conversación se graba y se transcribe.",
+        boton: "Hablar con Federico",
+        nota: "Es una IA, no una persona. Necesitas micrófono. La conversación se graba y se transcribe.",
       },
       en: {
         etiqueta: "Live demo · Voice",
-        titulo: "Sofía, an AI voice agent",
-        descripcion: "Talk to Sofía from your browser and ask her questions the way you would ask someone on your team.",
+        titulo: "Federico's AI version: a voice agent",
+        descripcion:
+          "Talk from your browser to an AI agent that uses the cloned voice of Federico Orozco, founder of Mundo Lógico. It isn't the real Federico.",
         paraTuEmpresa: "This is how a voice agent can handle your customers' calls, with clear answers in their language.",
-        boton: "Talk to Sofía",
-        nota: "You'll need a microphone. The conversation is recorded and transcribed.",
+        boton: "Talk to Federico",
+        nota: "It's an AI, not a person. You'll need a microphone. The conversation is recorded and transcribed.",
       },
     },
   },

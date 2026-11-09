@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
-import { personalizacionSegura, variablesSofia } from "../../src/lib/demo-sofia.ts";
-import { textosSofia } from "../../src/content/data/demo-sofia.ts";
+import { personalizacionSegura, variablesAgenteVoz } from "../../src/lib/demo-agente-voz.ts";
+import { textosAgenteVoz } from "../../src/content/data/demo-agente-voz.ts";
 import { demos, esRutaLocal } from "../../src/content/data/demos.ts";
 
-describe("personalización de Sofía (?u= y ?c=)", () => {
+describe("personalización del agente de voz (?u= y ?c=)", () => {
   test("acepta nombres y empresas con tildes, ñ y puntuación básica", () => {
     for (const v of ["María José", "Peña & Cía. S.A.S.", "O'Brien", "Logística (Medellín)", "Grupo 360", "Jean-Luc"]) {
       assert.equal(personalizacionSegura(v), v);
@@ -35,28 +35,28 @@ describe("personalización de Sofía (?u= y ?c=)", () => {
   });
 
   test("sin parámetros o con valores inválidos usa el genérico del idioma", () => {
-    assert.deepEqual(variablesSofia(undefined, undefined, textosSofia.es.genericos), {
+    assert.deepEqual(variablesAgenteVoz(undefined, undefined, textosAgenteVoz.es.genericos), {
       user_name: "visitante",
       company_name: "tu empresa",
     });
-    assert.deepEqual(variablesSofia("ana@x.com", "<script>", textosSofia.en.genericos), {
+    assert.deepEqual(variablesAgenteVoz("ana@x.com", "<script>", textosAgenteVoz.en.genericos), {
       user_name: "guest",
       company_name: "your company",
     });
-    assert.deepEqual(variablesSofia("Ana", "Formex", textosSofia.es.genericos), { user_name: "Ana", company_name: "Formex" });
+    assert.deepEqual(variablesAgenteVoz("Ana", "Formex", textosAgenteVoz.es.genericos), { user_name: "Ana", company_name: "Formex" });
   });
 
-  test("textos de Sofía sin raya larga", () => {
-    assert.ok(!JSON.stringify(textosSofia).includes(String.fromCharCode(0x2014)));
+  test("textos del agente de voz sin raya larga", () => {
+    assert.ok(!JSON.stringify(textosAgenteVoz).includes(String.fromCharCode(0x2014)));
   });
 });
 
 describe("tarjeta del demo de voz en /demos-ml", () => {
-  test("apunta a /demos-ml/sofia como ruta local y sigue inactiva", () => {
-    const sofia = demos.find((d) => d.id === "agente-conversacional")!;
-    assert.equal(sofia.url, "/demos-ml/sofia");
-    assert.equal(sofia.activo, false);
-    assert.ok(esRutaLocal(sofia.url));
+  test("apunta a /demos-ml/agente-voz como ruta local y sigue inactiva", () => {
+    const agenteVoz = demos.find((d) => d.id === "agente-conversacional")!;
+    assert.equal(agenteVoz.url, "/demos-ml/agente-voz");
+    assert.equal(agenteVoz.activo, false);
+    assert.ok(esRutaLocal(agenteVoz.url));
   });
 
   test("solo las rutas que empiezan con una barra son locales", () => {

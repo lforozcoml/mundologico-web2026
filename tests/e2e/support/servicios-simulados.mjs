@@ -6,7 +6,7 @@
 //   POST /turnstile               siempre success
 //   POST /make                    200, o 500 si el email contiene "falla-make"
 //   GET  /__registro?email=...    { make: [...] } con cuerpo y header secreto de ese email
-//   GET  /demo-estado             bandera del demo de voz; POST /__demo-estado {status, cuerpo} la cambia
+//   GET  /demo-estado             bandera del demo de voz; POST /__demo-estado {status, cuerpo, demoraMs} la cambia
 import { createServer } from "node:http";
 
 const PORT = Number(process.env.PORT ?? 3101);
@@ -38,12 +38,13 @@ createServer(async (req, res) => {
   }
   if (req.method === "POST" && url.pathname === "/turnstile") return json(res, 200, { success: true });
 
-  // Bandera del demo de voz (MAKE_DEMO_ESTADO_URL). Solo la usa demo-sofia.spec.ts, que corre en serie.
+  // Bandera del demo de voz (MAKE_DEMO_ESTADO_URL). Solo la usa demo-agente-voz.spec.ts, que corre en serie.
   if (req.method === "POST" && url.pathname === "/__demo-estado") {
     demoEstado = JSON.parse(texto);
     return json(res, 200, { ok: true });
   }
   if (req.method === "GET" && url.pathname === "/demo-estado") {
+    if (demoEstado.demoraMs) await new Promise((r) => setTimeout(r, demoEstado.demoraMs));
     if (demoEstado.status !== 200) return json(res, demoEstado.status, { error: "falla simulada" });
     res.writeHead(200, { "Content-Type": "application/json" });
     return res.end(demoEstado.cuerpo);

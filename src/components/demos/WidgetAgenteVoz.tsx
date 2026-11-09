@@ -4,8 +4,8 @@ import { useState, type DetailedHTMLProps, type HTMLAttributes } from "react";
 import Link from "next/link";
 import Script from "next/script";
 import { Mic } from "lucide-react";
-import { WIDGET_SCRIPT_URL, type TextosSofia } from "@/content/data/demo-sofia";
-import type { VariablesSofia } from "@/lib/demo-sofia";
+import { WIDGET_SCRIPT_URL, type TextosAgenteVoz } from "@/content/data/demo-agente-voz";
+import type { VariablesAgenteVoz } from "@/lib/demo-agente-voz";
 
 type PropsConvai = DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
   "agent-id": string;
@@ -24,8 +24,8 @@ declare module "react" {
 
 type Props = {
   agentId: string;
-  variables: VariablesSofia;
-  textos: Pick<TextosSofia, "aviso" | "hablar" | "listo">;
+  variables: VariablesAgenteVoz;
+  textos: Pick<TextosAgenteVoz, "aviso" | "hablar" | "listo">;
   botonClase: string;
 };
 
@@ -35,12 +35,12 @@ type Props = {
  * aviso: así lo lee antes de cualquier llamada y la página no baja el script si no
  * lo va a usar. El widget flota en una esquina (no se puede incrustar en línea).
  */
-export function WidgetSofia({ agentId, variables, textos, botonClase }: Props) {
+export function WidgetAgenteVoz({ agentId, variables, textos, botonClase }: Props) {
   const [aceptado, setAceptado] = useState(false);
 
   return (
     <div>
-      <div id="aviso-sofia" className="rounded-xl border border-mundo-blue/30 bg-mundo-blue/5 px-4 py-3 text-base leading-relaxed text-mundo-dark">
+      <div id="aviso-agente-voz" className="rounded-xl border border-mundo-blue/30 bg-mundo-blue/5 px-4 py-3 text-base leading-relaxed text-mundo-dark">
         <p className="font-bold">{textos.aviso.titulo}</p>
         <p className="mt-1">
           {textos.aviso.antesDelEnlace}
@@ -63,8 +63,8 @@ export function WidgetSofia({ agentId, variables, textos, botonClase }: Props) {
         <button
           type="button"
           onClick={() => setAceptado(true)}
-          aria-describedby="aviso-sofia"
-          data-cta="demo-sofia-hablar"
+          aria-describedby="aviso-agente-voz"
+          data-cta="demo-agente-voz-hablar"
           className={`mt-5 ${botonClase}`}
         >
           <Mic aria-hidden className="size-5" />

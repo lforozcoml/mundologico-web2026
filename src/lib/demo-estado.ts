@@ -1,5 +1,5 @@
 /**
- * Bandera externa del demo de voz (/demos-ml/sofia). La fuente de verdad es un
+ * Bandera externa del demo de voz (/demos-ml/agente-voz). La fuente de verdad es un
  * escenario de Make que responde GET con {"enabled": true|false}; su URL va en
  * MAKE_DEMO_ESTADO_URL (solo servidor).
  *
