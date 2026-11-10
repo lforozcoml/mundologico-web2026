@@ -14,10 +14,8 @@ describe("configuración de demos", () => {
     assert.deepEqual(erroresDemos(demos), []);
   });
 
-  test("solo se ven los activos con url: hoy solo WhatsApp", () => {
-    assert.deepEqual(demosVisibles().map((d) => d.id), ["whatsapp-medellin"]);
-    const inactivo = demos.find((d) => d.id === "agente-conversacional")!;
-    assert.equal(inactivo.activo, false);
+  test("solo se ven los activos con url: hoy WhatsApp y el agente de voz", () => {
+    assert.deepEqual(demosVisibles().map((d) => d.id), ["whatsapp-medellin", "agente-conversacional"]);
     assert.equal(demos.find((d) => d.id === "video-cotizaciones")!.activo, false);
   });
 

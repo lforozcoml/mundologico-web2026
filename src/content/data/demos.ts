@@ -81,26 +81,25 @@ const DEMOS: Demo[] = [
   {
     id: "agente-conversacional",
     tipo: "web",
-    // Página propia con el widget de voz de ElevenLabs. Además de este flag, la página
-    // solo carga el widget si la bandera de Make (MAKE_DEMO_ESTADO_URL) está prendida.
-    // Textos en borrador: revisarlos antes de activar.
-    activo: false,
+    // Página propia con el widget de voz de ElevenLabs. La tarjeta se muestra siempre que
+    // esté activa y no consulta la bandera: la página decide. Si la bandera de Make
+    // (MAKE_DEMO_ESTADO_URL) está apagada o falta el agente, muestra "demo desactivado".
+    activo: true,
     url: "/demos-ml/agente-voz",
     textos: {
       es: {
         etiqueta: "Demo en vivo · Voz",
-        titulo: "Federico en versión IA: un agente de voz",
+        titulo: "Habla con Federico, mi versión IA",
         descripcion:
-          "Habla desde tu navegador con un agente de IA que usa la voz clonada de Federico Orozco, fundador de Mundo Lógico. No es él en persona.",
+          "Un agente de voz con IA, con la voz clonada de Federico Orozco, que atiende una llamada y agenda una reunión.",
         paraTuEmpresa: "Así puede atender un agente de voz las llamadas de tus clientes, con respuestas claras y en su idioma.",
         boton: "Hablar con Federico",
         nota: "Es una IA, no una persona. Necesitas micrófono. La conversación se graba y se transcribe.",
       },
       en: {
         etiqueta: "Live demo · Voice",
-        titulo: "Federico's AI version: a voice agent",
-        descripcion:
-          "Talk from your browser to an AI agent that uses the cloned voice of Federico Orozco, founder of Mundo Lógico. It isn't the real Federico.",
+        titulo: "Talk to Federico, my AI version",
+        descripcion: "An AI voice agent with Federico Orozco's cloned voice that answers a call and books a meeting.",
         paraTuEmpresa: "This is how a voice agent can handle your customers' calls, with clear answers in their language.",
         boton: "Talk to Federico",
         nota: "It's an AI, not a person. You'll need a microphone. The conversation is recorded and transcribed.",

@@ -52,10 +52,10 @@ describe("personalización del agente de voz (?u= y ?c=)", () => {
 });
 
 describe("tarjeta del demo de voz en /demos-ml", () => {
-  test("apunta a /demos-ml/agente-voz como ruta local y sigue inactiva", () => {
+  test("apunta a /demos-ml/agente-voz como ruta local y está activa", () => {
     const agenteVoz = demos.find((d) => d.id === "agente-conversacional")!;
     assert.equal(agenteVoz.url, "/demos-ml/agente-voz");
-    assert.equal(agenteVoz.activo, false);
+    assert.equal(agenteVoz.activo, true);
     assert.ok(esRutaLocal(agenteVoz.url));
   });
 

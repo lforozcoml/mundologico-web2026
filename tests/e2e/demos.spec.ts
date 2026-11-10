@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { CALENDARIO_URL } from "../../src/content/data/site";
 import { demos } from "../../src/content/data/demos";
 import { textosDemos } from "../../src/content/data/demos-textos";
+import { textosAgenteVoz } from "../../src/content/data/demo-agente-voz";
 import { textosTarjeta } from "../../src/content/data/tarjeta-textos";
 import { MENSAJE_DEMOS } from "../../src/lib/contact";
 import { emailUnico, enviosMake, eventos, preparar } from "./support/contacto";
@@ -10,6 +11,7 @@ const RUTA = "/demos-ml";
 const ES = textosDemos.es;
 const EN = textosDemos.en;
 const whatsapp = demos.find((d) => d.id === "whatsapp-medellin")!;
+const agenteVoz = demos.find((d) => d.id === "agente-conversacional")!;
 
 test.beforeEach(async ({ page }) => preparar(page));
 
@@ -43,7 +45,7 @@ test("estructura: una h1, solo los demos activos y sin raya larga en ES ni EN", 
     await expect(page.locator("h1")).toHaveText(tx.hero.titulo);
     expect(await page.locator("h1").count()).toBe(1);
     const idioma = q ? "en" : "es";
-    await expect(page.getByRole("article")).toHaveCount(1);
+    await expect(page.getByRole("article")).toHaveCount(demos.filter((x) => x.activo).length);
     for (const d of demos.filter((x) => !x.activo)) await expect(page.getByText(d.textos[idioma].titulo)).toHaveCount(0);
     await expect(page.getByRole("heading", { name: whatsapp.textos[idioma].titulo })).toBeVisible();
     await expect(page.getByText(whatsapp.textos[idioma].paraTuEmpresa)).toBeVisible();
@@ -64,6 +66,30 @@ test("WhatsApp: wa.me/573332845521 con el mensaje de cada idioma, en pestaña nu
     await expect(boton).toHaveAttribute("target", "_blank");
     expect((await boton.boundingBox())!.height).toBeGreaterThanOrEqual(44);
   }
+});
+
+test("agente de voz: tarjeta visible que abre /demos-ml/agente-voz en la misma pestaña, con src e idioma", async ({ page }) => {
+  for (const [q, idioma, esperado] of [
+    ["?src=nfc", "es", "/demos-ml/agente-voz?src=nfc"],
+    ["?src=nfc&lang=en", "en", "/demos-ml/agente-voz?src=nfc&lang=en"],
+  ] as const) {
+    await page.goto(`${RUTA}${q}`);
+    const t = agenteVoz.textos[idioma];
+    await expect(page.getByRole("heading", { name: t.titulo })).toBeVisible();
+    await expect(page.getByText(t.descripcion)).toBeVisible();
+    const boton = page.getByRole("link", { name: t.boton });
+    await expect(boton).toHaveAttribute("href", esperado);
+    await expect(boton).not.toHaveAttribute("target", /.+/);
+    expect(await page.locator("main").innerText()).not.toMatch(/sof[ií]a/i);
+  }
+
+  // La tarjeta no consulta la bandera: la página decide. demo-agente-voz.spec.ts cambia la bandera
+  // simulada en paralelo, así que aquí vale cualquiera de los dos estados de la página.
+  await page.goto(RUTA);
+  await page.getByRole("link", { name: agenteVoz.textos.es.boton }).click();
+  await expect(page).toHaveURL(/\/demos-ml\/agente-voz$/);
+  const vozEs = textosAgenteVoz.es;
+  await expect(page.locator("h1")).toHaveText(new RegExp(`^(${vozEs.desactivado.titulo}|${vozEs.titulo})$`));
 });
 
 test("?lang=en cambia el idioma y el selector conserva src", async ({ page }) => {
