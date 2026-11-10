@@ -150,7 +150,7 @@ test("Diagnóstico en inglés: abre la captura de esta página y envía el inter
   await b.getByRole("checkbox").check();
   await page.waitForTimeout(3200);
   await b.getByRole("button", { name: textosTarjeta.en.captura.enviar }).click();
-  await expect(b.getByRole("status")).toContainText(textosTarjeta.en.captura.exito);
+  await expect(b.getByRole("status")).toContainText(EN.captura.exito);
   const [envio] = await enviosMake(page, email);
   expect(envio.cuerpo).toMatchObject({
     nombre: "John", apellidos: "Smith", interes: "Diagnóstico de automatización",
@@ -177,7 +177,7 @@ test("captura plegada: no envía sin consentimiento y envía con fuente que incl
 
   await b.getByRole("checkbox").check();
   await enviar.click();
-  await expect(b.getByRole("status")).toContainText(t.exito);
+  await expect(b.getByRole("status")).toContainText(ES.captura.exito);
   // En la propia página de demos no se ofrece "Mira los demos".
   await expect(b.getByRole("link", { name: t.verDemos })).toHaveCount(0);
 

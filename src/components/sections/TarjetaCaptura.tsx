@@ -34,6 +34,8 @@ type Props = {
   ubicacion?: "tarjeta" | "demos";
   /** Reemplaza el título por defecto ("Déjanos tus datos"). */
   titulo?: string;
+  /** Reemplaza el mensaje de éxito por defecto (el de la tarjeta). */
+  exito?: string;
   /** Línea bajo el título, por ejemplo el interés preseleccionado. */
   nota?: string;
   /** Plegado: el título abre y cierra el formulario. El formulario (y Turnstile) se monta al abrir. */
@@ -103,6 +105,7 @@ function CuerpoCaptura({
   interes,
   mensajeBase,
   enlaceDemos = true,
+  exito: textoExito,
 }: PropsCuerpo) {
   const t = textosTarjeta[idioma].captura;
   const [hrefDemos, setHrefDemos] = useState<string | null>(null);
@@ -180,7 +183,7 @@ function CuerpoCaptura({
     <>
       {exito ? (
         <div role="status" className="mt-3 text-base text-white">
-          <p>✅ {t.exito}</p>
+          <p>✅ {textoExito ?? t.exito}</p>
           {hrefDemos && (
             <Link
               href={hrefDemos}

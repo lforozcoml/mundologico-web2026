@@ -36,6 +36,7 @@ export type TextosTarjeta = {
     enviar: string;
     enviando: string;
     verificando: string;
+    /** Éxito de la tarjeta. /demos-ml pasa el suyo (prop `exito`). */
     exito: string;
     /** Enlace a /demos-ml en el estado de éxito. */
     verDemos: string;
@@ -65,7 +66,7 @@ export const textosTarjeta: Record<Idioma, TextosTarjeta> = {
       `Guarda el contacto de ${nombre} de ${empresa}: automatización e IA para empresas.`,
     descripcionEmpresa: (empresa) => `Guarda el contacto de ${empresa}: automatización e IA para empresas.`,
     captura: {
-      titulo: "Déjanos tus datos",
+      titulo: "Déjanos tus datos y recibe un correo con acceso a 2 demos de comunicación",
       nombre: "Nombre completo",
       nombrePlaceholder: "Tu nombre y apellido",
       email: "Correo",
@@ -83,7 +84,7 @@ export const textosTarjeta: Record<Idioma, TextosTarjeta> = {
       enviar: "Enviar mis datos",
       enviando: "Enviando...",
       verificando: "Verificando...",
-      exito: "Gracias, te escribimos en 24 a 48 horas.",
+      exito: "Gracias. Revisa tu correo: te enviamos el acceso a los demos y te escribimos en 24 a 48 horas.",
       verDemos: "Mira los demos →",
       errorDatos: "Revisa tu nombre y tu correo e intenta de nuevo.",
       errorLimite: "Hubo muchos intentos seguidos. Espera un momento e intenta de nuevo.",
@@ -109,7 +110,7 @@ export const textosTarjeta: Record<Idioma, TextosTarjeta> = {
       `Save the contact details of ${nombre} at ${empresa}: automation and AI for businesses.`,
     descripcionEmpresa: (empresa) => `Save the contact details of ${empresa}: automation and AI for businesses.`,
     captura: {
-      titulo: "Leave your details",
+      titulo: "Leave your details and get an email with access to 2 communication demos",
       nombre: "Full name",
       nombrePlaceholder: "Your first and last name",
       email: "Email",
@@ -128,7 +129,7 @@ export const textosTarjeta: Record<Idioma, TextosTarjeta> = {
       enviar: "Send my details",
       enviando: "Sending...",
       verificando: "Verifying...",
-      exito: "Thanks, we'll write to you within 24 to 48 hours.",
+      exito: "Thanks. Check your email: we sent you access to the demos, and we will reply within 24 to 48 hours.",
       verDemos: "See the demos →",
       errorDatos: "Please check your name and email and try again.",
       errorLimite: "Too many attempts in a row. Wait a moment and try again.",

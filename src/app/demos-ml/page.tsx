@@ -161,6 +161,7 @@ export default async function DemosPage({ searchParams }: Props) {
             ubicacion="demos"
             titulo={tx.captura.titulo}
             nota={interes ? tx.captura.notaDiagnostico : undefined}
+            exito={tx.captura.exito}
             plegado
             abiertoInicial={interes !== null}
             interes={interes ?? undefined}

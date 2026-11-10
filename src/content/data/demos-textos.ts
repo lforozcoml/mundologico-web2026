@@ -24,7 +24,7 @@ export type TextosDemos = {
     explicacion: string;
   };
   confianza: { titulo: string; casos: string };
-  captura: { titulo: string; notaDiagnostico: string };
+  captura: { titulo: string; notaDiagnostico: string; exito: string };
   botonFijo: string;
 };
 
@@ -55,6 +55,7 @@ export const textosDemos: Record<Idioma, TextosDemos> = {
     captura: {
       titulo: "¿Prefieres que te escribamos? Déjanos tus datos",
       notaDiagnostico: "Interés: Diagnóstico de automatización",
+      exito: "Gracias, te escribimos en 24 a 48 horas.",
     },
     botonFijo: "Agendar llamada",
   },
@@ -85,6 +86,7 @@ export const textosDemos: Record<Idioma, TextosDemos> = {
     captura: {
       titulo: "Rather have us reach out? Leave your details",
       notaDiagnostico: "Interest: Automation Diagnostic",
+      exito: "Thanks, we'll write to you within 24 to 48 hours.",
     },
     botonFijo: "Book a call",
   },
