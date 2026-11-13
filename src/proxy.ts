@@ -6,6 +6,7 @@ import { pathInterno, resolverRuta } from "@/lib/i18n/rutas";
  * - Sin prefijo (español): se reescribe por dentro a /es/... La URL pública no cambia.
  * - /en/...: se traduce con el mapa de rutas a la carpeta en español (/en/products → /en/productos).
  *   Lo que no está en el mapa (páginas solo en español, demos, tarjeta, paths en español) da 404.
+ * - /demos-ml y /contacto no pasan por aquí (ver matcher): viven en app/(sin-prefijo).
  * - /es/... escrito a mano: 308 a la URL sin prefijo, para no duplicar contenido.
  * No hay redirección por Accept-Language.
  *
@@ -34,5 +35,6 @@ export function proxy(request: NextRequest) {
 export const config = {
   // Fuera: API, internos de Next y Vercel, la imagen social y todo lo que tenga extensión
   // (archivos de public/, icon.png, robots.txt, sitemap.xml y el .vcf de la tarjeta).
-  matcher: ["/((?!api/|api$|_next/|_vercel/|opengraph-image|.*\\.[^/]+$).*)"],
+  // También fuera: /demos-ml y /contacto, que viven en app/(sin-prefijo) y usan ?lang=.
+  matcher: ["/((?!api/|api$|_next/|_vercel/|opengraph-image|demos-ml(?:/|$)|contacto(?:/|$)|.*\\.[^/]+$).*)"],
 };
