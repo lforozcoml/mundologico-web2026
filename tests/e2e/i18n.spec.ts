@@ -1,0 +1,202 @@
+import { expect, test, type APIRequestContext } from "@playwright/test";
+import { IDIOMAS, PUBLICADO_EN, type Idioma } from "@/lib/i18n/config";
+import { IDS_RUTAS, RUTAS, alternatesDe, enlace, type RutaId } from "@/lib/i18n/rutas";
+import { SITE_URL } from "@/lib/metadata";
+import { casos } from "@/content/data/casos";
+import { entradasSitemap } from "@/app/sitemap";
+
+/**
+ * Fase 1 de i18n: arquitectura /en sin traducir contenido. Se prueba cada página del
+ * mapa de rutas en cada idioma donde existe, con la bandera PUBLICADO_EN tal como está.
+ */
+
+type Caso = { id: RutaId; idioma: Idioma; path: string };
+
+const paginas: Caso[] = IDS_RUTAS.flatMap((id) =>
+  (id === "caso" ? casos.map((c) => ({ slug: c.slug })) : [{}]).flatMap((params) =>
+    IDIOMAS.flatMap((idioma) => {
+      const path = enlace(id, idioma, params);
+      return path ? [{ id, idioma, path }] : [];
+    }),
+  ),
+);
+
+/**
+ * Títulos en español que ya pasaban de 60 caracteres antes del i18n. Son copy existente
+ * y esta fase no cambia textos en español: quedan como deuda conocida. En inglés se
+ * repiten mientras el contenido no esté traducido.
+ */
+const TITULOS_LARGOS_CONOCIDOS = new Set(["/casos/formex", "/en/case-studies/formex"]);
+
+const absoluta = (path: string) => `${SITE_URL}${path === "/" ? "" : path}`;
+
+async function html(request: APIRequestContext, path: string) {
+  const res = await request.get(path, { maxRedirects: 0 });
+  return { status: res.status(), cuerpo: await res.text() };
+}
+
+const meta = (h: string, re: RegExp) => h.match(re)?.[1];
+const decodificar = (s = "") => s.replace(/&amp;/g, "&").replace(/&#x27;/g, "'").replace(/&quot;/g, '"');
+
+test.describe("i18n por ruta e idioma (HTML del servidor)", () => {
+  for (const { id, idioma, path } of paginas) {
+    test(`${path}: metadata, lang, H1 y JSON-LD`, async ({ request }) => {
+      const { status, cuerpo: h } = await html(request, path);
+      expect(status).toBe(200);
+      const head = h.slice(0, h.indexOf("</head>"));
+
+      // lang del <html> desde el servidor, no desde el navegador.
+      expect(meta(h, /<html[^>]*\slang="([^"]*)"/)).toBe(idioma);
+
+      const titulo = decodificar(meta(head, /<title>([^<]*)<\/title>/));
+      expect(titulo.length).toBeGreaterThan(0);
+      if (!TITULOS_LARGOS_CONOCIDOS.has(path)) expect(titulo.length, titulo).toBeLessThanOrEqual(60);
+
+      const descripcion = decodificar(meta(head, /<meta name="description" content="([^"]*)"/));
+      expect(descripcion.length).toBeGreaterThan(0);
+      expect(descripcion.length, descripcion).toBeLessThanOrEqual(155);
+
+      expect(meta(head, /<link rel="canonical" href="([^"]*)"/)).toBe(absoluta(path));
+      expect(meta(head, /<meta property="og:locale" content="([^"]*)"/)).toBe(idioma === "es" ? "es_CO" : "en_US");
+
+      // hreflang: con el inglés sin publicar no hay ninguno; publicado, recíproco con x-default.
+      const hreflang = Object.fromEntries(
+        [...head.matchAll(/<link rel="alternate" hrefLang="([^"]+)" href="([^"]+)"/g)].map((m) => [m[1], m[2]]),
+      );
+      const params: Record<string, string> = id === "caso" ? { slug: path.split("/").pop() as string } : {};
+      const esperado = Object.fromEntries(Object.entries(alternatesDe(id, params)).map(([k, v]) => [k, absoluta(v)]));
+      expect(hreflang).toEqual(esperado);
+      if (PUBLICADO_EN && RUTAS[id].traducciones.en !== "solo-es" && RUTAS[id].traducciones.en !== "pendiente") {
+        expect(Object.keys(hreflang).sort()).toEqual(["en", "es", "x-default"]);
+      }
+
+      // robots: el inglés sin publicar va noindex, nofollow.
+      const robots = meta(head, /<meta name="robots" content="([^"]*)"/);
+      if (idioma === "en" && !PUBLICADO_EN) expect(robots).toBe("noindex, nofollow");
+      else expect(robots ?? "index, follow").toBe("index, follow");
+
+      expect((h.match(/<h1[\s>]/g) ?? []).length).toBe(1);
+
+      const ld = [...h.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)];
+      expect(ld.length).toBeGreaterThan(0);
+      for (const m of ld) expect(() => JSON.parse(m[1])).not.toThrow();
+    });
+  }
+});
+
+test.describe("sitemap según la bandera", () => {
+  test("cada página publicada en español está; /en solo con PUBLICADO_EN", async ({ request }) => {
+    const xml = await (await request.get("/sitemap.xml")).text();
+    const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+    for (const { id, idioma, path } of paginas) {
+      const debe = RUTAS[id].publicada && (idioma === "es" || PUBLICADO_EN);
+      expect(urls.includes(absoluta(path)), `${path} en el sitemap`).toBe(debe);
+    }
+    for (const u of urls) expect(u.includes("/en"), u).toBe(PUBLICADO_EN && u.includes("/en"));
+    expect(xml.match(/<lastmod>/g)?.length).toBe(urls.length);
+  });
+
+  test("con el inglés publicado: alternates recíprocos y legales sin par", () => {
+    const entradas = entradasSitemap(true);
+    const productos = entradas.filter((e) => e.url.endsWith("/productos") || e.url.endsWith("/en/products"));
+    expect(productos).toHaveLength(2);
+    for (const e of productos) {
+      expect(e.alternates?.languages).toEqual({
+        es: `${SITE_URL}/productos`, en: `${SITE_URL}/en/products`, "x-default": `${SITE_URL}/productos`,
+      });
+    }
+    const terminos = entradas.filter((e) => e.url.includes("terminos") || e.url.includes("terms"));
+    expect(terminos.map((e) => e.url)).toEqual([`${SITE_URL}/terminos`]);
+    expect(terminos[0].alternates).toBeUndefined();
+    expect(entradas.some((e) => e.url.includes("/en/nosotros") || e.url.includes("/en/about"))).toBe(false);
+  });
+});
+
+test.describe("/en mientras PUBLICADO_EN sea false", () => {
+  test.skip(PUBLICADO_EN, "Solo aplica con el inglés sin publicar");
+
+  test("/en responde 200 con noindex, nofollow", async ({ request }) => {
+    const res = await request.get("/en");
+    expect(res.status()).toBe(200);
+    const h = await res.text();
+    expect(meta(h, /<meta name="robots" content="([^"]*)"/)).toBe("noindex, nofollow");
+  });
+
+  test("ni el menú ni el footer en español enlazan a /en", async ({ request }) => {
+    for (const path of ["/", "/productos", "/casos"]) {
+      const h = (await html(request, path)).cuerpo;
+      expect(h).not.toMatch(/href="\/en(\/|")/);
+      expect(h).not.toContain("[FALTA REVISION EN]");
+    }
+  });
+});
+
+test.describe("proxy y archivos fuera de [lang]", () => {
+  const casosProxy: [string, number, string?][] = [
+    ["/es", 308, "/"],
+    ["/es/productos", 308, "/productos"],
+    ["/en/productos", 404],
+    ["/en/nosotros", 404],
+    ["/en/terminos", 404],
+    ["/en/privacidad", 404],
+    ["/en/demos-ml", 404],
+    ["/en/contacto/federico-orozco", 404],
+    ["/fr", 404],
+    ["/no-existe", 404],
+    ["/casos/no-existe", 404],
+    ["/contacto", 307, "/contacto/federico-orozco"],
+  ];
+  for (const [path, status, destino] of casosProxy) {
+    test(`${path} → ${status}`, async ({ request }) => {
+      const res = await request.get(path, { maxRedirects: 0 });
+      expect(res.status()).toBe(status);
+      if (destino) expect(new URL(res.headers()["location"], "http://x").pathname).toBe(destino);
+    });
+  }
+
+  test("el 404 lleva lang es y el documento del sitio", async ({ request }) => {
+    const h = (await html(request, "/no-existe")).cuerpo;
+    expect(meta(h, /<html[^>]*\slang="([^"]*)"/)).toBe("es");
+    expect(h).toContain("GTM-MM4PSS2");
+  });
+
+  test("demos y tarjeta conservan ?lang= sin prefijo", async ({ request }) => {
+    for (const path of ["/demos-ml", "/demos-ml?lang=en", "/contacto/federico-orozco?lang=en"]) {
+      expect((await request.get(path)).status(), path).toBe(200);
+    }
+    const res = await request.get("/demos-ml");
+    expect(res.headers()["x-robots-tag"]).toBe("noindex, nofollow");
+  });
+
+  for (const [path, tipo] of [
+    ["/opengraph-image", "image/png"],
+    ["/icon.png", "image/png"],
+    ["/robots.txt", "text/plain"],
+    ["/sitemap.xml", "application/xml"],
+    ["/contacto/federico-orozco/contacto.vcf", "text/vcard"],
+  ] as const) {
+    test(`${path} responde sin pasar por [lang]`, async ({ request }) => {
+      const res = await request.get(path);
+      expect(res.status()).toBe(200);
+      expect(res.headers()["content-type"]).toContain(tipo);
+    });
+  }
+
+  test("/api/contact sigue fuera del proxy", async ({ request }) => {
+    expect((await request.get("/api/contact")).status()).toBe(405);
+  });
+});
+
+test.describe("375 px sin scroll horizontal", () => {
+  test.use({ viewport: { width: 375, height: 812 } });
+  for (const { path } of paginas) {
+    test(path, async ({ page }) => {
+      await page.goto(path);
+      const ancho = await page.evaluate(() => ({
+        doc: document.documentElement.scrollWidth,
+        vista: document.documentElement.clientWidth,
+      }));
+      expect(ancho.doc).toBeLessThanOrEqual(ancho.vista);
+    });
+  }
+});
