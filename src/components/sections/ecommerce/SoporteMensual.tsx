@@ -3,19 +3,21 @@
 import { m } from "framer-motion";
 import { Check, Clock, Plus } from "lucide-react";
 import { CALENDARIO_URL } from "@/content/data/site";
-import { soporte } from "@/content/data/ecommerce-shopify";
+import { ecommerce } from "@/content/data/i18n/ecommerce-contenido";
+import type { Idioma } from "@/lib/i18n/config";
 
 /** Colores de marca con texto blanco AA (4.5:1 o más). */
 const SEGMENTOS_COLOR = ["#176BEC", "#513EF5", "#037F70"] as const;
 
-const lista = new Intl.ListFormat("es", { style: "long", type: "conjunction" });
 /** Descripción para lectores de pantalla, armada con los mismos textos de la ilustración. */
-const descripcionIlustracion = `${soporte.ilustracion.paquete}: ${lista.format(
-  soporte.ilustracion.segmentos.map((s) => s.toLocaleLowerCase("es")),
-)}. ${soporte.ilustracion.aparte}.`;
 
-function BolsaDeHoras() {
+function BolsaDeHoras({ idioma }: { idioma: Idioma }) {
+  const { soporte } = ecommerce[idioma];
   const { paquete, segmentos, aparte } = soporte.ilustracion;
+  const lista = new Intl.ListFormat(idioma, { style: "long", type: "conjunction" });
+  const descripcionIlustracion = `${paquete}: ${lista.format(
+    segmentos.map((s) => s.toLocaleLowerCase(idioma)),
+  )}. ${aparte}.`;
   return (
     <>
       <p className="sr-only">{descripcionIlustracion}</p>
@@ -63,7 +65,8 @@ function BolsaDeHoras() {
   );
 }
 
-export function SoporteMensual() {
+export function SoporteMensual({ idioma }: { idioma: Idioma }) {
+  const { soporte } = ecommerce[idioma];
   return (
     <section id={soporte.id} className="scroll-mt-24 overflow-x-clip py-20 md:py-28">
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 md:grid-cols-2 md:gap-16">
@@ -113,7 +116,7 @@ export function SoporteMensual() {
           <p className="mt-3 text-[15px] text-gray-600">{soporte.apoyo}</p>
         </div>
 
-        <BolsaDeHoras />
+        <BolsaDeHoras idioma={idioma} />
       </div>
     </section>
   );

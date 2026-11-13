@@ -13,7 +13,9 @@ import {
   Workflow,
   type LucideIcon,
 } from "lucide-react";
-import { revision, type Frente, type IconoFrente } from "@/content/data/ecommerce-shopify";
+import type { Frente, IconoFrente } from "@/content/data/ecommerce-shopify";
+import { ecommerce } from "@/content/data/i18n/ecommerce-contenido";
+import type { Idioma } from "@/lib/i18n/config";
 
 const ICONOS: Record<IconoFrente, LucideIcon> = {
   funnel: Funnel,
@@ -37,16 +39,14 @@ const TONOS_CAPA: readonly Tono[] = [
 
 type Item = { frente: Frente; n: number; tono: Tono };
 
-const items: Item[] = (() => {
+function itemsDe(frentes: readonly Frente[]): Item[] {
   let capa = 0;
-  return revision.frentes.map((frente, i) => ({
+  return frentes.map((frente, i) => ({
     frente,
     n: i + 1,
     tono: frente.tipo === "capa" ? TONOS_CAPA[capa++ % TONOS_CAPA.length] : TONO_ETAPA,
   }));
-})();
-const etapas = items.filter((it) => it.frente.tipo === "etapa");
-const capas = items.filter((it) => it.frente.tipo === "capa");
+}
 
 const RESALTE = "border-mundo-blue shadow-[0_8px_24px_rgba(23,107,236,0.18)]";
 const FOCO = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mundo-blue";
@@ -63,7 +63,11 @@ function Circulo({ n, color }: { n: number; color: string }) {
   );
 }
 
-export function RevisionFrentes() {
+export function RevisionFrentes({ idioma }: { idioma: Idioma }) {
+  const { revision, ui } = ecommerce[idioma];
+  const items = itemsDe(revision.frentes);
+  const etapas = items.filter((it) => it.frente.tipo === "etapa");
+  const capas = items.filter((it) => it.frente.tipo === "capa");
   const [activo, setActivo] = useState(0);
   const base = useId();
   const idTarjeta = (n: number) => `${base}-frente-${n}`;
@@ -96,7 +100,7 @@ export function RevisionFrentes() {
                 <button
                   type="button"
                   aria-pressed={on}
-                  aria-label={`Frente ${it.n}: ${it.frente.titulo}`}
+                  aria-label={`${ui.frente} ${it.n}: ${it.frente.titulo}`}
                   aria-describedby={idTarjeta(it.n)}
                   {...activar(it.n - 1)}
                   className={`flex min-h-11 w-full items-center gap-3 rounded-xl border-2 bg-white px-4 py-3 text-left transition-[border-color,box-shadow] duration-200 ${FOCO} ${
@@ -130,7 +134,7 @@ export function RevisionFrentes() {
                 <button
                   type="button"
                   aria-pressed={on}
-                  aria-label={`Frente ${it.n}: ${it.frente.titulo}`}
+                  aria-label={`${ui.frente} ${it.n}: ${it.frente.titulo}`}
                   aria-describedby={idTarjeta(it.n)}
                   {...activar(it.n - 1)}
                   style={{ background: it.tono.tinte }}

@@ -2,7 +2,9 @@
 
 import { m } from "framer-motion";
 import { ArrowRight, Check, Gauge, LifeBuoy, Store, type LucideIcon } from "lucide-react";
-import { formas, type IconoForma } from "@/content/data/ecommerce-shopify";
+import type { IconoForma } from "@/content/data/ecommerce-shopify";
+import { ecommerce } from "@/content/data/i18n/ecommerce-contenido";
+import type { Idioma } from "@/lib/i18n/config";
 
 const ICONOS: Record<IconoForma, LucideIcon> = { store: Store, gauge: Gauge, lifebuoy: LifeBuoy };
 const COLORES = ["#176BEC", "#04BCA6", "#513EF5"] as const;
@@ -44,7 +46,8 @@ function Ilustracion({ icono, color }: { icono: IconoForma; color: string }) {
   );
 }
 
-export function FormasTrabajo() {
+export function FormasTrabajo({ idioma }: { idioma: Idioma }) {
+  const { formas, ui } = ecommerce[idioma];
   const total = formas.peldanos.length;
   return (
     <section className="bg-gray-50 py-20 md:py-28">
@@ -83,11 +86,11 @@ export function FormasTrabajo() {
                   <h3 className="text-xl font-extrabold leading-snug text-mundo-dark">{f.titulo}</h3>
                 </div>
                 <div className="mb-4 rounded-xl bg-gray-50 px-4 py-3">
-                  <p className="mb-1 text-[12px] font-bold uppercase tracking-wider text-gray-600">Para quién</p>
+                  <p className="mb-1 text-[12px] font-bold uppercase tracking-wider text-gray-600">{ui.paraQuien}</p>
                   <p className="text-[15px] leading-relaxed text-mundo-dark">{f.paraQuien}</p>
                 </div>
                 <p className="mb-5 text-[16px] leading-relaxed text-gray-600">{f.descripcion}</p>
-                <p className="mb-3 text-[13px] font-bold uppercase tracking-wider text-mundo-dark">Qué recibes</p>
+                <p className="mb-3 text-[13px] font-bold uppercase tracking-wider text-mundo-dark">{ui.queRecibes}</p>
                 <ul className="grid gap-2.5">
                   {f.recibes.map((r) => (
                     <li key={r} className="flex gap-2.5 text-[15px] leading-relaxed text-gray-600">
@@ -113,7 +116,7 @@ export function FormasTrabajo() {
 
         <div className="mt-16 grid items-end gap-10 md:grid-cols-[1fr_1.2fr]">
           <p className="text-xl font-bold leading-snug text-mundo-dark md:text-2xl">{formas.cierre}</p>
-          <ol className="flex items-end gap-2 sm:gap-3" aria-label="Escalera de trabajo">
+          <ol className="flex items-end gap-2 sm:gap-3" aria-label={ui.escaleraAria}>
             {formas.peldanos.map((p, i) => (
               <m.li
                 key={p}

@@ -5,7 +5,9 @@ import Image from "next/image";
 import { m, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { CreditCard, Headset, Package } from "lucide-react";
 import { CALENDARIO_URL } from "@/content/data/site";
-import { hero, visibleTiendas, capturaDe, leyendaCaptura } from "@/content/data/ecommerce-shopify";
+import { visibleTiendas, capturaDe } from "@/content/data/ecommerce-shopify";
+import { ecommerce, leyendaEnIdioma, tiendaEnIdioma } from "@/content/data/i18n/ecommerce-contenido";
+import type { Idioma } from "@/lib/i18n/config";
 import { BrowserFrame } from "@/components/ui/BrowserFrame";
 
 const ICONOS_ETIQUETA = [Package, CreditCard, Headset];
@@ -15,14 +17,16 @@ const POSICIONES = [
   "left-4 bottom-0 md:left-10 md:-bottom-6",
 ];
 
-export function HeroEcommerce() {
+export function HeroEcommerce({ idioma }: { idioma: Idioma }) {
+  const { hero, ui } = ecommerce[idioma];
   const ref = useRef<HTMLElement>(null);
   const reducir = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const yMockup = useTransform(scrollYProgress, [0, 1], [0, reducir ? 0 : 60]);
   const yTarjetas = useTransform(scrollYProgress, [0, 1], [0, reducir ? 0 : -40]);
 
-  const tienda = visibleTiendas().find((t) => capturaDe(t));
+  const base = visibleTiendas().find((t) => capturaDe(t));
+  const tienda = base ? tiendaEnIdioma(base, idioma) : undefined;
   const captura = tienda ? capturaDe(tienda) : undefined;
 
   return (
@@ -77,7 +81,7 @@ export function HeroEcommerce() {
                     src={captura.desktop.src}
                     width={captura.desktop.width}
                     height={captura.desktop.height}
-                    alt={`${captura.alt}, en escritorio`}
+                    alt={`${captura.alt}, ${ui.enEscritorio}`}
                     sizes="(min-width: 1280px) 560px, (min-width: 768px) 45vw, 92vw"
                     // Next 16 depreca priority: carga inmediata con prioridad alta.
                     loading="eager"
@@ -92,7 +96,7 @@ export function HeroEcommerce() {
               )}
             </m.div>
 
-            <m.ul style={{ y: yTarjetas }} className="pointer-events-none absolute inset-0" aria-label="Lo que pasa después de la compra">
+            <m.ul style={{ y: yTarjetas }} className="pointer-events-none absolute inset-0" aria-label={ui.despuesCompraAria}>
               {hero.etiquetas.map((etiqueta, i) => {
                 const Icono = ICONOS_ETIQUETA[i % ICONOS_ETIQUETA.length];
                 return (
@@ -117,7 +121,7 @@ export function HeroEcommerce() {
           </div>
           {/* Leyenda fuera del degradado: sobre el fondo oscuro el contraste se mantiene. */}
           {tienda && captura && (
-            <figcaption className="mt-4 text-center text-[13px] text-white/70 md:mt-10">{leyendaCaptura(tienda)}</figcaption>
+            <figcaption className="mt-4 text-center text-[13px] text-white/70 md:mt-10">{leyendaEnIdioma(tienda, idioma)}</figcaption>
           )}
         </figure>
       </div>

@@ -7,16 +7,9 @@ import { breadcrumbJsonLd, faqJsonLd, jsonLdScript, serviceJsonLd } from "@/lib/
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CtaBand } from "@/components/ui/CtaBand";
-import {
-  PUBLICADO,
-  RUTA,
-  bandaFinal,
-  faq,
-  meta,
-  robotsPara,
-  visibleModulos,
-  visibleTiendas,
-} from "@/content/data/ecommerce-shopify";
+import { PUBLICADO, RUTA, robotsPara, visibleModulos, visibleTiendas } from "@/content/data/ecommerce-shopify";
+import { ecommerce, moduloEnIdioma, tiendaEnIdioma } from "@/content/data/i18n/ecommerce-contenido";
+import { CALENDARIO_URL } from "@/content/data/site";
 import { MotionProvider } from "@/components/sections/ecommerce/MotionProvider";
 import { HeroEcommerce } from "@/components/sections/ecommerce/HeroEcommerce";
 import { FranjaLogos } from "@/components/sections/ecommerce/FranjaLogos";
@@ -32,6 +25,7 @@ type Props = PageProps<"/[lang]/productos/ecommerce-shopify">;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const idioma = await idiomaDePagina(params, "ecommerceShopify");
+  const { meta } = ecommerce[idioma];
   return {
     ...pageMetadata({ title: meta.title, description: meta.description, idioma, ruta: "ecommerceShopify" }),
     // Idioma sin publicar: noindex aunque la página sí esté publicada.
@@ -41,11 +35,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 function jsonLdDe(idioma: Idioma) {
   const ruta = enlace("ecommerceShopify", idioma) ?? RUTA;
+  const { meta, faq, ui } = ecommerce[idioma];
   return [
     serviceJsonLd({ nombre: meta.title, descripcion: meta.description, ruta, areaServed: "Colombia", idioma }),
     breadcrumbJsonLd([
-      { nombre: "Inicio", ruta: enlace("inicio", idioma) ?? "/" },
-      { nombre: "Productos", ruta: enlace("productos", idioma) ?? "/productos" },
+      { nombre: ui.migas.inicio, ruta: enlace("inicio", idioma) ?? "/" },
+      { nombre: ui.migas.productos, ruta: enlace("productos", idioma) ?? "/productos" },
       { nombre: meta.title, ruta },
     ], idioma),
     faqJsonLd(faq.items, idioma),
@@ -55,8 +50,9 @@ function jsonLdDe(idioma: Idioma) {
 export default async function EcommerceShopifyPage({ params }: Props) {
   const idioma = await idiomaDePagina(params, "ecommerceShopify");
   const jsonLd = jsonLdDe(idioma);
-  const modulos = visibleModulos();
-  const tiendas = visibleTiendas();
+  const { bandaFinal, ui } = ecommerce[idioma];
+  const modulos = visibleModulos().map((m) => moduloEnIdioma(m, idioma));
+  const tiendas = visibleTiendas().map((t) => tiendaEnIdioma(t, idioma));
 
   return (
     <>
@@ -70,17 +66,21 @@ export default async function EcommerceShopifyPage({ params }: Props) {
       <Header idioma={idioma} ruta="ecommerceShopify" />
       <main className="flex-1">
         <MotionProvider>
-          <HeroEcommerce />
-          <FranjaLogos />
-          <FormasTrabajo />
-          <RevisionTienda />
-          {modulos.length > 0 && <FlujoOperacion modulos={modulos} />}
-          {tiendas.length > 0 && <TiendasDesarrolladas tiendas={tiendas} />}
-          <ComoTrabajamos />
-          <SoporteMensual />
-          <FaqAcordeon />
+          <HeroEcommerce idioma={idioma} />
+          <FranjaLogos idioma={idioma} />
+          <FormasTrabajo idioma={idioma} />
+          <RevisionTienda idioma={idioma} />
+          {modulos.length > 0 && <FlujoOperacion modulos={modulos} idioma={idioma} />}
+          {tiendas.length > 0 && <TiendasDesarrolladas tiendas={tiendas} idioma={idioma} />}
+          <ComoTrabajamos idioma={idioma} />
+          <SoporteMensual idioma={idioma} />
+          <FaqAcordeon idioma={idioma} />
         </MotionProvider>
-        <CtaBand {...bandaFinal} />
+        {/* En español el CTA principal es el valor por defecto de CtaBand, como antes. */}
+        <CtaBand
+          {...bandaFinal}
+          {...(ui.bandaCtaPrimario ? { ctaPrimario: { label: ui.bandaCtaPrimario, href: CALENDARIO_URL } } : {})}
+        />
       </main>
       <Footer idioma={idioma} />
     </>

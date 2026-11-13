@@ -2,9 +2,11 @@
 
 import { useId, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { faq } from "@/content/data/ecommerce-shopify";
+import { ecommerce } from "@/content/data/i18n/ecommerce-contenido";
+import type { Idioma } from "@/lib/i18n/config";
 
-export function FaqAcordeon() {
+export function FaqAcordeon({ idioma }: { idioma: Idioma }) {
+  const { faq } = ecommerce[idioma];
   const [abierta, setAbierta] = useState<number | null>(null);
   const base = useId();
 

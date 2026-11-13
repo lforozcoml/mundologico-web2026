@@ -3,9 +3,10 @@
 import { useId, useRef, useState, type KeyboardEvent } from "react";
 import { m } from "framer-motion";
 import { Check, ShieldCheck } from "lucide-react";
-import { comoTrabajamos, type Ruta } from "@/content/data/ecommerce-shopify";
+import type { Ruta } from "@/content/data/ecommerce-shopify";
+import { ecommerce } from "@/content/data/i18n/ecommerce-contenido";
+import type { Idioma } from "@/lib/i18n/config";
 
-const rutas: readonly Ruta[] = comoTrabajamos.rutas;
 const FOCO = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mundo-blue";
 
 function LineaDeTiempo({ ruta }: { ruta: Ruta }) {
@@ -47,7 +48,9 @@ function LineaDeTiempo({ ruta }: { ruta: Ruta }) {
   );
 }
 
-export function ComoTrabajamos() {
+export function ComoTrabajamos({ idioma }: { idioma: Idioma }) {
+  const { comoTrabajamos, ui } = ecommerce[idioma];
+  const rutas: readonly Ruta[] = comoTrabajamos.rutas;
   const [activa, setActiva] = useState(0);
   const base = useId();
   const pestanas = useRef<(HTMLButtonElement | null)[]>([]);
@@ -83,7 +86,7 @@ export function ComoTrabajamos() {
 
         <div
           role="tablist"
-          aria-label="Ruta de trabajo"
+          aria-label={ui.rutaTrabajoAria}
           className="mb-8 inline-flex flex-wrap gap-1 rounded-full border border-gray-200 bg-white p-1"
         >
           {rutas.map((ruta, i) => {

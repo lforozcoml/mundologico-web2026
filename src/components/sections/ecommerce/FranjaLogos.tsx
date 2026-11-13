@@ -1,5 +1,7 @@
 import Image from "next/image";
-import { tiendasSeccion, visibleTiendas, type Imagen, type Tienda } from "@/content/data/ecommerce-shopify";
+import { visibleTiendas, type Imagen, type Tienda } from "@/content/data/ecommerce-shopify";
+import { ecommerce } from "@/content/data/i18n/ecommerce-contenido";
+import type { Idioma } from "@/lib/i18n/config";
 
 type ConLogo = Tienda & { logo: Imagen };
 
@@ -8,7 +10,8 @@ type ConLogo = Tienda & { logo: Imagen };
  * Contraste medido sobre bg-gray-50 en gris con opacidad 0.7: el más claro
  * (Parchita) queda en 7:1, por encima del mínimo de 3:1.
  */
-export function FranjaLogos() {
+export function FranjaLogos({ idioma }: { idioma: Idioma }) {
+  const { tiendasSeccion, ui } = ecommerce[idioma];
   const conLogo = visibleTiendas().filter((t): t is ConLogo => Boolean(t.logo));
   if (conLogo.length < 2) return null;
 
@@ -23,7 +26,7 @@ export function FranjaLogos() {
                 src={t.logo.src}
                 width={t.logo.width}
                 height={t.logo.height}
-                alt={`Logo de ${t.nombre}`}
+                alt={`${ui.logoDe} ${t.nombre}`}
                 loading="lazy"
                 className="h-7 w-auto opacity-70 grayscale transition-[filter,opacity] duration-300 hover:opacity-100 hover:grayscale-0 md:h-9"
               />

@@ -2,7 +2,9 @@
 
 import { m, useReducedMotion } from "framer-motion";
 import { CreditCard, FileText, Package, Store, UserRound, Warehouse, type LucideIcon } from "lucide-react";
-import { operacion, type ModuloOperacion } from "@/content/data/ecommerce-shopify";
+import type { ModuloOperacion } from "@/content/data/ecommerce-shopify";
+import { ecommerce } from "@/content/data/i18n/ecommerce-contenido";
+import type { Idioma } from "@/lib/i18n/config";
 
 const ICONOS: LucideIcon[] = [Store, Package, CreditCard, Warehouse, FileText, UserRound];
 
@@ -19,7 +21,8 @@ const RUTA = "M60 60 H340 V180 H60";
 const LARGO = 280 + 120 + 280;
 
 /** Solo se monta si hay al menos un módulo activo (lo decide la página). */
-export function FlujoOperacion({ modulos }: { modulos: readonly ModuloOperacion[] }) {
+export function FlujoOperacion({ modulos, idioma }: { modulos: readonly ModuloOperacion[]; idioma: Idioma }) {
+  const { operacion, ui } = ecommerce[idioma];
   const reducir = useReducedMotion();
   return (
     <section className="bg-mundo-dark py-20 text-white md:py-28">
@@ -38,7 +41,7 @@ export function FlujoOperacion({ modulos }: { modulos: readonly ModuloOperacion[
         </div>
 
         <figure>
-          <svg viewBox="0 0 400 240" className="w-full" role="img" aria-label={`Flujo: ${operacion.flujo.join(", ")}`}>
+          <svg viewBox="0 0 400 240" className="w-full" role="img" aria-label={`${ui.flujo}: ${operacion.flujo.join(", ")}`}>
             <path d={RUTA} fill="none" stroke="rgba(255,255,255,.15)" strokeWidth="4" strokeLinecap="round" />
             <m.path
               d={RUTA}

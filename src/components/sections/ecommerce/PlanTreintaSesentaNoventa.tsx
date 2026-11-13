@@ -1,13 +1,15 @@
 "use client";
 
 import { m } from "framer-motion";
-import { revision } from "@/content/data/ecommerce-shopify";
+import { ecommerce } from "@/content/data/i18n/ecommerce-contenido";
+import type { Idioma } from "@/lib/i18n/config";
 
 /** Número decorativo de cada tramo. Es una etiqueta visual, no un dato. */
 const TRAMOS = ["30", "60", "90"] as const;
 const COLORES = ["#176BEC", "#513EF5", "#037F70"] as const;
 
-export function PlanTreintaSesentaNoventa() {
+export function PlanTreintaSesentaNoventa({ idioma }: { idioma: Idioma }) {
+  const { revision } = ecommerce[idioma];
   return (
     <ol className="grid gap-4 md:grid-cols-3">
       {revision.plan.map((paso, i) => (
