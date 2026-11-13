@@ -15,7 +15,8 @@ export const metadata: Metadata = pageMetadata({
   title: `${SITE_NAME} | Automatización e IA para empresas`,
   description:
     "Diseñamos e implementamos automatizaciones con IA para que tu equipo deje de hacer trabajo repetitivo y se enfoque en lo que realmente importa.",
-  path: "/",
+  idioma: "es",
+  ruta: "inicio",
   absoluteTitle: true,
 });
 

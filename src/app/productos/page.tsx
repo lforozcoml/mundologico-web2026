@@ -14,7 +14,8 @@ export const metadata: Metadata = pageMetadata({
   description: ECOMMERCE_PUBLICADO
     ? entrada.hub.description
     : "Soluciones de automatización con IA para tu empresa. Knowledge Engine, Support Engine, IA Lab y Signal Engine.",
-  path: "/productos",
+  idioma: "es",
+  ruta: "productos",
 });
 
 const colorToken = {

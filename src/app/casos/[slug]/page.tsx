@@ -21,7 +21,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return pageMetadata({
     title: `${caso.nombre} · Casos de éxito`,
     description: caso.subtitulo,
-    path: `/casos/${slug}`,
+    idioma: "es",
+    ruta: "caso",
+    params: { slug },
     type: "article",
   });
 }

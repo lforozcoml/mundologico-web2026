@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { IDIOMAS, LOCALE_OG, idiomaPublicado, type Idioma } from "./i18n/config.ts";
+import { alternatesDe, enlace, type ParamsRuta, type RutaId } from "./i18n/rutas.ts";
 
 export const SITE_URL = "https://mundologico.com";
 export const SITE_NAME = "Mundo Lógico";
@@ -14,40 +16,70 @@ const OG_IMAGE = {
   alt: `${SITE_NAME}: automatización e IA para empresas`,
 };
 
-type PageMetadataInput = {
+type Comunes = {
   /** Título de la página sin el sufijo de marca. */
   title: string;
   description: string;
-  /** Ruta relativa a SITE_URL, por ejemplo "/productos". */
-  path: string;
   type?: "website" | "article";
   /** Usa el título tal cual, sin agregar " | Mundo Lógico". */
   absoluteTitle?: boolean;
+  /** Solo para pruebas: por defecto la bandera PUBLICADO_EN. */
+  publicadoEn?: boolean;
 };
+
+/** Página del mapa de rutas: canonical propio por idioma y hreflang recíproco. */
+type EnMapa = Comunes & { idioma: Idioma; ruta: RutaId; params?: ParamsRuta };
+
+/**
+ * Página fuera del mapa (demos y tarjeta, con ?lang=): un solo canonical, sin hreflang,
+ * siempre con el locale del español como hasta ahora.
+ */
+type FueraDelMapa = Comunes & { path: string };
+
+export type PageMetadataInput = EnMapa | FueraDelMapa;
+
+const NOINDEX = { index: false, follow: false } as const;
+
+/** robots para un idioma: noindex, nofollow mientras ese idioma no esté publicado. */
+export function robotsIdioma(idioma: Idioma, publicadoEn?: boolean): Metadata["robots"] | undefined {
+  return idiomaPublicado(idioma, publicadoEn) ? undefined : NOINDEX;
+}
 
 /**
  * Metadata por página. Next mezcla la metadata de forma superficial, así que
  * cada página debe definir su propio canonical y openGraph completos; si no,
  * hereda los del layout (que apuntan al home).
+ *
+ * Con el inglés sin publicar, el español sale igual que antes del i18n: sin
+ * alternates.languages ni alternateLocale. El inglés lleva noindex, nofollow.
  */
-export function pageMetadata({
-  title,
-  description,
-  path,
-  type = "website",
-  absoluteTitle = false,
-}: PageMetadataInput): Metadata {
+export function pageMetadata(input: PageMetadataInput): Metadata {
+  const { title, description, type = "website", absoluteTitle = false, publicadoEn } = input;
   const fullTitle = absoluteTitle ? title : `${title} | ${SITE_NAME}`;
+
+  const enMapa = "ruta" in input;
+  const idioma: Idioma = enMapa ? input.idioma : "es";
+  const path = enMapa ? enlace(input.ruta, idioma, input.params) : input.path;
+  if (path === null) throw new Error(`La ruta ${enMapa ? input.ruta : ""} no existe en ${idioma}`);
+
+  const languages = enMapa ? alternatesDe(input.ruta, input.params, publicadoEn) : {};
+  const conPares = Object.keys(languages).length > 0;
+  const alternateLocale = conPares
+    ? IDIOMAS.filter((i) => i !== idioma && languages[i]).map((i) => LOCALE_OG[i])
+    : [];
+  const robots = robotsIdioma(idioma, publicadoEn);
+
   return {
     title: { absolute: fullTitle },
     description,
-    alternates: { canonical: path },
+    alternates: conPares ? { canonical: path, languages } : { canonical: path },
     openGraph: {
       title: fullTitle,
       description,
       url: path,
       siteName: SITE_NAME,
-      locale: "es_CO",
+      locale: LOCALE_OG[idioma],
+      ...(alternateLocale.length ? { alternateLocale } : {}),
       type,
       images: [OG_IMAGE],
     },
@@ -57,5 +89,6 @@ export function pageMetadata({
       description,
       images: [OG_IMAGE],
     },
+    ...(robots ? { robots } : {}),
   };
 }

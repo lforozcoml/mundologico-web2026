@@ -9,7 +9,8 @@ export const metadata: Metadata = pageMetadata({
   title: "Nosotros",
   description:
     "21 años construyendo tecnología para empresas en Colombia y Estados Unidos, más de 8 automatizando procesos. Hoy, automatización e IA embebida.",
-  path: "/nosotros",
+  idioma: "es",
+  ruta: "nosotros",
 });
 
 export default function NosotrosPage() {

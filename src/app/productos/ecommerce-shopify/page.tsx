@@ -26,18 +26,18 @@ import { TiendasDesarrolladas } from "@/components/sections/ecommerce/TiendasDes
 import { FaqAcordeon } from "@/components/sections/ecommerce/FaqAcordeon";
 
 export const metadata: Metadata = {
-  ...pageMetadata({ title: meta.title, description: meta.description, path: RUTA }),
+  ...pageMetadata({ title: meta.title, description: meta.description, idioma: "es", ruta: "ecommerceShopify" }),
   robots: robotsPara(PUBLICADO),
 };
 
 const jsonLd = [
-  serviceJsonLd({ nombre: meta.title, descripcion: meta.description, ruta: RUTA, areaServed: "Colombia" }),
+  serviceJsonLd({ nombre: meta.title, descripcion: meta.description, ruta: RUTA, areaServed: "Colombia", idioma: "es" }),
   breadcrumbJsonLd([
     { nombre: "Inicio", ruta: "/" },
     { nombre: "Productos", ruta: "/productos" },
     { nombre: meta.title, ruta: RUTA },
-  ]),
-  faqJsonLd(faq.items),
+  ], "es"),
+  faqJsonLd(faq.items, "es"),
 ];
 
 export default function EcommerceShopifyPage() {

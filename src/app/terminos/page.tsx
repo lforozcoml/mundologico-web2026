@@ -9,7 +9,8 @@ export const metadata: Metadata = pageMetadata({
   title: "Términos y condiciones",
   description:
     "Condiciones de uso de los servicios de Mundo Lógico S.A.S.",
-  path: "/terminos",
+  idioma: "es",
+  ruta: "terminos",
 });
 
 export default function TerminosPage() {

@@ -3,7 +3,7 @@ import { Tajawal } from "next/font/google";
 import Script from "next/script";
 import { SITE_NAME, SITE_URL } from "@/lib/metadata";
 import { consentInitScript } from "@/lib/consent";
-import { site } from "@/content/data/site";
+import { jsonLdScript, organizationJsonLd } from "@/lib/jsonld";
 import { CookieBanner } from "@/components/layout/CookieBanner";
 import "./globals.css";
 
@@ -42,22 +42,7 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "Mundo Lógico",
-              url: SITE_URL,
-              logo: `${SITE_URL}/icon.png`,
-              contactPoint: {
-                "@type": "ContactPoint",
-                email: "hola@mundologico.com",
-                telephone: "+57-312-8315581",
-                contactType: "customer support",
-                areaServed: ["CO", "US"],
-                availableLanguage: "Spanish",
-              },
-              sameAs: [site.redes.linkedin, site.redes.facebook],
-            }),
+            __html: jsonLdScript(organizationJsonLd()),
           }}
         />
         {/* Consent Mode v2: debe ir antes de GTM */}

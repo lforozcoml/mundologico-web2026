@@ -9,7 +9,8 @@ export const metadata: Metadata = pageMetadata({
   title: "Política de privacidad",
   description:
     "Política de privacidad y tratamiento de datos personales de Mundo Lógico S.A.S. Ley 1581 de 2012.",
-  path: "/privacidad",
+  idioma: "es",
+  ruta: "privacidad",
 });
 
 const cookies = [

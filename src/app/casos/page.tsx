@@ -9,7 +9,8 @@ export const metadata: Metadata = pageMetadata({
   title: "Casos de éxito",
   description:
     "Resultados reales, no promesas. Proyectos de automatización e IA con métricas concretas.",
-  path: "/casos",
+  idioma: "es",
+  ruta: "casos",
 });
 
 export default function CasosPage() {
