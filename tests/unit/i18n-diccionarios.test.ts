@@ -9,11 +9,13 @@ import { entradaPorIdioma } from "../../src/content/data/ecommerce-shopify.ts";
 import { INTERESES } from "../../src/lib/contact.ts";
 import { ecommerce } from "../../src/content/data/i18n/ecommerce-contenido.ts";
 import { _todasLasTiendas, _todosLosModulos } from "../../src/content/data/ecommerce-shopify.ts";
+import { nosotros } from "../../src/content/data/i18n/nosotros.ts";
+import { site } from "../../src/content/data/site.ts";
 import { cookies } from "../../src/content/data/i18n/cookies.ts";
 import { casosPagina } from "../../src/content/data/i18n/casos-pagina.ts";
 import { productosDetalle, productosPagina } from "../../src/content/data/i18n/productos-pagina.ts";
 
-const diccionarios = { header, footer, inicio, casos: casosPorIdioma, entrada: entradaPorIdioma, productosDetalle, productosPagina, casosPagina, cookies };
+const diccionarios = { header, footer, inicio, casos: casosPorIdioma, entrada: entradaPorIdioma, productosDetalle, productosPagina, casosPagina, cookies, nosotros };
 const diccionariosConEcommerce = { ...diccionarios, ecommerce };
 
 /** Todos los textos de un valor, recorriendo objetos y arreglos. */
@@ -124,6 +126,10 @@ describe("diccionarios", () => {
 
   test("ecommerce: meta description de hasta 155 caracteres en cada idioma", () => {
     for (const i of IDIOMAS) assert.ok(ecommerce[i].meta.description.length <= 155, `${i}: ${ecommerce[i].meta.description.length}`);
+  });
+
+  test("nosotros: la fecha de corte de las cifras es la misma en todos los idiomas", () => {
+    for (const i of IDIOMAS) assert.ok(nosotros[i].cifrasNota.includes(digitos(site.cifras.fechaCorte)), i);
   });
 
   test("cifras de empresa: los mismos números en todos los idiomas", () => {

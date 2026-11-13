@@ -21,11 +21,10 @@ describe("mapa de rutas", () => {
     }
   });
 
-  test("decisiones fijas: legales solo español, Nosotros pendiente, prioridades con par", () => {
+  test("decisiones fijas: legales solo español; el resto con par en inglés", () => {
     assert.equal(RUTAS.terminos.traducciones.en, "solo-es");
     assert.equal(RUTAS.privacidad.traducciones.en, "solo-es");
-    assert.equal(RUTAS.nosotros.traducciones.en, "pendiente");
-    for (const id of ["inicio", "productos", "ecommerceShopify", "casos", "caso"] as const) {
+    for (const id of ["inicio", "productos", "ecommerceShopify", "casos", "caso", "nosotros"] as const) {
       assert.ok(enlace(id, "en", params(id)), id);
     }
   });
@@ -107,7 +106,7 @@ describe("mapa de rutas", () => {
       es: "/casos/formex", en: "/en/case-studies/formex", "x-default": "/casos/formex",
     });
     assert.deepEqual(alternatesDe("terminos", {}, true), {});
-    assert.deepEqual(alternatesDe("nosotros", {}, true), {});
+    assert.deepEqual(alternatesDe("nosotros", {}, true), { es: "/nosotros", en: "/en/about", "x-default": "/nosotros" });
   });
 
   test("una página sin publicar no lleva hreflang", () => {

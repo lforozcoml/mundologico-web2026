@@ -66,7 +66,7 @@ test.describe("i18n por ruta e idioma (HTML del servidor)", () => {
       const params: Record<string, string> = id === "caso" ? { slug: path.split("/").pop() as string } : {};
       const esperado = Object.fromEntries(Object.entries(alternatesDe(id, params)).map(([k, v]) => [k, absoluta(v)]));
       expect(hreflang).toEqual(esperado);
-      if (PUBLICADO_EN && RUTAS[id].traducciones.en !== "solo-es" && RUTAS[id].traducciones.en !== "pendiente") {
+      if (PUBLICADO_EN && enlace(id, "en", params) !== null) {
         expect(Object.keys(hreflang).sort()).toEqual(["en", "es", "x-default"]);
       }
 
@@ -108,7 +108,7 @@ test.describe("sitemap según la bandera", () => {
     const terminos = entradas.filter((e) => e.url.includes("terminos") || e.url.includes("terms"));
     expect(terminos.map((e) => e.url)).toEqual([`${SITE_URL}/terminos`]);
     expect(terminos[0].alternates).toBeUndefined();
-    expect(entradas.some((e) => e.url.includes("/en/nosotros") || e.url.includes("/en/about"))).toBe(false);
+    expect(entradas.some((e) => e.url.includes("/en/nosotros"))).toBe(false);
   });
 });
 
@@ -206,7 +206,7 @@ test.describe("375 px sin scroll horizontal", () => {
  * casi siempre es texto que quedó sin traducir. Se permiten nombres propios, marcas y cifras.
  */
 const PERMITIDOS_IGUALES =
-  /^(Mundo Lógico|Mundo Lógico S\.A\.S\.|IA Lab|Knowledge Engine|Support Engine|Signal Engine|E-commerce|Email|WhatsApp|LinkedIn|Facebook|Legal|Marketing|Plan|Make\.com|Monday\.com|Airtable|OpenAI|Claude|Gemini|Zendesk|Confluence|Bitrix24|Dialpad API|WhatsApp API|WhatsApp Business API|Parchita|Autollantas|Formex|Shopify|Google Workspace Select Partner|Make Silver Partner.*|Medellín, Colombia|[a-z]+\.com\.co|hola@mundologico\.com|\+57 .*|[\d\s.,%+·:/→↓h-]+|0[1-9]|🧪.*)$/;
+  /^(Mundo Lógico|Mundo Lógico S\.A\.S\.|IA Lab|Knowledge Engine|Support Engine|Signal Engine|E-commerce|Email|WhatsApp|LinkedIn|Facebook|Legal|Marketing|Plan|Make\.com|Monday\.com|Airtable|OpenAI|Claude|Gemini|Zendesk|Confluence|Bitrix24|Dialpad API|WhatsApp API|WhatsApp Business API|Parchita|Autollantas|Formex|Shopify|Google Workspace Select Partner|Make Silver Partner.*|Medellín, Colombia|Juan Guillermo Gartner|Federico Orozco|LinkedIn →|[a-z]+\.com\.co|hola@mundologico\.com|\+57 .*|[\d\s.,%+·:/→↓h-]+|0[1-9]|🧪.*)$/;
 
 async function piezasVisibles(request: APIRequestContext, path: string): Promise<Set<string>> {
   const h = (await (await request.get(path)).text())

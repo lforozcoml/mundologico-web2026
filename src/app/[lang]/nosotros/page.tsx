@@ -5,13 +5,16 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { NosotrosSection } from "@/components/sections/NosotrosSection";
 import { CtaBand } from "@/components/ui/CtaBand";
+import { nosotros } from "@/content/data/i18n/nosotros";
+import { inicio } from "@/content/data/i18n/inicio";
+import { CALENDARIO_URL } from "@/content/data/site";
+import { enlaceOEspanol } from "@/lib/i18n/rutas";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/nosotros">): Promise<Metadata> {
   const idioma = await idiomaDePagina(params, "nosotros");
   return pageMetadata({
-    title: "Nosotros",
-    description:
-      "21 años construyendo tecnología para empresas en Colombia y Estados Unidos, más de 8 automatizando procesos. Hoy, automatización e IA embebida.",
+    title: nosotros[idioma].meta.title,
+    description: nosotros[idioma].meta.description,
     idioma,
     ruta: "nosotros",
   });
@@ -19,15 +22,18 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/nosotros">
 
 export default async function NosotrosPage({ params }: PageProps<"/[lang]/nosotros">) {
   const idioma = await idiomaDePagina(params, "nosotros");
+  const tx = nosotros[idioma];
   return (
     <>
       <Header idioma={idioma} ruta="nosotros" />
       <main className="flex-1 pt-16">
-        <NosotrosSection />
+        <NosotrosSection idioma={idioma} />
         <CtaBand
-          titulo="¿Listo para trabajar juntos?"
-          descripcion="Agenda una llamada de 20 minutos. Revisamos un proceso concreto y te decimos si vale la pena automatizarlo."
-          ctaSecundario={{ label: "Ver casos de éxito", href: "/casos" }}
+          titulo={tx.bandaFinal.titulo}
+          descripcion={tx.bandaFinal.descripcion}
+          // En español se deja el CTA principal por defecto de CtaBand, como antes.
+          {...(idioma === "es" ? {} : { ctaPrimario: { label: inicio[idioma].bandaFinal.ctaPrimario, href: CALENDARIO_URL } })}
+          ctaSecundario={{ label: tx.bandaFinal.ctaSecundario, href: enlaceOEspanol("casos", idioma) }}
         />
       </main>
       <Footer idioma={idioma} />

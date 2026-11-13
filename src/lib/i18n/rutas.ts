@@ -76,7 +76,7 @@ export const RUTAS = {
   },
   nosotros: {
     es: "/nosotros",
-    traducciones: { en: "pendiente" },
+    traducciones: { en: "/about" },
     actualizado: "2026-10-30",
     changeFrequency: "yearly",
     priority: 0.6,

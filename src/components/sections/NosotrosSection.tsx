@@ -1,36 +1,16 @@
 import Image from "next/image";
-import { site, partnerBadges } from "@/content/data/site";
+import { partnerBadges } from "@/content/data/site";
+import { inicio } from "@/content/data/i18n/inicio";
+import { nosotros } from "@/content/data/i18n/nosotros";
+import type { Idioma } from "@/lib/i18n/config";
 import { PartnerBadge } from "@/components/ui/PartnerBadge";
 
-const pillares = [
-  { color: "bg-mundo-blue", text: "No somos una agencia. Somos ingenieros que se involucran en el problema desde adentro." },
-  { color: "bg-mundo-teal", text: "Los mismos que diagnostican son los que construyen y entregan." },
-  { color: "bg-mundo-purple", text: "Elegimos la herramienta y la IA según el problema." },
-];
+const COLORES_PILAR = ["bg-mundo-blue", "bg-mundo-teal", "bg-mundo-purple"] as const;
 
-type Fundador = {
-  nombre: string;
-  rol: string;
-  linea: string;
-  linkedin: string;
-};
-
-const fundadores: Fundador[] = [
-  {
-    nombre: "Juan Guillermo Gartner",
-    rol: "CEO y co-fundador",
-    linea: "Estrategia y clientes en Estados Unidos.",
-    linkedin: "https://www.linkedin.com/in/jggartner/",
-  },
-  {
-    nombre: "Federico Orozco",
-    rol: "Co-fundador",
-    linea: "Automatización e IA. Google Cloud Digital Leader.",
-    linkedin: "https://www.linkedin.com/in/lforozco/",
-  },
-];
-
-export function NosotrosSection() {
+export function NosotrosSection({ idioma }: { idioma: Idioma }) {
+  const tx = nosotros[idioma];
+  const cifras = inicio[idioma].cifras;
+  const pillares = tx.pillares.map((text, i) => ({ text, color: COLORES_PILAR[i % COLORES_PILAR.length] }));
   return (
     <section className="py-24 overflow-hidden" id="nosotros">
       <div className="max-w-7xl mx-auto px-6">
@@ -38,23 +18,23 @@ export function NosotrosSection() {
         {/* Encabezado */}
         <div className="max-w-3xl mb-16">
           <Image src="/isotipo-separador.svg" alt="" width={26} height={26} className="mb-2.5" />
-          <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-3">Quiénes somos</p>
+          <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-3">{tx.eyebrow}</p>
           <h1 className="text-4xl md:text-5xl font-black text-mundo-dark leading-tight mb-5">
-            21 años conectando{" "}
-            <span className="text-mundo-blue">tecnología y negocio</span>
+            {tx.h1.a}{" "}
+            <span className="text-mundo-blue">{tx.h1.resaltado}</span>
           </h1>
           <p className="text-[16px] text-gray-600 leading-relaxed mb-4">
-            Desde 2005 construimos tecnología para empresas en Colombia y Estados Unidos, y hace más de 8 años nos especializamos en automatizar procesos. Hoy nos enfocamos en automatización e IA: que tu equipo deje las tareas manuales, cometa menos errores de digitación y tenga mejor información para decidir.
+            {tx.intro}
           </p>
           <p className="text-[16px] text-gray-600 leading-relaxed">
-            No vendemos chatbots sueltos. Trabajamos con <strong className="font-bold text-mundo-dark">IA embebida</strong>: la IA va dentro de tus automatizaciones, en el paso del proceso donde aporta, ya sea para leer un documento, clasificar una solicitud o redactar una respuesta. Usamos Claude o ChatGPT según lo que pida cada proceso.
+            {tx.embebida.antes} <strong className="font-bold text-mundo-dark">{tx.embebida.resaltado}</strong>{tx.embebida.despues}
           </p>
         </div>
 
         {/* Cifras */}
         <div className="mb-16">
           <div className="grid sm:grid-cols-3 gap-6 max-w-4xl">
-            {site.cifras.items.map(({ valor, label }) => (
+            {cifras.map(({ valor, label }) => (
               <div key={label} className="bg-gray-50 rounded-2xl border border-gray-200 px-7 py-6">
                 <div className="text-[34px] font-black text-mundo-dark leading-none mb-2">{valor}</div>
                 <div className="text-[14px] text-gray-600 leading-snug">{label}</div>
@@ -62,7 +42,7 @@ export function NosotrosSection() {
             ))}
           </div>
           <p className="text-[12px] text-gray-400 mt-4">
-            Datos internos de Mundo Lógico a {site.cifras.fechaCorte}.
+            {tx.cifrasNota}
           </p>
         </div>
 
@@ -80,22 +60,22 @@ export function NosotrosSection() {
 
         {/* Partners y certificaciones */}
         <div className="bg-gray-50 rounded-3xl border border-gray-200 p-12 mb-14">
-          <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-5">Partners y certificaciones</p>
+          <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-5">{tx.partnersTitulo}</p>
           <div className="flex items-center gap-4 flex-wrap mb-6">
             {partnerBadges.map((badge) => (
-              <PartnerBadge key={badge.alt} badge={badge} imgClassName="h-[76px] w-auto" />
+              <PartnerBadge key={badge.alt} badge={badge} imgClassName="h-[76px] w-auto" titulo={inicio[idioma].hero.perfilPartner} />
             ))}
           </div>
           <p className="text-[15px] text-gray-600 leading-relaxed max-w-2xl">
-            Todo nuestro equipo está certificado en Make, hasta nivel Advanced. También tenemos certificaciones en Monday.com y Google Cloud Digital Leader.
+            {tx.certificaciones}
           </p>
         </div>
 
         {/* Fundadores */}
         <div className="max-w-3xl">
-          <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-5">Fundadores</p>
+          <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-5">{tx.fundadoresTitulo}</p>
           <div className="flex flex-col gap-4">
-            {fundadores.map(({ nombre, rol, linea, linkedin }) => (
+            {tx.fundadores.map(({ nombre, rol, linea, linkedin }) => (
               <div key={nombre} className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                 <span className="text-[16px] font-extrabold text-mundo-dark">{nombre}</span>
                 <span className="text-[15px] text-gray-500">· {rol}. {linea}</span>
