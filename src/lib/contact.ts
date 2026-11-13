@@ -1,8 +1,11 @@
 /**
  * Contrato y validación del formulario de contacto. Lo usan el formulario
  * (opciones y límites), /api/contact (validación en el servidor) y los tests.
- * No importa nada para que los tests unitarios lo carguen con Node directamente.
+ * Solo importa la configuración de idiomas (ruta relativa con .ts) para que los tests
+ * unitarios lo carguen con Node directamente.
  */
+
+import { IDIOMAS, IDIOMA_POR_DEFECTO, type Idioma } from "./i18n/config.ts";
 
 /**
  * Opciones del selector de interés. Es la única lista: la usan el formulario y el servidor.
@@ -36,10 +39,8 @@ export const FUENTES = ["web", "nfc", "qr", "rueda-2026-11"] as const;
 export type Fuente = (typeof FUENTES)[number];
 export const FUENTE_POR_DEFECTO: Fuente = "web";
 
-/** Idioma en que la persona usó el sitio, para responderle en ese idioma. */
-export const IDIOMAS = ["es", "en"] as const;
-export type Idioma = (typeof IDIOMAS)[number];
-export const IDIOMA_POR_DEFECTO: Idioma = "es";
+/** Idioma en que la persona usó el sitio, para responderle en ese idioma. Sale de la configuración de idiomas. */
+export { IDIOMAS, IDIOMA_POR_DEFECTO, type Idioma };
 
 export const CONTACT_LIMITS = {
   nombre: 80,
