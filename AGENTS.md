@@ -28,7 +28,7 @@ Reporta evidencia (comando y resultado real), nunca solo "pasó". Si un comando 
 - Toda animación respeta `useReducedMotion`.
 - A 375 px de ancho: sin scroll horizontal y CTA principal visible sin hacer scroll.
 - Metadata solo con `pageMetadata()`. JSON-LD solo con los helpers de `src/lib` y `jsonLdScript`.
-- Página o sección nueva detrás de un flag de publicación y con `noindex` hasta que se active. Referencia: `robotsPara(PUBLICADO)` en la metadata de la página y `sitemapEntrada(PUBLICADO, BASE)` en `src/app/sitemap.ts` (ver `src/content/data/ecommerce-shopify.ts`).
+- Página o sección nueva detrás de un flag de publicación y con `noindex` hasta que se active. Referencia: `robotsPara(PUBLICADO)` en la metadata de la página y `publicada: PUBLICADO` en su entrada de `src/lib/i18n/rutas.ts`, de donde sale el sitemap (ver `src/content/data/ecommerce-shopify.ts`).
 - CTAs medibles con atributo `data-cta` (GTM ya está instalado).
 - Un solo CTA primario por sección. Los textos de CTA son verbos concretos, no "Saber más".
 

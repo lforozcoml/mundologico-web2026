@@ -53,16 +53,18 @@ mundo-lavender:#6F6DFB
 
 | Ruta | Componente / Archivo |
 |---|---|
-| `/` | `src/app/page.tsx` |
-| `/productos` | `src/app/productos/page.tsx` |
-| `/productos/ecommerce-shopify` | `src/app/productos/ecommerce-shopify/page.tsx` (datos en `src/content/data/ecommerce-shopify.ts`) |
-| `/nosotros` | `src/app/nosotros/page.tsx` |
-| `/casos` | `src/app/casos/page.tsx` |
-| `/casos/[slug]` | `src/app/casos/[slug]/page.tsx` |
-| `/demos-ml` (no listada) | `src/app/demos-ml/page.tsx` (datos en `src/content/data/demos.ts`) |
-| `/demos-ml/agente-voz` (no listada) | `src/app/demos-ml/agente-voz/page.tsx` (textos en `src/content/data/demo-agente-voz.ts`) |
-| `/terminos` | `src/app/terminos/page.tsx` |
-| `/privacidad` | `src/app/privacidad/page.tsx` |
+| `/` | `src/app/[lang]/page.tsx` |
+| `/productos` | `src/app/[lang]/productos/page.tsx` |
+| `/productos/ecommerce-shopify` | `src/app/[lang]/productos/ecommerce-shopify/page.tsx` (datos en `src/content/data/ecommerce-shopify.ts`) |
+| `/nosotros` | `src/app/[lang]/nosotros/page.tsx` |
+| `/casos` | `src/app/[lang]/casos/page.tsx` |
+| `/casos/[slug]` | `src/app/[lang]/casos/[slug]/page.tsx` |
+| `/demos-ml` (no listada) | `src/app/[lang]/demos-ml/page.tsx` (datos en `src/content/data/demos.ts`) |
+| `/demos-ml/agente-voz` (no listada) | `src/app/[lang]/demos-ml/agente-voz/page.tsx` (textos en `src/content/data/demo-agente-voz.ts`) |
+| `/terminos` | `src/app/[lang]/terminos/page.tsx` |
+| `/privacidad` | `src/app/[lang]/privacidad/page.tsx` |
+| `/contacto/[slug]` (tarjeta NFC) | `src/app/[lang]/contacto/[slug]/page.tsx`; el `.vcf` queda en `src/app/contacto/[slug]/contacto.vcf/route.ts` |
+| `/en`, `/en/products`, `/en/products/shopify-ecommerce`, `/en/case-studies`, `/en/case-studies/[slug]` | Mismas carpetas de `src/app/[lang]/` (ver i18n) |
 | `POST /api/contact` | `src/app/api/contact/route.ts` |
 
 ## Decisiones importantes
@@ -71,7 +73,7 @@ mundo-lavender:#6F6DFB
 - **Formulario**: valida campos → POST al webhook de Make (`MAKE_WEBHOOK_URL` en env).
 - **CTAs de diagnóstico**: `CALENDARIO_URL` centralizado en `site.ts`, todos abren en nueva pestaña.
 - **IALabSection**: cliente component con isotipo SVG flotante y parallax (lerp 0.06).
-- **i18n**: diferido para después del lanzamiento en español.
+- **i18n**: ver sección i18n. Fase 1 (arquitectura) lista; el inglés no está publicado.
 - **Metadata**: cada página usa `pageMetadata()` de `src/lib/metadata.ts` (canonical, openGraph, twitter). No definir canonical ni openGraph en el layout: Next mezcla la metadata de forma superficial y las páginas heredarían los del home.
 - **Imagen social**: `src/app/opengraph-image.tsx`, referenciada explícitamente desde `pageMetadata()`.
 - **Cookies**: banner propio con Google Consent Mode v2 (`src/lib/consent.ts`, `CookieBanner.tsx`). Analítica activa por defecto con opción de rechazo, marketing apagado hasta aceptar. Para opt-in estricto: `analytics: false` en `CONSENT_DEFAULTS`. GTM: `GTM-MM4PSS2`.
@@ -106,6 +108,18 @@ Página `/productos/ecommerce-shopify`. Todo el contenido sale de `src/content/d
 - Excepción a "Casos anonimizados": en esta página sí se nombran tiendas, solo las marcadas `autorizado: true`.
 - Orden de secciones: Hero, FranjaLogos, FormasTrabajo, RevisionTienda, FlujoOperacion (solo si hay módulos activos), TiendasDesarrolladas, ComoTrabajamos, SoporteMensual, FaqAcordeon, CtaBand.
 
+## i18n
+
+Español sin prefijo (URLs de siempre), inglés bajo `/en/`. Todas las páginas viven en `src/app/[lang]/` con carpetas en español.
+
+- **Configuración**: `src/lib/i18n/config.ts` (`IDIOMAS`, `IDIOMA_POR_DEFECTO`, `hasLocale`, `LOCALE_OG`, bandera `PUBLICADO_EN`). Para sumar francés: agregar `"fr"` ahí y completar lo que TypeScript marque.
+- **Mapa de rutas**: `src/lib/i18n/rutas.ts`, fuente única de enlaces internos, selector de idioma, hreflang, sitemap y proxy. Cada ruta: path en español, path en inglés sin prefijo, `"solo-es"` (legales, por decisión) o `"pendiente"` (Nosotros). Slugs de casos iguales en ambos idiomas.
+- **Proxy**: `src/proxy.ts` reescribe lo sin prefijo a `/es/...`, traduce `/en/...` con el mapa (lo que no está da 404) y manda `/es/...` con 308 a la URL sin prefijo. Sin redirección por `Accept-Language`. Excluye `api`, `_next`, `_vercel`, `opengraph-image` y todo lo que tenga extensión.
+- **404**: `src/app/global-not-found.tsx` (`experimental.globalNotFound`), porque con el layout raíz dentro de `[lang]` el `notFound()` no renderiza el layout. Páginas con slug usan `dynamicParams = false`.
+- **`PUBLICADO_EN` en false**: `/en` existe con `noindex, nofollow`, fuera del sitemap, sin hreflang, sin selector de idioma y sin enlaces. El JSON-LD declara `availableLanguage` solo en español.
+- **Diccionarios**: `src/content/data/i18n/` con `Record<Idioma, Tipo>`. El inglés provisional lleva `[FALTA REVISION EN]`; un test unitario impide poner `PUBLICADO_EN` en true mientras quede alguna marca. Migrados: Header, Footer y nav.
+- **Demos y tarjeta** siguen solo sin prefijo con `?lang=` e `IdiomaDocumento`.
+
 ## Variables de entorno
 
 | Variable | Descripción |
@@ -118,5 +132,5 @@ En `.env.local` para desarrollo. Agregar en Vercel antes del deploy.
 
 ## Pendientes
 
-1. i18n (inglés + francés). El sitio ya está lanzado y sigue solo en español (`lang="es"`, `es_CO`).
+1. i18n fase 2: traducir contenido (home, productos, hub de Shopify, casos y contacto; Nosotros después) y revisar `areaServed` del JSON-LD de Organization. Francés más adelante.
 2. Revisión y limpieza de etiquetas en GTM (proyecto aparte)
