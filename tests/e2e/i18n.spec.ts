@@ -200,3 +200,36 @@ test.describe("375 px sin scroll horizontal", () => {
     });
   }
 });
+
+/**
+ * Textos y atributos que salen idénticos en la página en español y en su par en inglés:
+ * casi siempre es texto que quedó sin traducir. Se permiten nombres propios, marcas y cifras.
+ */
+const PERMITIDOS_IGUALES =
+  /^(Mundo Lógico|Mundo Lógico S\.A\.S\.|IA Lab|Knowledge Engine|Support Engine|Signal Engine|E-commerce|Email|WhatsApp|LinkedIn|Facebook|Legal|Marketing|Plan|Make\.com|Monday\.com|Airtable|OpenAI|Claude|Gemini|Zendesk|Confluence|Bitrix24|Dialpad API|WhatsApp API|WhatsApp Business API|Parchita|Autollantas|Formex|Shopify|Google Workspace Select Partner|Make Silver Partner.*|Medellín, Colombia|[a-z]+\.com\.co|hola@mundologico\.com|\+57 .*|[\d\s.,%+·:/→↓h-]+|0[1-9]|🧪.*)$/;
+
+async function piezasVisibles(request: APIRequestContext, path: string): Promise<Set<string>> {
+  const h = (await (await request.get(path)).text())
+    .replace(/<script[\s\S]*?<\/script>/g, "")
+    .replace(/<style[\s\S]*?<\/style>/g, "")
+    .replace(/<svg[\s\S]*?<\/svg>/g, "");
+  const body = h.slice(h.indexOf("<body"));
+  const attrs = [...body.matchAll(/(?:placeholder|alt|title|aria-label)="([^"]*)"/g)].map((m) => decodificar(m[1]));
+  const texto = body.replace(/<[^>]+>/g, "\n").split("\n").map((t) => decodificar(t).trim()).filter(Boolean);
+  return new Set([...texto, ...attrs]);
+}
+
+test.describe("inglés sin restos del español", () => {
+  const pares = IDS_RUTAS.flatMap((id) => {
+    const params: Record<string, string> = id === "caso" ? { slug: casos[0].slug } : {};
+    const en = enlace(id, "en", params);
+    return en ? [{ es: enlace(id, "es", params) as string, en }] : [];
+  });
+  for (const { es, en } of pares) {
+    test(`${en} no repite textos de ${es}`, async ({ request }) => {
+      const [a, b] = await Promise.all([piezasVisibles(request, es), piezasVisibles(request, en)]);
+      const iguales = [...b].filter((t) => a.has(t) && !PERMITIDOS_IGUALES.test(t) && /[a-záéíóúñ]{3}/i.test(t));
+      expect(iguales).toEqual([]);
+    });
+  }
+});

@@ -16,6 +16,12 @@ const OG_IMAGE = {
   alt: `${SITE_NAME}: automatización e IA para empresas`,
 };
 
+/** alt de la imagen social por idioma. La imagen es una sola (con el texto en español). */
+const OG_ALT: Record<Idioma, string> = {
+  es: OG_IMAGE.alt,
+  en: `${SITE_NAME}: automation and AI for businesses`,
+};
+
 type Comunes = {
   /** Título de la página sin el sufijo de marca. */
   title: string;
@@ -68,6 +74,7 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
     ? IDIOMAS.filter((i) => i !== idioma && languages[i]).map((i) => LOCALE_OG[i])
     : [];
   const robots = robotsIdioma(idioma, publicadoEn);
+  const imagen = { ...OG_IMAGE, alt: OG_ALT[idioma] };
 
   return {
     title: { absolute: fullTitle },
@@ -81,13 +88,13 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
       locale: LOCALE_OG[idioma],
       ...(alternateLocale.length ? { alternateLocale } : {}),
       type,
-      images: [OG_IMAGE],
+      images: [imagen],
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
       description,
-      images: [OG_IMAGE],
+      images: [imagen],
     },
     ...(robots ? { robots } : {}),
   };
