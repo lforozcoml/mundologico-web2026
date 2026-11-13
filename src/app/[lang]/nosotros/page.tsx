@@ -18,10 +18,10 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/nosotros">
 }
 
 export default async function NosotrosPage({ params }: PageProps<"/[lang]/nosotros">) {
-  await idiomaDePagina(params, "nosotros");
+  const idioma = await idiomaDePagina(params, "nosotros");
   return (
     <>
-      <Header />
+      <Header idioma={idioma} ruta="nosotros" />
       <main className="flex-1 pt-16">
         <NosotrosSection />
         <CtaBand
@@ -30,7 +30,7 @@ export default async function NosotrosPage({ params }: PageProps<"/[lang]/nosotr
           ctaSecundario={{ label: "Ver casos de éxito", href: "/casos" }}
         />
       </main>
-      <Footer />
+      <Footer idioma={idioma} />
     </>
   );
 }

@@ -292,10 +292,10 @@ function PuertasHub() {
 }
 
 export default async function ProductosPage({ params }: PageProps<"/[lang]/productos">) {
-  await idiomaDePagina(params, "productos");
+  const idioma = await idiomaDePagina(params, "productos");
   return (
     <>
-      <Header />
+      <Header idioma={idioma} ruta="productos" />
       <main className="flex-1 pt-16">
 
         {/* Page header */}
@@ -499,7 +499,7 @@ export default async function ProductosPage({ params }: PageProps<"/[lang]/produ
           ctaSecundario={{ label: "Ver casos de éxito", href: "/casos" }}
         />
       </main>
-      <Footer />
+      <Footer idioma={idioma} />
     </>
   );
 }

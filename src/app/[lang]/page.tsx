@@ -25,10 +25,10 @@ export async function generateMetadata({ params }: PageProps<"/[lang]">): Promis
 }
 
 export default async function Home({ params }: PageProps<"/[lang]">) {
-  await idiomaDePagina(params, "inicio");
+  const idioma = await idiomaDePagina(params, "inicio");
   return (
     <>
-      <Header />
+      <Header idioma={idioma} ruta="inicio" />
       <main className="flex-1">
         <HeroSection />
         <LogosStrip />
@@ -38,7 +38,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
         <CasosSection />
         <ContactoSection />
       </main>
-      <Footer />
+      <Footer idioma={idioma} />
     </>
   );
 }

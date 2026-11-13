@@ -93,14 +93,3 @@ export const TURNSTILE_SITE_KEY =
 
 export const CALENDARIO_URL =
   "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ2McfMCNpByJV-5t2BNp4Dbetqm_DA3BGSiEitNWiplFuMauPHKMIZFBvA1aB7zPdBDIyomUesw";
-
-export const nav = {
-  links: [
-    { label: "Productos", href: "/productos" },
-    { label: "Nosotros", href: "/nosotros" },
-    { label: "Casos de éxito", href: "/casos" },
-    { label: "Contacto", href: "/#contacto" },
-  ],
-  // TODO: Cal.com
-  cta: { label: "Agendar llamada", href: CALENDARIO_URL },
-};

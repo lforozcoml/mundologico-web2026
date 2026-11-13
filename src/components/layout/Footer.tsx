@@ -3,40 +3,67 @@ import Image from "next/image";
 import { site, partnerBadges } from "@/content/data/site";
 import { PartnerBadge } from "@/components/ui/PartnerBadge";
 import { CookieSettingsButton } from "@/components/layout/CookieBanner";
-import { PUBLICADO as ECOMMERCE_PUBLICADO, RUTA as ECOMMERCE_RUTA, entrada } from "@/content/data/ecommerce-shopify";
+import { PUBLICADO as ECOMMERCE_PUBLICADO } from "@/content/data/ecommerce-shopify";
+import { footer } from "@/content/data/i18n/navegacion";
+import type { Idioma } from "@/lib/i18n/config";
+import { enlace, enlaceOEspanol, tieneIdioma } from "@/lib/i18n/rutas";
 
 type EnlacePie = { label: string; href: string; cta?: string };
+type Columna = { id: "productos" | "empresa" | "legal"; titulo: string; links: EnlacePie[] };
 
-const footerLinks: Record<string, EnlacePie[]> = {
-  Productos: [
-    // Solo con la página de e-commerce publicada.
-    ...(ECOMMERCE_PUBLICADO ? [{ label: entrada.pie, href: ECOMMERCE_RUTA, cta: "footer-ecommerce" }] : []),
-    { label: "IA Lab",           href: "/productos#ia-lab" },
-    { label: "Knowledge Engine", href: "/productos#knowledge-engine" },
-    { label: "Support Engine",   href: "/productos#support-engine" },
-    { label: "Signal Engine",    href: "/productos#signal-engine" },
-  ],
-  Empresa: [
-    { label: "Nosotros",         href: "/nosotros" },
-    { label: "Casos de éxito",   href: "/casos" },
-    { label: "Contacto",         href: "/#contacto" },
-  ],
-  Legal: [
-    { label: "Términos y condiciones", href: "/terminos" },
-    { label: "Política de privacidad", href: "/privacidad" },
-  ],
-};
+/** Columnas del pie. Las URLs salen del mapa de rutas; los textos, del diccionario. */
+function columnasPie(idioma: Idioma): Columna[] {
+  const tx = footer[idioma];
+  const productos = enlace("productos", idioma) ?? "/productos";
+  const nota = tx.notaSoloEspanol ? ` ${tx.notaSoloEspanol}` : "";
+  return [
+    {
+      id: "productos",
+      titulo: tx.columnas.productos,
+      links: [
+        // Solo con la página de e-commerce publicada.
+        ...(ECOMMERCE_PUBLICADO
+          ? [{ label: tx.productos.ecommerce, href: enlaceOEspanol("ecommerceShopify", idioma), cta: "footer-ecommerce" }]
+          : []),
+        { label: tx.productos.iaLab,     href: `${productos}#ia-lab` },
+        { label: tx.productos.knowledge, href: `${productos}#knowledge-engine` },
+        { label: tx.productos.support,   href: `${productos}#support-engine` },
+        { label: tx.productos.signal,    href: `${productos}#signal-engine` },
+      ],
+    },
+    {
+      id: "empresa",
+      titulo: tx.columnas.empresa,
+      links: [
+        // Nosotros solo donde tiene página (en inglés está pendiente).
+        ...(tieneIdioma("nosotros", idioma) ? [{ label: tx.empresa.nosotros, href: enlaceOEspanol("nosotros", idioma) }] : []),
+        { label: tx.empresa.casos,    href: enlaceOEspanol("casos", idioma) },
+        { label: tx.empresa.contacto, href: `${enlaceOEspanol("inicio", idioma)}#contacto` },
+      ],
+    },
+    {
+      id: "legal",
+      titulo: tx.columnas.legal,
+      // Legales solo en español: en inglés enlazan a la versión en español con la nota.
+      links: [
+        { label: `${tx.legal.terminos}${tieneIdioma("terminos", idioma) ? "" : nota}`,     href: enlaceOEspanol("terminos", idioma) },
+        { label: `${tx.legal.privacidad}${tieneIdioma("privacidad", idioma) ? "" : nota}`, href: enlaceOEspanol("privacidad", idioma) },
+      ],
+    },
+  ];
+}
 
-export function Footer() {
+export function Footer({ idioma }: { idioma: Idioma }) {
+  const tx = footer[idioma];
   return (
     <footer className="bg-gray-900 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-2 md:grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Image src="/logo-mundologico-blanco.png" alt="Mundo Lógico" width={160} height={36} className="h-8 w-auto mb-4" />
+            <Image src="/logo-mundologico-blanco.png" alt={tx.logoAlt} width={160} height={36} className="h-8 w-auto mb-4" />
             <p className="text-[14px] text-white/70 leading-relaxed max-w-[260px]">
-              {site.descripcion}
+              {tx.descripcion}
             </p>
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-5">
               {site.redes.linkedin && (
@@ -57,16 +84,16 @@ export function Footer() {
           </div>
 
           {/* Link columns */}
-          {Object.entries(footerLinks).map(([title, links]) => (
-            <div key={title}>
-              <h4 className="text-[13px] font-bold uppercase tracking-widest text-white/55 mb-4">{title}</h4>
+          {columnasPie(idioma).map(({ id, titulo, links }) => (
+            <div key={id}>
+              <h4 className="text-[13px] font-bold uppercase tracking-widest text-white/55 mb-4">{titulo}</h4>
               {links.map(({ label, href, cta }) => (
                 <Link key={label} href={href} data-cta={cta}
                   className="block text-[14px] text-white/80 hover:text-white transition-colors mb-2.5">
                   {label}
                 </Link>
               ))}
-              {title === "Legal" && (
+              {id === "legal" && (
                 <CookieSettingsButton className="block text-left text-[14px] text-white/80 hover:text-white transition-colors mb-2.5" />
               )}
             </div>
@@ -77,10 +104,10 @@ export function Footer() {
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex flex-col gap-1 text-center md:text-left">
             <p className="text-[13px] text-white/55">
-              © {new Date().getFullYear()} Mundo Lógico S.A.S. Todos los derechos reservados.
+              © {new Date().getFullYear()} Mundo Lógico S.A.S. {tx.derechos}
             </p>
             <p className="text-[13px] text-white/55">
-              {site.contacto.ciudad} · {site.contacto.email}
+              {tx.ciudad} · {site.contacto.email}
             </p>
           </div>
 

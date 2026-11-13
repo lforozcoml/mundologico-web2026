@@ -42,10 +42,10 @@ const datosGrid = [
 ];
 
 export default async function PrivacidadPage({ params }: PageProps<"/[lang]/privacidad">) {
-  await idiomaDePagina(params, "privacidad");
+  const idioma = await idiomaDePagina(params, "privacidad");
   return (
     <>
-      <Header />
+      <Header idioma={idioma} ruta="privacidad" />
       <main className="flex-1 pt-16">
 
         <section className="py-16 bg-white border-b border-gray-100">
@@ -183,7 +183,7 @@ export default async function PrivacidadPage({ params }: PageProps<"/[lang]/priv
         </section>
 
       </main>
-      <Footer />
+      <Footer idioma={idioma} />
     </>
   );
 }

@@ -18,10 +18,10 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/terminos">
 }
 
 export default async function TerminosPage({ params }: PageProps<"/[lang]/terminos">) {
-  await idiomaDePagina(params, "terminos");
+  const idioma = await idiomaDePagina(params, "terminos");
   return (
     <>
-      <Header />
+      <Header idioma={idioma} ruta="terminos" />
       <main className="flex-1 pt-16">
 
         <section className="py-16 bg-white border-b border-gray-100">
@@ -104,7 +104,7 @@ export default async function TerminosPage({ params }: PageProps<"/[lang]/termin
         </section>
 
       </main>
-      <Footer />
+      <Footer idioma={idioma} />
     </>
   );
 }

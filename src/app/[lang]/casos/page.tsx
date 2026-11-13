@@ -18,15 +18,15 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/casos">): 
 }
 
 export default async function CasosPage({ params }: PageProps<"/[lang]/casos">) {
-  await idiomaDePagina(params, "casos");
+  const idioma = await idiomaDePagina(params, "casos");
   return (
     <>
-      <Header />
+      <Header idioma={idioma} ruta="casos" />
       <main className="flex-1 pt-16">
         <CasosSection headingAs="h1" />
         <CtaBand />
       </main>
-      <Footer />
+      <Footer idioma={idioma} />
     </>
   );
 }

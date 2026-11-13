@@ -67,7 +67,7 @@ export default async function EcommerceShopifyPage({ params }: Props) {
           dangerouslySetInnerHTML={{ __html: jsonLdScript(data) }}
         />
       ))}
-      <Header />
+      <Header idioma={idioma} ruta="ecommerceShopify" />
       <main className="flex-1">
         <MotionProvider>
           <HeroEcommerce />
@@ -82,7 +82,7 @@ export default async function EcommerceShopifyPage({ params }: Props) {
         </MotionProvider>
         <CtaBand {...bandaFinal} />
       </main>
-      <Footer />
+      <Footer idioma={idioma} />
     </>
   );
 }

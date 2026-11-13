@@ -40,7 +40,7 @@ const colorToken = {
 };
 
 export default async function CasoPage({ params }: Props) {
-  await idiomaDePagina(params, "caso");
+  const idioma = await idiomaDePagina(params, "caso");
   const { slug } = await params;
   const caso = casos.find((c) => c.slug === slug);
   if (!caso) notFound();
@@ -49,7 +49,7 @@ export default async function CasoPage({ params }: Props) {
 
   return (
     <>
-      <Header />
+      <Header idioma={idioma} ruta="caso" params={{ slug }} />
       <main className="flex-1 pt-16">
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-6">
@@ -135,7 +135,7 @@ export default async function CasoPage({ params }: Props) {
           ctaSecundario={{ label: "Ver más casos", href: "/casos" }}
         />
       </main>
-      <Footer />
+      <Footer idioma={idioma} />
     </>
   );
 }
