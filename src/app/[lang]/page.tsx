@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { pageMetadata, SITE_NAME } from "@/lib/metadata";
+import { idiomaDePagina } from "@/lib/i18n/servidor";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { HeroSection } from "@/components/sections/HeroSection";
@@ -11,16 +12,20 @@ import { PUBLICADO as ECOMMERCE_PUBLICADO } from "@/content/data/ecommerce-shopi
 import { CasosSection } from "@/components/sections/CasosSection";
 import { ContactoSection } from "@/components/sections/ContactoSection";
 
-export const metadata: Metadata = pageMetadata({
-  title: `${SITE_NAME} | Automatización e IA para empresas`,
-  description:
-    "Diseñamos e implementamos automatizaciones con IA para que tu equipo deje de hacer trabajo repetitivo y se enfoque en lo que realmente importa.",
-  idioma: "es",
-  ruta: "inicio",
-  absoluteTitle: true,
-});
+export async function generateMetadata({ params }: PageProps<"/[lang]">): Promise<Metadata> {
+  const idioma = await idiomaDePagina(params, "inicio");
+  return pageMetadata({
+    title: `${SITE_NAME} | Automatización e IA para empresas`,
+    description:
+      "Diseñamos e implementamos automatizaciones con IA para que tu equipo deje de hacer trabajo repetitivo y se enfoque en lo que realmente importa.",
+    idioma,
+    ruta: "inicio",
+    absoluteTitle: true,
+  });
+}
 
-export default function Home() {
+export default async function Home({ params }: PageProps<"/[lang]">) {
+  await idiomaDePagina(params, "inicio");
   return (
     <>
       <Header />

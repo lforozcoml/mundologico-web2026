@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import { slugPrincipal, tarjetaGeneral, tarjetasRetiradas } from "./src/content/data/tarjeta";
 
 const nextConfig: NextConfig = {
+  experimental: { globalNotFound: true },
   // /demos-ml es no listada: noindex también en cabecera, además de la meta de la página.
   // No se pone en Disallow de robots.txt porque eso la revela (y Google no vería el noindex).
   async headers() {

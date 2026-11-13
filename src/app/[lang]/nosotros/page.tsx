@@ -1,19 +1,24 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/metadata";
+import { idiomaDePagina } from "@/lib/i18n/servidor";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { NosotrosSection } from "@/components/sections/NosotrosSection";
 import { CtaBand } from "@/components/ui/CtaBand";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Nosotros",
-  description:
-    "21 años construyendo tecnología para empresas en Colombia y Estados Unidos, más de 8 automatizando procesos. Hoy, automatización e IA embebida.",
-  idioma: "es",
-  ruta: "nosotros",
-});
+export async function generateMetadata({ params }: PageProps<"/[lang]/nosotros">): Promise<Metadata> {
+  const idioma = await idiomaDePagina(params, "nosotros");
+  return pageMetadata({
+    title: "Nosotros",
+    description:
+      "21 años construyendo tecnología para empresas en Colombia y Estados Unidos, más de 8 automatizando procesos. Hoy, automatización e IA embebida.",
+    idioma,
+    ruta: "nosotros",
+  });
+}
 
-export default function NosotrosPage() {
+export default async function NosotrosPage({ params }: PageProps<"/[lang]/nosotros">) {
+  await idiomaDePagina(params, "nosotros");
   return (
     <>
       <Header />

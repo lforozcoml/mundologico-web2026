@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import { pageMetadata } from "@/lib/metadata";
+import { pageMetadata, robotsIdioma } from "@/lib/metadata";
+import { idiomaDePagina } from "@/lib/i18n/servidor";
+import { enlace } from "@/lib/i18n/rutas";
+import type { Idioma } from "@/lib/i18n/config";
 import { breadcrumbJsonLd, faqJsonLd, jsonLdScript, serviceJsonLd } from "@/lib/jsonld";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -25,22 +28,33 @@ import { ComoTrabajamos } from "@/components/sections/ecommerce/ComoTrabajamos";
 import { TiendasDesarrolladas } from "@/components/sections/ecommerce/TiendasDesarrolladas";
 import { FaqAcordeon } from "@/components/sections/ecommerce/FaqAcordeon";
 
-export const metadata: Metadata = {
-  ...pageMetadata({ title: meta.title, description: meta.description, idioma: "es", ruta: "ecommerceShopify" }),
-  robots: robotsPara(PUBLICADO),
-};
+type Props = PageProps<"/[lang]/productos/ecommerce-shopify">;
 
-const jsonLd = [
-  serviceJsonLd({ nombre: meta.title, descripcion: meta.description, ruta: RUTA, areaServed: "Colombia", idioma: "es" }),
-  breadcrumbJsonLd([
-    { nombre: "Inicio", ruta: "/" },
-    { nombre: "Productos", ruta: "/productos" },
-    { nombre: meta.title, ruta: RUTA },
-  ], "es"),
-  faqJsonLd(faq.items, "es"),
-];
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const idioma = await idiomaDePagina(params, "ecommerceShopify");
+  return {
+    ...pageMetadata({ title: meta.title, description: meta.description, idioma, ruta: "ecommerceShopify" }),
+    // Idioma sin publicar: noindex aunque la página sí esté publicada.
+    robots: robotsIdioma(idioma) ?? robotsPara(PUBLICADO),
+  };
+}
 
-export default function EcommerceShopifyPage() {
+function jsonLdDe(idioma: Idioma) {
+  const ruta = enlace("ecommerceShopify", idioma) ?? RUTA;
+  return [
+    serviceJsonLd({ nombre: meta.title, descripcion: meta.description, ruta, areaServed: "Colombia", idioma }),
+    breadcrumbJsonLd([
+      { nombre: "Inicio", ruta: enlace("inicio", idioma) ?? "/" },
+      { nombre: "Productos", ruta: enlace("productos", idioma) ?? "/productos" },
+      { nombre: meta.title, ruta },
+    ], idioma),
+    faqJsonLd(faq.items, idioma),
+  ];
+}
+
+export default async function EcommerceShopifyPage({ params }: Props) {
+  const idioma = await idiomaDePagina(params, "ecommerceShopify");
+  const jsonLd = jsonLdDe(idioma);
   const modulos = visibleModulos();
   const tiendas = visibleTiendas();
 

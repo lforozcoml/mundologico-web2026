@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/metadata";
+import { idiomaDePagina } from "@/lib/i18n/servidor";
 import Link from "next/link";
 import Image from "next/image";
 import { Header } from "@/components/layout/Header";
@@ -9,14 +10,17 @@ import { CALENDARIO_URL } from "@/content/data/site";
 import { StackPill } from "@/components/ui/StackPill";
 import { PUBLICADO as ECOMMERCE_PUBLICADO, RUTA as ECOMMERCE_RUTA, entrada } from "@/content/data/ecommerce-shopify";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Productos",
-  description: ECOMMERCE_PUBLICADO
-    ? entrada.hub.description
-    : "Soluciones de automatización con IA para tu empresa. Knowledge Engine, Support Engine, IA Lab y Signal Engine.",
-  idioma: "es",
-  ruta: "productos",
-});
+export async function generateMetadata({ params }: PageProps<"/[lang]/productos">): Promise<Metadata> {
+  const idioma = await idiomaDePagina(params, "productos");
+  return pageMetadata({
+    title: "Productos",
+    description: ECOMMERCE_PUBLICADO
+      ? entrada.hub.description
+      : "Soluciones de automatización con IA para tu empresa. Knowledge Engine, Support Engine, IA Lab y Signal Engine.",
+    idioma,
+    ruta: "productos",
+  });
+}
 
 const colorToken = {
   blue:     { accent: "#176BEC", bg: "rgba(23,107,236,.08)",  border: "rgba(23,107,236,.2)",  tag: "text-mundo-blue",   grad: "linear-gradient(135deg,#23274C 0%,#176BEC 100%)" },
@@ -287,7 +291,8 @@ function PuertasHub() {
   );
 }
 
-export default function ProductosPage() {
+export default async function ProductosPage({ params }: PageProps<"/[lang]/productos">) {
+  await idiomaDePagina(params, "productos");
   return (
     <>
       <Header />

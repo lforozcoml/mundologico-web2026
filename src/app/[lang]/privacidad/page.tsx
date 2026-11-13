@@ -1,17 +1,21 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/metadata";
+import { idiomaDePagina } from "@/lib/i18n/servidor";
 import Link from "next/link";
 import Image from "next/image";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Política de privacidad",
-  description:
-    "Política de privacidad y tratamiento de datos personales de Mundo Lógico S.A.S. Ley 1581 de 2012.",
-  idioma: "es",
-  ruta: "privacidad",
-});
+export async function generateMetadata({ params }: PageProps<"/[lang]/privacidad">): Promise<Metadata> {
+  const idioma = await idiomaDePagina(params, "privacidad");
+  return pageMetadata({
+    title: "Política de privacidad",
+    description:
+      "Política de privacidad y tratamiento de datos personales de Mundo Lógico S.A.S. Ley 1581 de 2012.",
+    idioma,
+    ruta: "privacidad",
+  });
+}
 
 const cookies = [
   { categoria: "Necesarias", detalle: "permiten que el sitio funcione y recuerdan tu decisión sobre cookies. Siempre están activas." },
@@ -37,7 +41,8 @@ const datosGrid = [
   "Dirección IP y datos de navegación (cookies)",
 ];
 
-export default function PrivacidadPage() {
+export default async function PrivacidadPage({ params }: PageProps<"/[lang]/privacidad">) {
+  await idiomaDePagina(params, "privacidad");
   return (
     <>
       <Header />

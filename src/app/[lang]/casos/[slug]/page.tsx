@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { pageMetadata } from "@/lib/metadata";
+import { idiomaDePagina } from "@/lib/i18n/servidor";
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -8,20 +9,24 @@ import { CtaBand } from "@/components/ui/CtaBand";
 import { StackPill } from "@/components/ui/StackPill";
 import { casos } from "@/content/data/casos";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = PageProps<"/[lang]/casos/[slug]">;
+
+// Un slug que no existe no se renderiza: responde el 404 global (ver global-not-found.tsx).
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   return casos.map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const idioma = await idiomaDePagina(params, "caso");
   const { slug } = await params;
   const caso = casos.find((c) => c.slug === slug);
   if (!caso) return {};
   return pageMetadata({
     title: `${caso.nombre} · Casos de éxito`,
     description: caso.subtitulo,
-    idioma: "es",
+    idioma,
     ruta: "caso",
     params: { slug },
     type: "article",
@@ -35,6 +40,7 @@ const colorToken = {
 };
 
 export default async function CasoPage({ params }: Props) {
+  await idiomaDePagina(params, "caso");
   const { slug } = await params;
   const caso = casos.find((c) => c.slug === slug);
   if (!caso) notFound();

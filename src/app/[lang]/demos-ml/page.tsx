@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { soloSinPrefijo } from "@/lib/i18n/servidor";
 import Image from "next/image";
 import Link from "next/link";
 import { CalendarDays, ClipboardList } from "lucide-react";
@@ -19,7 +20,7 @@ import { TarjetaCaptura } from "@/components/sections/TarjetaCaptura";
 const PAGINA = "demos-ml";
 
 type Query = { lang?: string | string[]; src?: string | string[]; interes?: string | string[] };
-type Props = { searchParams: Promise<Query> };
+type Props = { params: Promise<{ lang: string }>; searchParams: Promise<Query> };
 
 function primero(v: string | string[] | undefined): string | undefined {
   return Array.isArray(v) ? v[0] : v;
@@ -31,7 +32,8 @@ function idiomaDe(q: Query): Idioma {
 }
 
 /** No listada: noindex en meta (aquí) y en cabecera (next.config.ts). No va en el sitemap ni en robots.txt. */
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  await soloSinPrefijo(params);
   const tx = textosDemos[idiomaDe(await searchParams)];
   return {
     ...pageMetadata({ title: tx.metaTitulo, description: tx.metaDescripcion, path: RUTA_DEMOS }),
@@ -44,7 +46,8 @@ const BOTON_PRIMARIO =
 const BOTON_SECUNDARIO =
   "flex min-h-12 w-full items-center justify-center gap-2 rounded-full border-2 border-mundo-dark px-6 text-center text-base font-bold text-mundo-dark transition-colors hover:bg-mundo-dark hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mundo-blue sm:w-auto";
 
-export default async function DemosPage({ searchParams }: Props) {
+export default async function DemosPage({ params, searchParams }: Props) {
+  await soloSinPrefijo(params);
   const query = await searchParams;
   const idioma = idiomaDe(query);
   const tx = textosDemos[idioma];

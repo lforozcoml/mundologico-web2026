@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { soloSinPrefijo } from "@/lib/i18n/servidor";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, CalendarDays } from "lucide-react";
@@ -21,7 +22,7 @@ type Query = {
   u?: string | string[];
   c?: string | string[];
 };
-type Props = { searchParams: Promise<Query> };
+type Props = { params: Promise<{ lang: string }>; searchParams: Promise<Query> };
 
 const AGENT_ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
 
@@ -57,7 +58,8 @@ async function estado(): Promise<{ estado: EstadoDemo; agente: string | null }> 
 }
 
 /** No listada: noindex en meta (aquí) y en cabecera (/demos-ml/:path* en next.config.ts). */
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  await soloSinPrefijo(params);
   const tx = textosAgenteVoz[idiomaDe(await searchParams)];
   return {
     ...pageMetadata({ title: tx.metaTitulo, description: tx.metaDescripcion, path: RUTA_AGENTE_VOZ }),
@@ -70,7 +72,8 @@ const BOTON_PRIMARIO =
 const ENLACE =
   "inline-flex min-h-11 items-center gap-2 font-semibold text-mundo-blue underline underline-offset-4";
 
-export default async function AgenteVozPage({ searchParams }: Props) {
+export default async function AgenteVozPage({ params, searchParams }: Props) {
+  await soloSinPrefijo(params);
   const query = await searchParams;
   const idioma = idiomaDe(query);
   const tx = textosAgenteVoz[idioma];

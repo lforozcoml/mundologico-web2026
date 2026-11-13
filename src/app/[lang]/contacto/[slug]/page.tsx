@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { soloSinPrefijo } from "@/lib/i18n/servidor";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -16,7 +17,7 @@ import { SelectorIdioma } from "@/components/ui/SelectorIdioma";
 export const dynamicParams = false;
 
 type Query = { lang?: string | string[]; src?: string | string[] };
-type Props = { params: Promise<{ slug: string }>; searchParams: Promise<Query> };
+type Props = { params: Promise<{ lang: string; slug: string }>; searchParams: Promise<Query> };
 
 function primero(v: string | string[] | undefined): string | undefined {
   return Array.isArray(v) ? v[0] : v;
@@ -32,6 +33,7 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  await soloSinPrefijo(params);
   const tarjeta = getTarjeta((await params).slug);
   if (!tarjeta) return {};
   const d = derivados(tarjeta);
@@ -55,6 +57,7 @@ type Boton = {
 };
 
 export default async function TarjetaPage({ params, searchParams }: Props) {
+  await soloSinPrefijo(params);
   const tarjeta = getTarjeta((await params).slug);
   if (!tarjeta) notFound();
   const d = derivados(tarjeta);

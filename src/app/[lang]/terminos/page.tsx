@@ -1,19 +1,24 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/metadata";
+import { idiomaDePagina } from "@/lib/i18n/servidor";
 import Link from "next/link";
 import Image from "next/image";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Términos y condiciones",
-  description:
-    "Condiciones de uso de los servicios de Mundo Lógico S.A.S.",
-  idioma: "es",
-  ruta: "terminos",
-});
+export async function generateMetadata({ params }: PageProps<"/[lang]/terminos">): Promise<Metadata> {
+  const idioma = await idiomaDePagina(params, "terminos");
+  return pageMetadata({
+    title: "Términos y condiciones",
+    description:
+      "Condiciones de uso de los servicios de Mundo Lógico S.A.S.",
+    idioma,
+    ruta: "terminos",
+  });
+}
 
-export default function TerminosPage() {
+export default async function TerminosPage({ params }: PageProps<"/[lang]/terminos">) {
+  await idiomaDePagina(params, "terminos");
   return (
     <>
       <Header />

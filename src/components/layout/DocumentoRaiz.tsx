@@ -4,8 +4,9 @@ import Script from "next/script";
 import { SITE_NAME, SITE_URL } from "@/lib/metadata";
 import { consentInitScript } from "@/lib/consent";
 import { jsonLdScript, organizationJsonLd } from "@/lib/jsonld";
+import { LOCALE_OG, type Idioma } from "@/lib/i18n/config";
 import { CookieBanner } from "@/components/layout/CookieBanner";
-import "./globals.css";
+import "@/app/globals.css";
 
 const tajawal = Tajawal({
   variable: "--font-tajawal",
@@ -16,14 +17,14 @@ const tajawal = Tajawal({
 
 // Valores por defecto. Cada página define su propio canonical y openGraph con
 // pageMetadata() para no heredar los del home.
-export const metadata: Metadata = {
+export const metadataRaiz: Metadata = {
   title: `${SITE_NAME} | Automatización e IA para empresas`,
   description:
     "Diseñamos e implementamos automatizaciones con IA para que tu equipo deje de hacer trabajo repetitivo y se enfoque en lo que realmente importa.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
     siteName: SITE_NAME,
-    locale: "es_CO",
+    locale: LOCALE_OG.es,
     type: "website",
   },
   twitter: {
@@ -31,13 +32,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+/**
+ * <html> completo del sitio: fuente, JSON-LD de Organization, Consent Mode, GTM y
+ * banner de cookies. Lo usan el layout de [lang] y el 404 global, para que el 404
+ * siga teniendo lo mismo que antes del i18n.
+ */
+export function DocumentoRaiz({ idioma, children }: { idioma: Idioma; children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${tajawal.variable} h-full`}>
+    <html lang={idioma} className={`${tajawal.variable} h-full`}>
+      {/* Es el <head> del layout raíz, movido aquí para compartirlo con el 404 global. */}
+      {/* eslint-disable-next-line @next/next/no-head-element */}
       <head>
         <script
           type="application/ld+json"
