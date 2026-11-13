@@ -59,11 +59,11 @@ mundo-lavender:#6F6DFB
 | `/nosotros` | `src/app/[lang]/nosotros/page.tsx` |
 | `/casos` | `src/app/[lang]/casos/page.tsx` |
 | `/casos/[slug]` | `src/app/[lang]/casos/[slug]/page.tsx` |
-| `/demos-ml` (no listada) | `src/app/[lang]/demos-ml/page.tsx` (datos en `src/content/data/demos.ts`) |
-| `/demos-ml/agente-voz` (no listada) | `src/app/[lang]/demos-ml/agente-voz/page.tsx` (textos en `src/content/data/demo-agente-voz.ts`) |
+| `/demos-ml` (no listada) | `src/app/(sin-prefijo)/demos-ml/page.tsx` (datos en `src/content/data/demos.ts`) |
+| `/demos-ml/agente-voz` (no listada) | `src/app/(sin-prefijo)/demos-ml/agente-voz/page.tsx` (textos en `src/content/data/demo-agente-voz.ts`) |
 | `/terminos` | `src/app/[lang]/terminos/page.tsx` |
 | `/privacidad` | `src/app/[lang]/privacidad/page.tsx` |
-| `/contacto/[slug]` (tarjeta NFC) | `src/app/[lang]/contacto/[slug]/page.tsx`; el `.vcf` queda en `src/app/contacto/[slug]/contacto.vcf/route.ts` |
+| `/contacto/[slug]` (tarjeta NFC) | `src/app/(sin-prefijo)/contacto/[slug]/page.tsx` y `contacto.vcf/route.ts` |
 | `/en`, `/en/products`, `/en/products/shopify-ecommerce`, `/en/case-studies`, `/en/case-studies/[slug]` | Mismas carpetas de `src/app/[lang]/` (ver i18n) |
 | `POST /api/contact` | `src/app/api/contact/route.ts` |
 
@@ -110,15 +110,15 @@ Página `/productos/ecommerce-shopify`. Todo el contenido sale de `src/content/d
 
 ## i18n
 
-Español sin prefijo (URLs de siempre), inglés bajo `/en/`. Todas las páginas viven en `src/app/[lang]/` con carpetas en español.
+Español sin prefijo (URLs de siempre), inglés bajo `/en/`. Las páginas del mapa viven en `src/app/[lang]/` con carpetas en español.
 
 - **Configuración**: `src/lib/i18n/config.ts` (`IDIOMAS`, `IDIOMA_POR_DEFECTO`, `hasLocale`, `LOCALE_OG`, bandera `PUBLICADO_EN`). Para sumar francés: agregar `"fr"` ahí y completar lo que TypeScript marque.
 - **Mapa de rutas**: `src/lib/i18n/rutas.ts`, fuente única de enlaces internos, selector de idioma, hreflang, sitemap y proxy. Cada ruta: path en español, path en inglés sin prefijo, `"solo-es"` (legales, por decisión) o `"pendiente"` (Nosotros). Slugs de casos iguales en ambos idiomas.
-- **Proxy**: `src/proxy.ts` reescribe lo sin prefijo a `/es/...`, traduce `/en/...` con el mapa (lo que no está da 404) y manda `/es/...` con 308 a la URL sin prefijo. Sin redirección por `Accept-Language`. Excluye `api`, `_next`, `_vercel`, `opengraph-image` y todo lo que tenga extensión.
+- **Proxy**: `src/proxy.ts` reescribe lo sin prefijo a `/es/...`, traduce `/en/...` con el mapa (lo que no está da 404) y manda `/es/...` con 308 a la URL sin prefijo. Sin redirección por `Accept-Language`. Excluye `api`, `_next`, `_vercel`, `opengraph-image`, `demos-ml`, `contacto` y todo lo que tenga extensión.
 - **404**: `src/app/global-not-found.tsx` (`experimental.globalNotFound`), porque con el layout raíz dentro de `[lang]` el `notFound()` no renderiza el layout. Páginas con slug usan `dynamicParams = false`.
 - **`PUBLICADO_EN` en false**: `/en` existe con `noindex, nofollow`, fuera del sitemap, sin hreflang, sin selector de idioma y sin enlaces. El JSON-LD declara `availableLanguage` solo en español.
 - **Diccionarios**: `src/content/data/i18n/` con `Record<Idioma, Tipo>`. El inglés provisional lleva `[FALTA REVISION EN]`; un test unitario impide poner `PUBLICADO_EN` en true mientras quede alguna marca. Migrados: Header, Footer y nav.
-- **Demos y tarjeta** siguen solo sin prefijo con `?lang=` e `IdiomaDocumento`.
+- **Demos y tarjeta** viven en `src/app/(sin-prefijo)/` con su propio layout raíz y siguen con `?lang=` e `IdiomaDocumento`. No moverlas a `[lang]`: en Vercel el rewrite del proxy llega a la página sin el query string y `?lang=` se pierde (con `next start` local no se ve). Probar siempre `?lang=en` en el Preview.
 
 ## Variables de entorno
 
