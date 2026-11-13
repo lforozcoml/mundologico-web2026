@@ -22,7 +22,8 @@ export const IDIOMAS_CON_PREFIJO = IDIOMAS.filter(
 /**
  * Bandera de publicación del inglés. Con false: /en/ existe en el build pero lleva
  * noindex, nofollow, no entra al sitemap, no hay hreflang hacia /en y nada lo enlaza.
- * No pasar a true mientras quede algún "[FALTA REVISION EN]" (lo bloquea un test unitario).
+ * No pasar a true mientras haya diccionarios en PENDIENTES_REVISION_EN
+ * (src/content/data/i18n/revision.ts) o algún "[FALTA REVISION EN]": lo bloquea un test unitario.
  */
 export const PUBLICADO_EN: boolean = false;
 

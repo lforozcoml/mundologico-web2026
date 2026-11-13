@@ -2,9 +2,8 @@
  * Diccionarios del Header (nav) y del Footer. Un tipo por sección y una versión por
  * idioma: Record<Idioma, ...> hace fallar el build si falta un idioma o una clave.
  *
- * El inglés es provisional y lleva MARCA_FALTA_REVISION: solo se ve entrando directo a
- * /en (noindex, sin enlaces mientras PUBLICADO_EN sea false). Un test unitario impide
- * publicar el inglés con marcas pendientes.
+ * El inglés es borrador hasta que salga de PENDIENTES_REVISION_EN (revision.ts). Solo se
+ * ve entrando directo a /en (noindex, sin enlaces mientras PUBLICADO_EN sea false).
  *
  * Imports relativos con .ts para que los tests unitarios lo carguen con Node.
  */
@@ -41,8 +40,6 @@ export type DiccFooter = {
   ciudad: string;
 };
 
-const M = "[FALTA REVISION EN]";
-
 export const header: Record<Idioma, DiccHeader> = {
   es: {
     logoAlt: "Mundo Lógico",
@@ -58,14 +55,14 @@ export const header: Record<Idioma, DiccHeader> = {
   },
   en: {
     logoAlt: "Mundo Lógico",
-    botonMenu: `${M} Toggle menu`,
+    botonMenu: "Open menu",
     links: [
-      { label: `${M} Products`, ruta: "productos" },
-      { label: `${M} About us`, ruta: "nosotros" },
-      { label: `${M} Case studies`, ruta: "casos" },
-      { label: `${M} Contact`, ruta: "inicio", ancla: "#contacto" },
+      { label: "Products", ruta: "productos" },
+      { label: "About us", ruta: "nosotros" },
+      { label: "Case studies", ruta: "casos" },
+      { label: "Contact", ruta: "inicio", ancla: "#contacto" },
     ],
-    cta: `${M} Book a call`,
+    cta: "Book a call",
     cambiarIdioma: "Español",
   },
 };
@@ -90,19 +87,19 @@ export const footer: Record<Idioma, DiccFooter> = {
   },
   en: {
     logoAlt: "Mundo Lógico",
-    descripcion: `${M} We connect your tools, your data and AI agents into a single system that does your team's repetitive work. Complete processes, not loose automations or isolated chatbots.`,
-    columnas: { productos: `${M} Products`, empresa: `${M} Company`, legal: `${M} Legal` },
+    descripcion: "We connect your tools, your data and AI agents into one system that handles your team's repetitive work. End-to-end processes, not scattered automations or isolated chatbots.",
+    columnas: { productos: "Products", empresa: "Company", legal: "Legal" },
     productos: {
-      ecommerce: `${M} Shopify e-commerce development`,
+      ecommerce: "Shopify e-commerce development",
       iaLab: "IA Lab",
       knowledge: "Knowledge Engine",
       support: "Support Engine",
       signal: "Signal Engine",
     },
-    empresa: { nosotros: `${M} About us`, casos: `${M} Case studies`, contacto: `${M} Contact` },
-    legal: { terminos: `${M} Terms and conditions`, privacidad: `${M} Privacy policy` },
+    empresa: { nosotros: "About us", casos: "Case studies", contacto: "Contact" },
+    legal: { terminos: "Terms and conditions", privacidad: "Privacy policy" },
     notaSoloEspanol: "(Spanish)",
-    derechos: `${M} All rights reserved.`,
+    derechos: "All rights reserved.",
     ciudad: "Medellín, Colombia",
   },
 };

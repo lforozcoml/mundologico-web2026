@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 import { IDIOMAS, MARCA_FALTA_REVISION, PUBLICADO_EN } from "../../src/lib/i18n/config.ts";
 import { footer, header } from "../../src/content/data/i18n/navegacion.ts";
+import { PENDIENTES_REVISION_EN } from "../../src/content/data/i18n/revision.ts";
 
 const diccionarios = { header, footer };
 
@@ -36,6 +37,10 @@ describe("diccionarios", () => {
       for (const i of IDIOMAS) assert.ok(!textos(dicc[i]).some((t) => t.includes("\u2014")), `${nombre}.${i}`);
     });
   }
+
+  test("no se publica el inglés con diccionarios pendientes de revisión", () => {
+    if (PUBLICADO_EN) assert.deepEqual([...PENDIENTES_REVISION_EN], [], "Revisar el inglés antes de poner PUBLICADO_EN en true");
+  });
 
   test("no se publica el inglés con textos marcados [FALTA REVISION EN]", () => {
     const pendientes = Object.entries(diccionarios).flatMap(([n, d]) =>
