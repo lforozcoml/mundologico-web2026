@@ -7,10 +7,14 @@ import { ETIQUETA_INTERES_EN, inicio } from "../../src/content/data/i18n/inicio.
 import { casosPorIdioma } from "../../src/content/data/casos.ts";
 import { entradaPorIdioma } from "../../src/content/data/ecommerce-shopify.ts";
 import { INTERESES } from "../../src/lib/contact.ts";
+import { ecommerce } from "../../src/content/data/i18n/ecommerce-contenido.ts";
+import { _todasLasTiendas, _todosLosModulos } from "../../src/content/data/ecommerce-shopify.ts";
+import { cookies } from "../../src/content/data/i18n/cookies.ts";
 import { casosPagina } from "../../src/content/data/i18n/casos-pagina.ts";
 import { productosDetalle, productosPagina } from "../../src/content/data/i18n/productos-pagina.ts";
 
-const diccionarios = { header, footer, inicio, casos: casosPorIdioma, entrada: entradaPorIdioma, productosDetalle, productosPagina, casosPagina };
+const diccionarios = { header, footer, inicio, casos: casosPorIdioma, entrada: entradaPorIdioma, productosDetalle, productosPagina, casosPagina, cookies };
+const diccionariosConEcommerce = { ...diccionarios, ecommerce };
 
 /** Todos los textos de un valor, recorriendo objetos y arreglos. */
 function textos(valor: unknown): string[] {
@@ -54,7 +58,7 @@ describe("diccionarios", () => {
   });
 
   test("no se publica el inglés con textos marcados [FALTA REVISION EN]", () => {
-    const pendientes = Object.entries(diccionarios).flatMap(([n, d]) =>
+    const pendientes = Object.entries(diccionariosConEcommerce).flatMap(([n, d]) =>
       textos(d.en).filter((t) => t.includes(MARCA_FALTA_REVISION)).map((t) => `${n}: ${t}`),
     );
     if (PUBLICADO_EN) assert.deepEqual(pendientes, [], "Revisar el inglés antes de poner PUBLICADO_EN en true");
@@ -86,6 +90,40 @@ describe("diccionarios", () => {
         productosDetalle.es.map((p) => [p.id, p.numero, p.nombre, p.color, p.stack.join()]),
       );
     }
+  });
+
+  test("ecommerce: misma forma en todos los idiomas (sin los textos por tienda y módulo)", () => {
+    const sinPropios = (c: (typeof ecommerce)["es"]) => ({ ...c, tiendas: null, modulos: null });
+    for (const i of IDIOMAS) assert.deepEqual(forma(sinPropios(ecommerce[i])), forma(sinPropios(ecommerce.es)));
+  });
+
+  test("ecommerce en inglés: cada tienda y cada módulo tiene su texto", () => {
+    for (const t of _todasLasTiendas) assert.ok(ecommerce.en.tiendas[t.id]?.descripcion, t.id);
+    for (const m of _todosLosModulos) assert.ok(ecommerce.en.modulos[m.id], m.id);
+    // Misma cifra que en español si algún día se publica.
+    const parchita = _todasLasTiendas.find((t) => t.id === "parchita");
+    if (parchita?.cifra) assert.equal(digitos(ecommerce.en.tiendas.parchita.cifra ?? "").slice(0, 5), digitos(parchita.cifra.texto).slice(0, 5));
+  });
+
+  test("ecommerce en inglés: términos fijos y sin 'campaign' en soporte", () => {
+    const todo = textos(ecommerce.en).join(" ").toLowerCase();
+    for (const t of [
+      "20-minute call",
+      "free of charge",
+      "Store Review",
+      "30-, 60- and 90-day plan",
+      "monthly hours package",
+      "first response during business hours (Monday to Friday, Colombia time)",
+      "quoted separately",
+      "scope agreed in writing",
+      "in your company's name",
+      "collaborator access with minimum permissions",
+    ]) assert.ok(todo.includes(t.toLowerCase()), t);
+    assert.ok(!/campaign/i.test(textos(ecommerce.en.soporte).join(" ")));
+  });
+
+  test("ecommerce: meta description de hasta 155 caracteres en cada idioma", () => {
+    for (const i of IDIOMAS) assert.ok(ecommerce[i].meta.description.length <= 155, `${i}: ${ecommerce[i].meta.description.length}`);
   });
 
   test("cifras de empresa: los mismos números en todos los idiomas", () => {

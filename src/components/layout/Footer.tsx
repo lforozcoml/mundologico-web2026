@@ -94,7 +94,7 @@ export function Footer({ idioma }: { idioma: Idioma }) {
                 </Link>
               ))}
               {id === "legal" && (
-                <CookieSettingsButton className="block text-left text-[14px] text-white/80 hover:text-white transition-colors mb-2.5" />
+                <CookieSettingsButton idioma={idioma} className="block text-left text-[14px] text-white/80 hover:text-white transition-colors mb-2.5" />
               )}
             </div>
           ))}
