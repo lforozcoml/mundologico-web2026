@@ -38,6 +38,8 @@ export type DiccFooter = {
   notaSoloEspanol: string;
   derechos: string;
   ciudad: string;
+  /** Título del enlace de las insignias de partner. */
+  perfilPartner: string;
 };
 
 export const header: Record<Idioma, DiccHeader> = {
@@ -84,6 +86,7 @@ export const footer: Record<Idioma, DiccFooter> = {
     notaSoloEspanol: "",
     derechos: "Todos los derechos reservados.",
     ciudad: site.contacto.ciudad,
+    perfilPartner: "Ver perfil de Mundo Lógico en el directorio de partners",
   },
   en: {
     logoAlt: "Mundo Lógico",
@@ -101,5 +104,6 @@ export const footer: Record<Idioma, DiccFooter> = {
     notaSoloEspanol: "(Spanish)",
     derechos: "All rights reserved.",
     ciudad: "Medellín, Colombia",
+    perfilPartner: "See Mundo Lógico's profile in the partner directory",
   },
 };

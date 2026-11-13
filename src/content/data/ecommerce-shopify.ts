@@ -5,6 +5,9 @@
  * en el documento no se incluye.
  */
 
+import type { Idioma } from "../../lib/i18n/config.ts";
+import type { Textos } from "../../lib/i18n/tipos.ts";
+
 // ── Banderas ────────────────────────────────────────────────────────────────
 
 /** false: noindex, nofollow, fuera del sitemap y sin enlace desde /productos. */
@@ -631,3 +634,48 @@ export function sitemapEntrada(publicado: boolean, base: string) {
 /** Listas completas, solo para pruebas de las funciones de visibilidad. */
 export const _todosLosModulos: readonly ModuloOperacion[] = modulos;
 export const _todasLasTiendas: readonly Tienda[] = tiendas;
+
+// ── Inglés (borrador, pendiente de revisión: ver i18n/revision.ts) ─────────────
+
+/** Entradas hacia la página desde home, /productos y footer, en inglés. */
+const entradaEn: Textos<typeof entrada> = {
+  anclaje: "Explore Shopify e-commerce development →",
+  shopify: {
+    eyebrow: "E-commerce",
+    titulo: "Your Shopify store",
+    texto: "To sell online or improve the store you already have, connected to your operation.",
+    servicios: ["New store", "Store review", "Monthly support"],
+  },
+  automatizacion: {
+    eyebrow: "Automation",
+    titulo: "Automate your processes with AI",
+    texto: "To take manual work off customer service, operations and data.",
+    cta: "See automation products ↓",
+    href: "#automatizacion",
+  },
+  puente: {
+    texto: "If you sell online, you can also see how to connect your store to your operation.",
+    enlace: "See how we review a store",
+    href: "/en/products/shopify-ecommerce#revision",
+  },
+  hub: {
+    h1a: "Sell better online,",
+    h1b: "and automate what eats up your time",
+    texto:
+      "Two ways to start: a well-built Shopify store, or automating the processes that are still done by hand.",
+    description: "Shopify stores connected to your operation and AI process automation for your company.",
+  },
+  home: {
+    eyebrow: "E-commerce",
+    titulo: "Selling online? A Shopify store that doesn't complicate your operation",
+    texto: "We build, optimize and support stores connected to everything that happens after the purchase.",
+  },
+  seccionAutomatizacion: {
+    titulo: "AI automation",
+    texto:
+      "Each product solves a specific problem. They are not demos or concepts: they are working systems with real architecture, verifiable metrics and ongoing support.",
+  },
+  pie: "Shopify e-commerce development",
+};
+
+export const entradaPorIdioma: Record<Idioma, Textos<typeof entrada>> = { es: entrada, en: entradaEn };

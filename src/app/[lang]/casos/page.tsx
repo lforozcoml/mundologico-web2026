@@ -23,7 +23,7 @@ export default async function CasosPage({ params }: PageProps<"/[lang]/casos">) 
     <>
       <Header idioma={idioma} ruta="casos" />
       <main className="flex-1 pt-16">
-        <CasosSection headingAs="h1" />
+        <CasosSection idioma={idioma} headingAs="h1" />
         <CtaBand />
       </main>
       <Footer idioma={idioma} />

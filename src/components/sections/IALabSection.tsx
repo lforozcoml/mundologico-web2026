@@ -4,13 +4,12 @@ import { useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { CALENDARIO_URL } from "@/content/data/site";
+import { inicio, type TextosInicio } from "@/content/data/i18n/inicio";
+import type { Idioma } from "@/lib/i18n/config";
 
 const pasos = [
   {
     num: "01",
-    label: "Entrada",
-    titulo: "Tu hipótesis",
-    desc: "Un problema de negocio, un proceso costoso, una idea que quieres probar antes de invertir en grande.",
     icon: (
       <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
         <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
@@ -21,9 +20,6 @@ const pasos = [
   },
   {
     num: "02",
-    label: "Arquitectura",
-    titulo: "Simulamos tu operación",
-    desc: "Construimos una arquitectura funcional completa: datos en Airtable, flujos en Make, procesos en Monday, inteligencia con la IA adecuada.",
     icon: (
       <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
         <path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9A1 1 0 0 0 21.4 6.07z"/>
@@ -35,9 +31,6 @@ const pasos = [
   },
   {
     num: "03",
-    label: "Prueba",
-    titulo: "Datos reales, resultado real",
-    desc: "Corremos la solución con tu información. No una demo. Un sistema funcionando que genera métricas verificables.",
     icon: (
       <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
         <path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/>
@@ -48,9 +41,6 @@ const pasos = [
   },
   {
     num: "04",
-    label: "Decisión",
-    titulo: "Validas y desplegás",
-    desc: "Si la hipótesis se confirma, el sistema ya está construido y listo para producción. Si no, aprendiste sin haber invertido en una implementación completa.",
     icon: (
       <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#04BCA6" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
@@ -61,20 +51,15 @@ const pasos = [
   },
 ];
 
-const stackItems = [
-  { logo: "/airtable-isotipo.svg", nombre: "Airtable", desc: "Base de datos flexible — captura y estructura los datos del experimento" },
-  { logo: "/make-isotipo.svg",     nombre: "Make.com",  desc: "Motor de automatización — orquesta los flujos y conecta los sistemas" },
-  { logo: "/monday-isotipo.svg",   nombre: "Monday.com",desc: "Gestión del proceso — visibilidad y control del flujo de trabajo" },
+const stackItems: { logo: string; nombre: string; clave: keyof TextosInicio["iaLab"]["stack"] }[] = [
+  { logo: "/airtable-isotipo.svg", nombre: "Airtable", clave: "airtable" },
+  { logo: "/make-isotipo.svg",     nombre: "Make.com",  clave: "make" },
+  { logo: "/monday-isotipo.svg",   nombre: "Monday.com",clave: "monday" },
 ];
 
-const diferenciadores = [
-  "No es una demo ni un piloto genérico. Es tu proceso real corriendo con IA.",
-  "Si la hipótesis valida, el sistema ya está construido. Sin re-trabajo.",
-  "Si no valida, aprendiste rápido y barato, sin comprometer un presupuesto completo.",
-  "Seleccionamos la IA que mejor resuelve tu caso — no la que está de moda.",
-];
-
-export function IALabSection() {
+export function IALabSection({ idioma }: { idioma: Idioma }) {
+  const tx = inicio[idioma].iaLab;
+  const diferenciadores = tx.diferenciadores;
   const sectionRef = useRef<HTMLElement>(null);
   const isotipoRef = useRef<SVGSVGElement>(null);
 
@@ -143,14 +128,14 @@ export function IALabSection() {
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 bg-white/8 border border-white/12 rounded-full px-4 py-1.5 text-[12px] font-bold text-white/80 uppercase tracking-widest mb-6">
-            🧪 Producto Flagship
+            {tx.eyebrow}
           </div>
           <h2 className="text-5xl md:text-6xl font-black text-white leading-tight mb-5">IA Lab</h2>
           <p className="text-xl font-semibold text-white/70 leading-snug mb-4">
-            Del problema a la prueba. De la prueba a producción.
+            {tx.subtitulo}
           </p>
           <p className="text-[16px] text-white/50 leading-relaxed">
-            Traes una hipótesis de negocio o un proceso que quieres transformar con IA. Nosotros construimos la arquitectura completa, la probamos con datos reales, y al final sabes si funciona — y si funciona, queda implementado.
+            {tx.intro}
           </p>
         </div>
 
@@ -159,7 +144,7 @@ export function IALabSection() {
           {/* Línea conectora */}
           <div className="absolute hidden md:block" style={{ top: 40, left: "12.5%", right: "12.5%", height: 1, background: "linear-gradient(90deg, transparent, rgba(4,188,166,.5), rgba(4,188,166,.5), transparent)", zIndex: 0 }} />
 
-          {pasos.map((p) => (
+          {pasos.map((p, i) => (
             <div key={p.num} className="text-center px-2 relative z-10">
               <div
                 className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5"
@@ -171,10 +156,10 @@ export function IALabSection() {
                 {p.icon}
               </div>
               <div className="text-[11px] font-extrabold uppercase tracking-widest text-mundo-teal mb-2">
-                {p.num} · {p.label}
+                {p.num} · {tx.pasos[i].label}
               </div>
-              <div className="text-[16px] font-bold text-white mb-2">{p.titulo}</div>
-              <div className="text-[13px] text-white/50 leading-relaxed">{p.desc}</div>
+              <div className="text-[16px] font-bold text-white mb-2">{tx.pasos[i].titulo}</div>
+              <div className="text-[13px] text-white/50 leading-relaxed">{tx.pasos[i].desc}</div>
             </div>
           ))}
         </div>
@@ -183,22 +168,22 @@ export function IALabSection() {
         <div className="grid md:grid-cols-2 gap-6">
           {/* Stack */}
           <div className="rounded-2xl p-8" style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)" }}>
-            <p className="text-[12px] font-bold uppercase tracking-widest text-white/35 mb-5">Columna vertebral del Lab</p>
+            <p className="text-[12px] font-bold uppercase tracking-widest text-white/35 mb-5">{tx.stackTitulo}</p>
             <div className="flex flex-col gap-4">
-              {stackItems.map(({ logo, nombre, desc }) => (
+              {stackItems.map(({ logo, nombre, clave }) => (
                 <div key={nombre} className="flex items-center gap-4">
                   <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center flex-shrink-0 p-2" style={{ border: "1px solid rgba(255,255,255,.15)" }}>
                     <Image src={logo} alt={nombre} width={28} height={28} className="w-full h-full object-contain" />
                   </div>
                   <div>
                     <div className="text-[14px] font-bold text-white">{nombre}</div>
-                    <div className="text-[12px] text-white/45">{desc}</div>
+                    <div className="text-[12px] text-white/45">{tx.stack[clave]}</div>
                   </div>
                 </div>
               ))}
               <div className="h-px my-1" style={{ background: "rgba(255,255,255,.07)" }} />
               <div className="flex items-center gap-2.5 flex-wrap">
-                <span className="text-[12px] text-white/40">+ IA según el caso:</span>
+                <span className="text-[12px] text-white/40">{tx.iaSegunCaso}</span>
                 {[
                   { src: "/claude.svg", alt: "Claude" },
                   { src: "/gemini.svg", alt: "Gemini" },
@@ -215,7 +200,7 @@ export function IALabSection() {
           {/* Diferenciadores + CTA */}
           <div className="flex flex-col gap-4">
             <div className="rounded-2xl p-7 flex-1" style={{ background: "rgba(4,188,166,.08)", border: "1px solid rgba(4,188,166,.2)" }}>
-              <p className="text-[12px] font-bold uppercase tracking-widest text-mundo-teal mb-4">¿Qué lo diferencia?</p>
+              <p className="text-[12px] font-bold uppercase tracking-widest text-mundo-teal mb-4">{tx.diferenciaTitulo}</p>
               <div className="flex flex-col gap-3">
                 {diferenciadores.map((d) => (
                   <div key={d} className="flex gap-2.5 text-[14px] text-white/75 leading-snug">
@@ -231,7 +216,7 @@ export function IALabSection() {
               rel="noopener noreferrer"
               className="flex items-center justify-center bg-white text-mundo-dark font-semibold text-[15px] px-7 py-4 rounded-full hover:bg-gray-100 transition-colors"
             >
-              Llevar mi hipótesis al IA Lab →
+              {tx.cta}
             </Link>
           </div>
         </div>

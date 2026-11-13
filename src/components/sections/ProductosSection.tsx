@@ -3,8 +3,10 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { productos } from "@/content/data/productos";
+import { productosPorIdioma } from "@/content/data/productos";
 import type { Producto } from "@/content/data/productos";
+import { inicio, type TextosInicio } from "@/content/data/i18n/inicio";
+import type { Idioma } from "@/lib/i18n/config";
 
 const colorMap = {
   blue:    { header: "linear-gradient(135deg, #23274C 0%, #176BEC 100%)", dot: "#176BEC" },
@@ -46,7 +48,7 @@ function DecoShapes({ id }: { id: string }) {
   return null;
 }
 
-function ProductCard({ producto }: { producto: Producto }) {
+function ProductCard({ producto, tx, hrefProductos }: { producto: Producto; tx: TextosInicio["productos"]; hrefProductos: string }) {
   const colors = colorMap[producto.color];
   return (
     <div className="flex flex-col rounded-3xl border border-gray-200 bg-white overflow-hidden flex-shrink-0 transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(23,39,76,0.10)]">
@@ -58,12 +60,12 @@ function ProductCard({ producto }: { producto: Producto }) {
           {producto.numero === "03" && (
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
           )}
-          Producto {producto.numero}
+          {tx.producto} {producto.numero}
         </div>
         {producto.id === "ia-lab" && (
           <div className="mb-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wide text-white/80" style={{ background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.15)" }}>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            Engagement de 90 días
+            {tx.engagement}
           </div>
         )}
         <div className="text-[26px] font-extrabold text-white leading-tight mb-2.5">{producto.nombre}</div>
@@ -91,15 +93,23 @@ function ProductCard({ producto }: { producto: Producto }) {
 
       {/* Footer */}
       <div className="px-9 pb-9 flex justify-center">
-        <Link href={`/productos#${producto.id}`} className="inline-flex items-center gap-1.5 bg-mundo-blue text-white text-[14px] font-semibold px-5 py-2.5 rounded-full hover:bg-blue-700 transition-colors">
-          Ver más información
+        <Link href={`${hrefProductos}#${producto.id}`} className="inline-flex items-center gap-1.5 bg-mundo-blue text-white text-[14px] font-semibold px-5 py-2.5 rounded-full hover:bg-blue-700 transition-colors">
+          {tx.verMas}
         </Link>
       </div>
     </div>
   );
 }
 
-export function ProductosSection() {
+type Props = {
+  idioma: Idioma;
+  /** URL de /productos en el idioma de la página (sale del mapa de rutas en el servidor). */
+  hrefProductos: string;
+};
+
+export function ProductosSection({ idioma, hrefProductos }: Props) {
+  const tx = inicio[idioma].productos;
+  const productos = productosPorIdioma[idioma];
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [current, setCurrent] = useState(0);
@@ -142,23 +152,23 @@ export function ProductosSection() {
         {/* Header */}
         <div className="mb-12">
           <Image src="/isotipo-separador.svg" alt="" width={26} height={26} className="mb-2.5" />
-          <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-3">Productos IA</p>
+          <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-3">{tx.eyebrow}</p>
           <h2 className="text-4xl md:text-5xl font-black text-mundo-dark leading-tight mb-5">
-            Construido, probado, roto<br className="hidden md:block" /> y mejorado.{" "}
-            <span className="text-mundo-blue">Antes de llegar a ti.</span>
+            {tx.titulo.a}<br className="hidden md:block" /> {tx.titulo.b}{" "}
+            <span className="text-mundo-blue">{tx.titulo.resaltado}</span>
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl leading-relaxed">
-            Cada producto carga con arquitectura real, integraciones en producción y decisiones que solo se aprenden ejecutando. No vendemos el proceso — vendemos el resultado de haberlo hecho antes.
+            {tx.intro}
           </p>
         </div>
 
         {/* Carousel */}
         <div className="relative">
-          <button onClick={prev} disabled={current === 0} aria-label="Anterior"
+          <button onClick={prev} disabled={current === 0} aria-label={tx.anterior}
             className="absolute -left-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center disabled:opacity-30 hover:not-disabled:border-mundo-blue transition-all">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#23274C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
-          <button onClick={next} disabled={current >= maxIndex} aria-label="Siguiente"
+          <button onClick={next} disabled={current >= maxIndex} aria-label={tx.siguiente}
             className="absolute -right-6 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center disabled:opacity-30 hover:not-disabled:border-mundo-blue transition-all">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#23274C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </button>
@@ -167,7 +177,7 @@ export function ProductosSection() {
             <div ref={trackRef} className="flex" style={{ gap: GAP, transition: "transform .45s cubic-bezier(.25,.46,.45,.94)" }}>
               {productos.map((p) => (
                 <div key={p.id} style={{ width: cardWidth, minWidth: cardWidth, flexShrink: 0 }}>
-                  <ProductCard producto={p} />
+                  <ProductCard producto={p} tx={tx} hrefProductos={hrefProductos} />
                 </div>
               ))}
             </div>
@@ -176,7 +186,7 @@ export function ProductosSection() {
           {/* Dots */}
           <div className="flex justify-center gap-2 mt-7">
             {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-              <button key={i} onClick={() => setCurrent(i)} aria-label={`Ir al producto ${i + 1}`}
+              <button key={i} onClick={() => setCurrent(i)} aria-label={`${tx.irAlProducto} ${i + 1}`}
                 className="h-2 rounded-full transition-all duration-300 border-none"
                 style={{ width: i === current ? 24 : 8, background: i === current ? "#176BEC" : "#E5E8F0" }}
               />
@@ -190,7 +200,7 @@ export function ProductosSection() {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#176BEC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
           </div>
           <p className="text-[14px] text-gray-600 leading-relaxed">
-            <strong className="text-mundo-dark">Arquitectura abierta.</strong> Cada producto se construye sobre plataformas que el cliente contrata directamente — sin markup de licencias. El costo operativo crece en proporción al uso real, no a nuestra tarifa.
+            <strong className="text-mundo-dark">{tx.notaTitulo}</strong> {tx.notaTexto}
           </p>
         </div>
       </div>

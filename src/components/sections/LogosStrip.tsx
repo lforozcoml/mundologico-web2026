@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { site } from "@/content/data/site";
+import { inicio } from "@/content/data/i18n/inicio";
+import type { Idioma } from "@/lib/i18n/config";
 
 const aiLogos = [
   { src: "/claude.svg", alt: "Claude" },
@@ -13,12 +14,13 @@ const autoLogos = [
   { src: "/airtable-logo.svg", alt: "Airtable" },
 ];
 
-export function LogosStrip() {
+export function LogosStrip({ idioma }: { idioma: Idioma }) {
+  const tx = inicio[idioma];
   return (
     <div className="border-t border-b border-gray-200 bg-gray-50 py-7">
       {/* Franja de confianza — mismas cifras y fecha de corte que Nosotros */}
       <div className="max-w-7xl mx-auto px-6 mb-6 flex items-center gap-x-3 gap-y-1 flex-wrap justify-center text-[14px] text-gray-500">
-        {site.cifras.items.map(({ valor, unidad, complemento }, i) => (
+        {tx.cifras.map(({ valor, unidad, complemento }, i) => (
           <span key={complemento} className="flex items-center gap-x-3">
             {i > 0 && <span className="text-gray-300" aria-hidden>·</span>}
             <span>
@@ -31,7 +33,7 @@ export function LogosStrip() {
         ))}
       </div>
       <div className="max-w-7xl mx-auto px-6 flex items-center gap-8 flex-wrap justify-center">
-        <span className="text-[13px] text-gray-400 font-medium whitespace-nowrap">IA agnósticos:</span>
+        <span className="text-[13px] text-gray-400 font-medium whitespace-nowrap">{tx.logos.ia}</span>
         {aiLogos.map(({ src, alt }) => (
           <div
             key={alt}
@@ -41,7 +43,7 @@ export function LogosStrip() {
           </div>
         ))}
         <div className="w-px h-5 bg-gray-200 hidden md:block" />
-        <span className="text-[13px] text-gray-400 font-medium whitespace-nowrap">Automatización:</span>
+        <span className="text-[13px] text-gray-400 font-medium whitespace-nowrap">{tx.logos.automatizacion}</span>
         {autoLogos.map(({ src, alt }) => (
           <div
             key={alt}

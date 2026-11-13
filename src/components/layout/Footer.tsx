@@ -119,6 +119,7 @@ export function Footer({ idioma }: { idioma: Idioma }) {
                 badge={badge}
                 className="bg-white rounded-xl px-4 py-2.5 flex items-center"
                 imgClassName="h-14 w-auto"
+                titulo={tx.perfilPartner}
               />
             ))}
           </div>

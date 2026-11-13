@@ -1,9 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import { site, CALENDARIO_URL, partnerBadges } from "@/content/data/site";
+import { CALENDARIO_URL, partnerBadges } from "@/content/data/site";
+import { inicio } from "@/content/data/i18n/inicio";
+import type { Idioma } from "@/lib/i18n/config";
+import { enlace } from "@/lib/i18n/rutas";
 import { PartnerBadge } from "@/components/ui/PartnerBadge";
 
-export function HeroSection() {
+export function HeroSection({ idioma }: { idioma: Idioma }) {
+  const tx = inicio[idioma].hero;
+  const casos = enlace("casos", idioma) ?? "/casos";
   return (
     <section className="relative overflow-hidden pt-28 pb-20 md:pt-36 md:pb-28" style={{ background: "#23274C" }}>
       {/* Blob top-right */}
@@ -63,19 +68,19 @@ export function HeroSection() {
           <div className="flex items-center gap-2.5 mb-6">
             <div className="w-2 h-2 rounded-full bg-mundo-teal shrink-0" />
             <span className="text-sm font-semibold text-white/65">
-              Automatización e IA para empresas en Colombia
+              {tx.eyebrow}
             </span>
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-[56px] font-black text-white leading-[1.08] tracking-tight mb-6">
-            Automatizamos lo que{" "}
-            <span className="text-mundo-blue">frena tu negocio.</span>{" "}
-            Construimos lo que{" "}
-            <span className="text-mundo-teal">lo escala.</span>
+            {tx.h1.a}{" "}
+            <span className="text-mundo-blue">{tx.h1.b}</span>{" "}
+            {tx.h1.c}{" "}
+            <span className="text-mundo-teal">{tx.h1.d}</span>
           </h1>
 
           <p className="text-lg text-white/65 leading-relaxed max-w-[480px] mb-9">
-            {site.descripcion}
+            {tx.descripcion}
           </p>
 
           <div className="flex flex-wrap gap-3 mb-4">
@@ -86,23 +91,23 @@ export function HeroSection() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-mundo-blue text-white font-semibold text-base px-7 py-3.5 rounded-full hover:bg-blue-700 transition-colors"
             >
-              Agenda una llamada de 20 minutos →
+              {tx.ctaPrimario}
             </Link>
             <Link
-              href="/casos"
+              href={casos}
               className="inline-flex items-center gap-2 border border-white/20 text-white font-semibold text-base px-7 py-3.5 rounded-full hover:bg-white/10 transition-colors"
             >
-              Ver casos de éxito
+              {tx.ctaCasos}
             </Link>
           </div>
 
           <p className="text-sm text-white/50 leading-relaxed max-w-[440px] mb-10">
-            Sin costo. Revisamos un proceso concreto y te decimos si vale la pena automatizarlo.
+            {tx.nota}
           </p>
 
           {/* Partner badges */}
           <div className="flex items-center gap-4 flex-wrap">
-            <span className="text-sm text-white/45 font-medium">Partners oficiales:</span>
+            <span className="text-sm text-white/45 font-medium">{tx.partners}</span>
             <div className="flex items-center gap-3 flex-wrap">
               {partnerBadges.map((badge) => (
                 <PartnerBadge
@@ -110,6 +115,7 @@ export function HeroSection() {
                   badge={badge}
                   className="flex items-center px-4 py-2.5 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
                   imgClassName="h-14 w-auto"
+                  titulo={tx.perfilPartner}
                 />
               ))}
             </div>
@@ -122,7 +128,7 @@ export function HeroSection() {
           <div className="relative rounded-3xl overflow-hidden shadow-[0_32px_80px_rgba(23,39,76,0.2)]">
             <Image
               src="/hero-team.jpeg"
-              alt="Equipo de trabajo revisando un proceso automatizado"
+              alt={tx.fotoAlt}
               width={600}
               height={450}
               className="w-full h-auto object-cover"
@@ -145,16 +151,16 @@ export function HeroSection() {
           >
             <div className="flex items-center gap-2 mb-1.5">
               <div className="w-2 h-2 rounded-full bg-mundo-teal" />
-              <span className="text-[11px] font-bold text-mundo-teal uppercase tracking-wide">Casos reales</span>
+              <span className="text-[11px] font-bold text-mundo-teal uppercase tracking-wide">{tx.tarjetaEyebrow}</span>
             </div>
             <p className="text-[14px] text-mundo-dark font-semibold leading-snug">
-              Sector público, distribución industrial y servicios financieros
+              {tx.tarjetaTexto}
             </p>
             <Link
-              href="/casos"
+              href={casos}
               className="inline-flex items-center gap-1 text-[13px] font-bold text-mundo-blue mt-2.5 hover:underline"
             >
-              Ver casos →
+              {tx.tarjetaCta}
             </Link>
           </div>
         </div>

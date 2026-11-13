@@ -1,6 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import { casos } from "@/content/data/casos";
+import { casosPorIdioma } from "@/content/data/casos";
+import { inicio } from "@/content/data/i18n/inicio";
+import type { Idioma } from "@/lib/i18n/config";
+import { enlace } from "@/lib/i18n/rutas";
 import { StackPill } from "@/components/ui/StackPill";
 
 const headerBg = {
@@ -20,24 +23,27 @@ const metricColor = {
 };
 
 type Props = {
+  idioma: Idioma;
   /** h1 cuando la sección es el contenido principal de la página (/casos). */
   headingAs?: "h1" | "h2";
 };
 
-export function CasosSection({ headingAs: Heading = "h2" }: Props) {
+export function CasosSection({ idioma, headingAs: Heading = "h2" }: Props) {
+  const tx = inicio[idioma].casos;
+  const casos = casosPorIdioma[idioma];
   return (
     <section className="py-24 bg-gray-50 overflow-hidden" id="casos">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <div className="mb-14">
           <Image src="/isotipo-separador.svg" alt="" width={26} height={26} className="mb-2.5" />
-          <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-3">Casos de éxito</p>
+          <p className="text-[13px] font-bold uppercase tracking-widest text-gray-400 mb-3">{tx.eyebrow}</p>
           <Heading className="text-4xl md:text-5xl font-black text-mundo-dark leading-tight mb-4">
-            Resultados reales,<br />
-            <span className="text-mundo-blue">no promesas</span>
+            {tx.titulo}<br />
+            <span className="text-mundo-blue">{tx.resaltado}</span>
           </Heading>
           <p className="text-lg text-gray-600 max-w-xl leading-relaxed">
-            Cada proyecto tiene métricas concretas. Esto es lo que hemos construido para nuestros clientes.
+            {tx.intro}
           </p>
         </div>
 
@@ -77,8 +83,8 @@ export function CasosSection({ headingAs: Heading = "h2" }: Props) {
 
               {/* Card footer */}
               <div className="px-7 pb-6 flex justify-end">
-                <Link href={`/casos/${c.slug}`} className="text-[14px] font-semibold text-mundo-blue flex items-center gap-1 hover:gap-2 transition-all">
-                  Ver caso completo →
+                <Link href={enlace("caso", idioma, { slug: c.slug }) ?? `/casos/${c.slug}`} className="text-[14px] font-semibold text-mundo-blue flex items-center gap-1 hover:gap-2 transition-all">
+                  {tx.verCaso}
                 </Link>
               </div>
             </div>

@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
-import { RUTA, entrada } from "@/content/data/ecommerce-shopify";
+import { entradaPorIdioma } from "@/content/data/ecommerce-shopify";
+import type { Idioma } from "@/lib/i18n/config";
+import { enlaceOEspanol } from "@/lib/i18n/rutas";
 
 /** Franja delgada del home hacia /productos/ecommerce-shopify. La página la muestra solo con PUBLICADO. */
-export function EntradaEcommerce() {
+export function EntradaEcommerce({ idioma }: { idioma: Idioma }) {
+  const entrada = entradaPorIdioma[idioma];
   return (
     <section aria-labelledby="entrada-ecommerce-titulo" className="bg-white py-12 md:py-16">
       <div className="mx-auto max-w-7xl px-6">
@@ -21,7 +24,7 @@ export function EntradaEcommerce() {
             </div>
           </div>
           <Link
-            href={RUTA}
+            href={enlaceOEspanol("ecommerceShopify", idioma)}
             data-cta="home-banda-ecommerce"
             className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-full bg-mundo-dark px-7 py-3 text-center text-base font-semibold text-white transition-colors hover:bg-mundo-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mundo-blue"
           >

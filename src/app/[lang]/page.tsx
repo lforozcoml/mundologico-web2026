@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import { pageMetadata, SITE_NAME } from "@/lib/metadata";
+import { pageMetadata } from "@/lib/metadata";
+import { enlaceOEspanol } from "@/lib/i18n/rutas";
+import { inicio } from "@/content/data/i18n/inicio";
 import { idiomaDePagina } from "@/lib/i18n/servidor";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -15,9 +17,8 @@ import { ContactoSection } from "@/components/sections/ContactoSection";
 export async function generateMetadata({ params }: PageProps<"/[lang]">): Promise<Metadata> {
   const idioma = await idiomaDePagina(params, "inicio");
   return pageMetadata({
-    title: `${SITE_NAME} | Automatización e IA para empresas`,
-    description:
-      "Diseñamos e implementamos automatizaciones con IA para que tu equipo deje de hacer trabajo repetitivo y se enfoque en lo que realmente importa.",
+    title: inicio[idioma].meta.title,
+    description: inicio[idioma].meta.description,
     idioma,
     ruta: "inicio",
     absoluteTitle: true,
@@ -30,13 +31,13 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
     <>
       <Header idioma={idioma} ruta="inicio" />
       <main className="flex-1">
-        <HeroSection />
-        <LogosStrip />
-        <ProductosSection />
-        {ECOMMERCE_PUBLICADO && <EntradaEcommerce />}
-        <IALabSection />
-        <CasosSection />
-        <ContactoSection />
+        <HeroSection idioma={idioma} />
+        <LogosStrip idioma={idioma} />
+        <ProductosSection idioma={idioma} hrefProductos={enlaceOEspanol("productos", idioma)} />
+        {ECOMMERCE_PUBLICADO && <EntradaEcommerce idioma={idioma} />}
+        <IALabSection idioma={idioma} />
+        <CasosSection idioma={idioma} />
+        <ContactoSection idioma={idioma} />
       </main>
       <Footer idioma={idioma} />
     </>

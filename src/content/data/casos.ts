@@ -1,3 +1,5 @@
+import type { Idioma } from "../../lib/i18n/config.ts";
+
 export type CasoColor = "teal" | "blue" | "purple";
 
 export type Caso = {
@@ -95,3 +97,88 @@ export const casos: Caso[] = [
     ],
   },
 ];
+
+/**
+ * Borrador en inglés (pendiente de revisión, ver i18n/revision.ts). Mismos slugs, colores,
+ * stack y cifras que en español; solo cambia el formato de los números (8.212 → 8,212).
+ */
+const casosEn: Caso[] = [
+  {
+    slug: "compas-urbano",
+    color: "teal",
+    industry: "Public sector · Culture",
+    nombre: "Public agency · Medellín",
+    tagline: "A smart cultural calendar for a city",
+    subtitulo: "From 13 disconnected sources to a single database of 8,212 events, with an AI agent serving citizens on WhatsApp 24/7.",
+    metricNum: "91%",
+    metricLabel: "of users would recommend the channel",
+    minis: [
+      { num: "8,212", lbl: "events in the database" },
+      { num: "2,036", lbl: "WhatsApp users" },
+      { num: "13",    lbl: "active sources" },
+    ],
+    desc: "A scraping network that consolidates cultural events from 13 sources, plus an AI agent that serves citizens on WhatsApp.",
+    stack: ["Make.com", "OpenAI", "Airtable", "WhatsApp API"],
+    problema: "A public cultural agency needed to consolidate a city's events calendar from more than 13 different organizations. The manual process took hours every week and produced inconsistent data.",
+    solucion: "Project 1. Smart scraping network: 13 automations in Make.com that pull events from each source, process them with OpenAI to standardize the format, and insert or update them automatically in Airtable. The website queries this database in real time.\n\nProject 2. Conversational agent: an AI assistant connected directly to the events database. It serves citizens on WhatsApp, answers only with real data (not the model's general knowledge), and when the conversation ends it automatically sends a 5-question satisfaction survey.",
+    stats: [
+      { num: "91%",    lbl: "of users would recommend the channel" },
+      { num: "8,212",  lbl: "events in the live database" },
+      { num: "2,036",  lbl: "unique users served on WhatsApp" },
+      { num: "18,927", lbl: "messages processed in 18 months" },
+    ],
+  },
+  {
+    slug: "formex",
+    color: "blue",
+    industry: "HVAC · Distribution",
+    nombre: "HVAC distributor · Colombia",
+    tagline: "International pre-orders from China",
+    subtitulo: "From manual emails and spreadsheets to a fully automated process that coordinates suppliers, clients and order status in real time.",
+    metricNum: "0",
+    metricLabel: "manual emails to coordinate the process",
+    minis: [
+      { num: "10",   lbl: "automations" },
+      { num: "+45",  lbl: "SKUs per catalog" },
+      { num: "100%", lbl: "traceability" },
+    ],
+    desc: "A complete system that handles catalog launch, client invitations, order consolidation and status updates with no manual work.",
+    stack: ["Make.com", "Monday.com"],
+    problema: "A wholesale HVAC equipment distributor coordinated international orders from China through a chain of manual emails between suppliers, the warehouse and clients. Every catalog season took dozens of hours of coordination and was prone to errors.",
+    solucion: "A system of 10 automations in Make.com that runs the whole cycle: catalog launch with automatic invitations to segmented clients, order consolidation in Monday.com, syncing with Google Sheets for suppliers, and automatic status notifications at every stage. Zero manual work once the season is activated.",
+    stats: [
+      { num: "0",    lbl: "manual emails in the process" },
+      { num: "10",   lbl: "active automations" },
+      { num: "+45",  lbl: "SKUs managed automatically" },
+      { num: "100%", lbl: "real-time order traceability" },
+    ],
+  },
+  {
+    slug: "mdo-mortgage",
+    color: "purple",
+    industry: "Finance · Mortgages · USA",
+    nombre: "Mortgage company · USA",
+    tagline: "CRM and phone system integrated automatically",
+    subtitulo: "Every call and text logged in Bitrix24 in 5.5 seconds. 73 hours of manual work eliminated in the first month.",
+    metricNum: "73h",
+    metricLabel: "of manual work eliminated in the first month",
+    minis: [
+      { num: "99.99%", lbl: "success rate" },
+      { num: "1,096",  lbl: "calls per month" },
+      { num: "5.5s",   lbl: "average response" },
+    ],
+    desc: "An automation that logs Dialpad calls and texts directly in the Bitrix24 CRM, with smart matching by borrower and co-borrowers.",
+    stack: ["Make.com", "Dialpad API", "Bitrix24"],
+    problema: "A US mortgage company logged every Dialpad call and text in Bitrix24 by hand. With more than 1,000 interactions a month, this took hours of work and left records incomplete or outdated.",
+    solucion: "An automation in Make.com that listens to Dialpad events in real time: every incoming call or text triggers a flow that finds the borrower (and co-borrowers) in Bitrix24, creates or updates the matching record, and attaches the full interaction log. The matching is smart and handles number variations and multiple contacts tied to one case.",
+    stats: [
+      { num: "73h",    lbl: "of manual work eliminated in the first month" },
+      { num: "99.99%", lbl: "automation success rate" },
+      { num: "1,096",  lbl: "calls processed per month" },
+      { num: "5.5s",   lbl: "average logging time" },
+    ],
+  },
+];
+
+/** Casos por idioma. El español es el arreglo `casos` de arriba, sin cambios. */
+export const casosPorIdioma: Record<Idioma, Caso[]> = { es: casos, en: casosEn };
