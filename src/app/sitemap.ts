@@ -1,27 +1,40 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 import { casos } from "@/content/data/casos";
-import { PUBLICADO as ECOMMERCE_PUBLICADO, sitemapEntrada as ecommerceEntrada } from "@/content/data/ecommerce-shopify";
+import { SITE_URL } from "@/lib/metadata";
+import { IDIOMAS, PUBLICADO_EN, idiomaPublicado } from "@/lib/i18n/config";
+import { IDS_RUTAS, RUTAS, alternatesDe, enlace, type ParamsRuta, type RutaId, type RutaSitio } from "@/lib/i18n/rutas";
 
-const BASE = "https://mundologico.com";
+/**
+ * Sale del mapa de rutas. Una entrada por URL publicada; las de /en solo con
+ * PUBLICADO_EN en true. alternates.languages solo cuando la página tiene par publicado.
+ * Exportada aparte para probarla con la bandera en true.
+ */
+export function entradasSitemap(publicadoEn: boolean = PUBLICADO_EN): MetadataRoute.Sitemap {
+  const paramsDe = (id: RutaId): ParamsRuta[] => (id === "caso" ? casos.map((c) => ({ slug: c.slug })) : [{}]);
+  const entradas: MetadataRoute.Sitemap = [];
+  for (const id of IDS_RUTAS) {
+    const ruta: RutaSitio = RUTAS[id];
+    if (!ruta.publicada) continue;
+    for (const params of paramsDe(id)) {
+      const languages = alternatesDe(id, params, publicadoEn);
+      const absolutos = Object.fromEntries(Object.entries(languages).map(([k, v]) => [k, `${SITE_URL}${v === "/" ? "" : v}`]));
+      for (const idioma of IDIOMAS) {
+        if (!idiomaPublicado(idioma, publicadoEn)) continue;
+        const path = enlace(id, idioma, params);
+        if (path === null) continue;
+        entradas.push({
+          url: `${SITE_URL}${path === "/" ? "" : path}`,
+          lastModified: new Date(`${ruta.actualizado}T00:00:00-05:00`),
+          changeFrequency: ruta.changeFrequency,
+          priority: ruta.priority,
+          ...(Object.keys(languages).length ? { alternates: { languages: absolutos } } : {}),
+        });
+      }
+    }
+  }
+  return entradas;
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: BASE,                 changeFrequency: "monthly", priority: 1.0 },
-    { url: `${BASE}/productos`,  changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/casos`,      changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE}/nosotros`,   changeFrequency: "yearly",  priority: 0.6 },
-    { url: `${BASE}/terminos`,   changeFrequency: "yearly",  priority: 0.3 },
-    { url: `${BASE}/privacidad`, changeFrequency: "yearly",  priority: 0.3 },
-  ];
-
-  const casoRoutes: MetadataRoute.Sitemap = casos.map((caso) => ({
-    url: `${BASE}/casos/${caso.slug}`,
-    changeFrequency: "yearly",
-    priority: 0.7,
-  }));
-
-  // Solo entra cuando la bandera PUBLICADO está en true.
-  const ecommerce = ecommerceEntrada(ECOMMERCE_PUBLICADO, BASE);
-
-  return [...staticRoutes, ...(ecommerce ? [ecommerce] : []), ...casoRoutes];
+  return entradasSitemap();
 }
