@@ -5,4 +5,4 @@
  *
  * Un test unitario impide poner PUBLICADO_EN en true mientras la lista no esté vacía.
  */
-export const PENDIENTES_REVISION_EN: readonly string[] = ["navegacion", "inicio", "productos", "casos", "ecommerce-entrada"];
+export const PENDIENTES_REVISION_EN: readonly string[] = ["navegacion", "inicio", "productos", "casos", "ecommerce-entrada", "productos-pagina"];

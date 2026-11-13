@@ -7,8 +7,9 @@ import { ETIQUETA_INTERES_EN, inicio } from "../../src/content/data/i18n/inicio.
 import { casosPorIdioma } from "../../src/content/data/casos.ts";
 import { entradaPorIdioma } from "../../src/content/data/ecommerce-shopify.ts";
 import { INTERESES } from "../../src/lib/contact.ts";
+import { productosDetalle, productosPagina } from "../../src/content/data/i18n/productos-pagina.ts";
 
-const diccionarios = { header, footer, inicio, casos: casosPorIdioma, entrada: entradaPorIdioma };
+const diccionarios = { header, footer, inicio, casos: casosPorIdioma, entrada: entradaPorIdioma, productosDetalle, productosPagina };
 
 /** Todos los textos de un valor, recorriendo objetos y arreglos. */
 function textos(valor: unknown): string[] {
@@ -74,6 +75,15 @@ describe("diccionarios", () => {
           assert.deepEqual(nums(c[campo]), nums(es[campo]), `${c.slug}.${campo}`);
         }
       });
+    }
+  });
+
+  test("productos: mismos ids, números, colores y stack en todos los idiomas", () => {
+    for (const i of IDIOMAS) {
+      assert.deepEqual(
+        productosDetalle[i].map((p) => [p.id, p.numero, p.nombre, p.color, p.stack.join()]),
+        productosDetalle.es.map((p) => [p.id, p.numero, p.nombre, p.color, p.stack.join()]),
+      );
     }
   });
 
