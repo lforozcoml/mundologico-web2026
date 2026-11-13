@@ -59,6 +59,7 @@ export const site = {
   },
   redes: {
     linkedin: "https://www.linkedin.com/company/mundologico",
+    facebook: "https://www.facebook.com/mundologicoDigital",
   },
   partners: ["Make.com", "Google Workspace"],
   cifras,

@@ -3,6 +3,7 @@ import { Tajawal } from "next/font/google";
 import Script from "next/script";
 import { SITE_NAME, SITE_URL } from "@/lib/metadata";
 import { consentInitScript } from "@/lib/consent";
+import { site } from "@/content/data/site";
 import { CookieBanner } from "@/components/layout/CookieBanner";
 import "./globals.css";
 
@@ -55,7 +56,7 @@ export default function RootLayout({
                 areaServed: ["CO", "US"],
                 availableLanguage: "Spanish",
               },
-              sameAs: ["https://www.linkedin.com/company/mundologico"],
+              sameAs: [site.redes.linkedin, site.redes.facebook],
             }),
           }}
         />
