@@ -117,7 +117,11 @@ Español sin prefijo (URLs de siempre), inglés bajo `/en/`. Las páginas del ma
 - **Proxy**: `src/proxy.ts` reescribe lo sin prefijo a `/es/...`, traduce `/en/...` con el mapa (lo que no está da 404) y manda `/es/...` con 308 a la URL sin prefijo. Sin redirección por `Accept-Language`. Excluye `api`, `_next`, `_vercel`, `opengraph-image`, `demos-ml`, `contacto` y todo lo que tenga extensión.
 - **404**: `src/app/global-not-found.tsx` (`experimental.globalNotFound`), porque con el layout raíz dentro de `[lang]` el `notFound()` no renderiza el layout. Páginas con slug usan `dynamicParams = false`.
 - **`PUBLICADO_EN` en false**: `/en` existe con `noindex, nofollow`, fuera del sitemap, sin hreflang, sin selector de idioma y sin enlaces. El JSON-LD declara `availableLanguage` solo en español.
-- **Diccionarios**: `src/content/data/i18n/` con `Record<Idioma, Tipo>`. El inglés provisional lleva `[FALTA REVISION EN]`; un test unitario impide poner `PUBLICADO_EN` en true mientras quede alguna marca. Migrados: Header, Footer y nav.
+- **Diccionarios**: `src/content/data/i18n/` con `Record<Idioma, Tipo>` (navegación, inicio, productos-pagina, casos-pagina, ecommerce-contenido, cookies), más `productosPorIdioma`, `casosPorIdioma` y `entradaPorIdioma` en sus archivos de datos. El español publicado no se tocó; el inglés de un objeto `as const` existente se tipa con `Textos<typeof x>` (`src/lib/i18n/tipos.ts`).
+- **Revisión del inglés**: `src/content/data/i18n/revision.ts` lista los diccionarios en borrador. Un test unitario impide poner `PUBLICADO_EN` en true mientras la lista no esté vacía. Al aprobar un diccionario, quitarlo de la lista.
+- **Traducido (borrador)**: home (con formulario: envía `idioma` a Make), `/en/products`, `/en/products/shopify-ecommerce`, `/en/case-studies` y cada caso, Header, Footer y banner de cookies. Falta: Nosotros, imagen social en inglés.
+- **Términos fijos del hub en inglés**: ver la cabecera de `ecommerce-contenido.ts`.
+- **Prueba de restos**: `tests/e2e/i18n.spec.ts` falla si una página en inglés repite un texto de su par en español (salvo nombres propios y cifras).
 - **Demos y tarjeta** viven en `src/app/(sin-prefijo)/` con su propio layout raíz y siguen con `?lang=` e `IdiomaDocumento`. No moverlas a `[lang]`: en Vercel el rewrite del proxy llega a la página sin el query string y `?lang=` se pierde (con `next start` local no se ve). Probar siempre `?lang=en` en el Preview.
 
 ## Variables de entorno
@@ -132,5 +136,5 @@ En `.env.local` para desarrollo. Agregar en Vercel antes del deploy.
 
 ## Pendientes
 
-1. i18n fase 2: traducir contenido (home, productos, hub de Shopify, casos y contacto; Nosotros después) y revisar `areaServed` del JSON-LD de Organization. Francés más adelante.
+1. i18n: revisión de Federico del inglés en borrador (ver `revision.ts`), Nosotros, imagen social en inglés y revisar `areaServed` del JSON-LD de Organization. Luego `PUBLICADO_EN = true`. Francés más adelante.
 2. Revisión y limpieza de etiquetas en GTM (proyecto aparte)
