@@ -58,6 +58,9 @@ test.describe("i18n por ruta e idioma (HTML del servidor)", () => {
 
       expect(meta(head, /<link rel="canonical" href="([^"]*)"/)).toBe(absoluta(path));
       expect(meta(head, /<meta property="og:locale" content="([^"]*)"/)).toBe(idioma === "es" ? "es_CO" : "en_US");
+      // Imagen social del idioma: la de español en /opengraph-image, la de inglés en /opengraph-image-en.
+      const ogImagen = meta(head, /<meta property="og:image" content="([^"]*)"/) ?? "";
+      expect(new URL(ogImagen).pathname).toBe(idioma === "es" ? "/opengraph-image" : "/opengraph-image-en");
 
       // hreflang: con el inglés sin publicar no hay ninguno; publicado, recíproco con x-default.
       const hreflang = Object.fromEntries(
@@ -170,6 +173,7 @@ test.describe("proxy y archivos fuera de [lang]", () => {
 
   for (const [path, tipo] of [
     ["/opengraph-image", "image/png"],
+    ["/opengraph-image-en", "image/png"],
     ["/icon.png", "image/png"],
     ["/robots.txt", "text/plain"],
     ["/sitemap.xml", "application/xml"],

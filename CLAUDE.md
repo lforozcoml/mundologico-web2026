@@ -75,7 +75,7 @@ mundo-lavender:#6F6DFB
 - **IALabSection**: cliente component con isotipo SVG flotante y parallax (lerp 0.06).
 - **i18n**: ver sección i18n. Fase 1 (arquitectura) lista; el inglés no está publicado.
 - **Metadata**: cada página usa `pageMetadata()` de `src/lib/metadata.ts` (canonical, openGraph, twitter). No definir canonical ni openGraph en el layout: Next mezcla la metadata de forma superficial y las páginas heredarían los del home.
-- **Imagen social**: `src/app/opengraph-image.tsx`, referenciada explícitamente desde `pageMetadata()`.
+- **Imagen social**: diseño en `src/lib/imagen-social.tsx`. Español en `src/app/opengraph-image.tsx` (`/opengraph-image`), inglés en `src/app/opengraph-image-en/route.tsx` (`/opengraph-image-en`). `pageMetadata()` elige la del idioma.
 - **Cookies**: banner propio con Google Consent Mode v2 (`src/lib/consent.ts`, `CookieBanner.tsx`). Analítica activa por defecto con opción de rechazo, marketing apagado hasta aceptar. Para opt-in estricto: `analytics: false` en `CONSENT_DEFAULTS`. GTM: `GTM-MM4PSS2`.
 - **Agente de voz Federico**: `/demos-ml/agente-voz` es un agente de IA con la voz clonada de Federico Orozco (agente "Federico" en ElevenLabs). Carga el widget de ElevenLabs (script con versión fija en `demo-agente-voz.ts`) solo si la bandera de Make (`MAKE_DEMO_ESTADO_URL`, `src/lib/demo-estado.ts`) responde exactamente `enabled: true` y hay `NEXT_PUBLIC_ELEVENLABS_AGENT_ID`. Falla cerrado. El widget se monta después de aceptar el aviso de IA, voz clonada y grabación (texto `[REVISAR LEGAL]`). La ruta es neutra a propósito: no depende del nombre del agente. La tarjeta en `/demos-ml` es aparte: `activo` en `demos.ts`.
 
@@ -119,7 +119,7 @@ Español sin prefijo (URLs de siempre), inglés bajo `/en/`. Las páginas del ma
 - **`PUBLICADO_EN` en false**: `/en` existe con `noindex, nofollow`, fuera del sitemap, sin hreflang, sin selector de idioma y sin enlaces. El JSON-LD declara `availableLanguage` solo en español.
 - **Diccionarios**: `src/content/data/i18n/` con `Record<Idioma, Tipo>` (navegación, inicio, productos-pagina, casos-pagina, ecommerce-contenido, cookies, nosotros), más `productosPorIdioma`, `casosPorIdioma` y `entradaPorIdioma` en sus archivos de datos. El español publicado no se tocó; el inglés de un objeto `as const` existente se tipa con `Textos<typeof x>` (`src/lib/i18n/tipos.ts`).
 - **Revisión del inglés**: `src/content/data/i18n/revision.ts` lista los diccionarios en borrador. Un test unitario impide poner `PUBLICADO_EN` en true mientras la lista no esté vacía. Al aprobar un diccionario, quitarlo de la lista.
-- **Traducido (borrador)**: home (con formulario: envía `idioma` a Make), `/en/products`, `/en/products/shopify-ecommerce`, `/en/case-studies` y cada caso, `/en/about`, Header, Footer y banner de cookies. Falta: imagen social en inglés.
+- **Traducido (borrador)**: home (con formulario: envía `idioma` a Make), `/en/products`, `/en/products/shopify-ecommerce`, `/en/case-studies` y cada caso, `/en/about`, Header, Footer, banner de cookies e imagen social.
 - **Términos fijos del hub en inglés**: ver la cabecera de `ecommerce-contenido.ts`.
 - **Prueba de restos**: `tests/e2e/i18n.spec.ts` falla si una página en inglés repite un texto de su par en español (salvo nombres propios y cifras).
 - **Demos y tarjeta** viven en `src/app/(sin-prefijo)/` con su propio layout raíz y siguen con `?lang=` e `IdiomaDocumento`. No moverlas a `[lang]`: en Vercel el rewrite del proxy llega a la página sin el query string y `?lang=` se pierde (con `next start` local no se ve). Probar siempre `?lang=en` en el Preview.
@@ -136,5 +136,5 @@ En `.env.local` para desarrollo. Agregar en Vercel antes del deploy.
 
 ## Pendientes
 
-1. i18n: revisión de Federico del inglés en borrador (ver `revision.ts`), imagen social en inglés y revisar `areaServed` del JSON-LD de Organization. Luego `PUBLICADO_EN = true`. Francés más adelante.
+1. i18n: revisión de Federico del inglés en borrador (ver `revision.ts`) y revisar `areaServed` del JSON-LD de Organization. Luego `PUBLICADO_EN = true`. Francés más adelante.
 2. Revisión y limpieza de etiquetas en GTM (proyecto aparte)

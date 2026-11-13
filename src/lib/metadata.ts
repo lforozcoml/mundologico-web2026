@@ -16,10 +16,10 @@ const OG_IMAGE = {
   alt: `${SITE_NAME}: automatización e IA para empresas`,
 };
 
-/** alt de la imagen social por idioma. La imagen es una sola (con el texto en español). */
-const OG_ALT: Record<Idioma, string> = {
-  es: OG_IMAGE.alt,
-  en: `${SITE_NAME}: automation and AI for businesses`,
+/** Imagen social por idioma: misma medida, su propia URL y su alt. */
+const OG_POR_IDIOMA: Record<Idioma, { url: string; alt: string }> = {
+  es: { url: OG_IMAGE.url, alt: OG_IMAGE.alt },
+  en: { url: "/opengraph-image-en", alt: `${SITE_NAME}: automation and AI for businesses` },
 };
 
 type Comunes = {
@@ -74,7 +74,7 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
     ? IDIOMAS.filter((i) => i !== idioma && languages[i]).map((i) => LOCALE_OG[i])
     : [];
   const robots = robotsIdioma(idioma, publicadoEn);
-  const imagen = { ...OG_IMAGE, alt: OG_ALT[idioma] };
+  const imagen = { ...OG_IMAGE, ...OG_POR_IDIOMA[idioma] };
 
   return {
     title: { absolute: fullTitle },
