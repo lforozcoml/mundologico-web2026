@@ -26,7 +26,7 @@ const paginas: Caso[] = IDS_RUTAS.flatMap((id) =>
  * y esta fase no cambia textos en español: quedan como deuda conocida. En inglés se
  * repiten mientras el contenido no esté traducido.
  */
-const TITULOS_LARGOS_CONOCIDOS = new Set(["/casos/formex", "/en/case-studies/formex"]);
+const TITULOS_LARGOS_CONOCIDOS = new Set(["/casos/formex"]);
 
 const absoluta = (path: string) => `${SITE_URL}${path === "/" ? "" : path}`;
 

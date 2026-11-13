@@ -7,7 +7,11 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CtaBand } from "@/components/ui/CtaBand";
 import { StackPill } from "@/components/ui/StackPill";
-import { casos } from "@/content/data/casos";
+import { casos, casosPorIdioma } from "@/content/data/casos";
+import { casosPagina } from "@/content/data/i18n/casos-pagina";
+import { inicio } from "@/content/data/i18n/inicio";
+import { CALENDARIO_URL } from "@/content/data/site";
+import { enlaceOEspanol } from "@/lib/i18n/rutas";
 
 type Props = PageProps<"/[lang]/casos/[slug]">;
 
@@ -21,10 +25,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const idioma = await idiomaDePagina(params, "caso");
   const { slug } = await params;
-  const caso = casos.find((c) => c.slug === slug);
+  const caso = casosPorIdioma[idioma].find((c) => c.slug === slug);
   if (!caso) return {};
   return pageMetadata({
-    title: `${caso.nombre} · Casos de éxito`,
+    title: `${caso.nombre} · ${casosPagina[idioma].tituloCaso}`,
     description: caso.subtitulo,
     idioma,
     ruta: "caso",
@@ -42,8 +46,10 @@ const colorToken = {
 export default async function CasoPage({ params }: Props) {
   const idioma = await idiomaDePagina(params, "caso");
   const { slug } = await params;
-  const caso = casos.find((c) => c.slug === slug);
+  const caso = casosPorIdioma[idioma].find((c) => c.slug === slug);
   if (!caso) notFound();
+  const tx = casosPagina[idioma];
+  const hrefCasos = enlaceOEspanol("casos", idioma);
 
   const ct = colorToken[caso.color];
 
@@ -56,7 +62,7 @@ export default async function CasoPage({ params }: Props) {
 
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-[13px] text-gray-400 mb-10">
-              <Link href="/casos" className="hover:text-mundo-dark transition-colors">Casos de éxito</Link>
+              <Link href={hrefCasos} className="hover:text-mundo-dark transition-colors">{tx.migaInicio}</Link>
               <span>/</span>
               <span className="text-mundo-dark font-semibold">{caso.nombre}</span>
             </div>
@@ -79,16 +85,16 @@ export default async function CasoPage({ params }: Props) {
               {/* Contenido */}
               <div className="flex flex-col gap-8">
                 <div>
-                  <p className="text-[12px] font-bold uppercase tracking-widest text-gray-400 mb-3">El problema</p>
+                  <p className="text-[12px] font-bold uppercase tracking-widest text-gray-400 mb-3">{tx.problema}</p>
                   <p className="text-[15px] text-gray-600 leading-relaxed">{caso.problema}</p>
                 </div>
                 <div className="h-px bg-gray-200" />
                 <div>
-                  <p className="text-[12px] font-bold uppercase tracking-widest text-gray-400 mb-3">Lo que construimos</p>
+                  <p className="text-[12px] font-bold uppercase tracking-widest text-gray-400 mb-3">{tx.construimos}</p>
                   <div className="flex flex-col gap-4">
                     {caso.solucion.split("\n\n").map((parrafo, i) => {
                       const [bold, ...rest] = parrafo.split(": ");
-                      const hasTitle = parrafo.includes(": ") && bold.startsWith("Proyecto");
+                      const hasTitle = parrafo.includes(": ") && bold.startsWith(tx.prefijoProyecto);
                       return (
                         <p key={i} className="text-[15px] text-gray-600 leading-relaxed">
                           {hasTitle ? (
@@ -101,7 +107,7 @@ export default async function CasoPage({ params }: Props) {
                 </div>
                 <div className="h-px bg-gray-200" />
                 <div>
-                  <p className="text-[12px] font-bold uppercase tracking-widest text-gray-400 mb-3">Stack tecnológico</p>
+                  <p className="text-[12px] font-bold uppercase tracking-widest text-gray-400 mb-3">{tx.stack}</p>
                   <div className="flex flex-wrap gap-2">
                     {caso.stack.map((s) => (
                       <StackPill key={s} name={s} size="md" />
@@ -130,9 +136,11 @@ export default async function CasoPage({ params }: Props) {
         </section>
 
         <CtaBand
-          titulo="¿Tu negocio tiene procesos que se pueden automatizar?"
-          descripcion="Agenda una llamada de 20 minutos. Revisamos un proceso concreto y te decimos si vale la pena automatizarlo."
-          ctaSecundario={{ label: "Ver más casos", href: "/casos" }}
+          titulo={tx.bandaFinalCaso.titulo}
+          descripcion={tx.bandaFinalCaso.descripcion}
+          // En español se deja el CTA principal por defecto de CtaBand, como antes.
+          {...(idioma === "es" ? {} : { ctaPrimario: { label: inicio[idioma].bandaFinal.ctaPrimario, href: CALENDARIO_URL } })}
+          ctaSecundario={{ label: tx.bandaFinalCaso.ctaSecundario, href: hrefCasos }}
         />
       </main>
       <Footer idioma={idioma} />

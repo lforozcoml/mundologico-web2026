@@ -7,9 +7,10 @@ import { ETIQUETA_INTERES_EN, inicio } from "../../src/content/data/i18n/inicio.
 import { casosPorIdioma } from "../../src/content/data/casos.ts";
 import { entradaPorIdioma } from "../../src/content/data/ecommerce-shopify.ts";
 import { INTERESES } from "../../src/lib/contact.ts";
+import { casosPagina } from "../../src/content/data/i18n/casos-pagina.ts";
 import { productosDetalle, productosPagina } from "../../src/content/data/i18n/productos-pagina.ts";
 
-const diccionarios = { header, footer, inicio, casos: casosPorIdioma, entrada: entradaPorIdioma, productosDetalle, productosPagina };
+const diccionarios = { header, footer, inicio, casos: casosPorIdioma, entrada: entradaPorIdioma, productosDetalle, productosPagina, casosPagina };
 
 /** Todos los textos de un valor, recorriendo objetos y arreglos. */
 function textos(valor: unknown): string[] {
