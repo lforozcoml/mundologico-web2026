@@ -33,7 +33,7 @@ describe("diccionarios", () => {
     });
 
     test(`${nombre}: sin em dash`, () => {
-      for (const i of IDIOMAS) assert.ok(!textos(dicc[i]).some((t) => t.includes("—")), `${nombre}.${i}`);
+      for (const i of IDIOMAS) assert.ok(!textos(dicc[i]).some((t) => t.includes("\u2014")), `${nombre}.${i}`);
     });
   }
 
