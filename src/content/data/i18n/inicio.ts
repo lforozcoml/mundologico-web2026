@@ -116,7 +116,7 @@ export const inicio: Record<Idioma, TextosInicio> = {
         "Diseñamos e implementamos automatizaciones con IA para que tu equipo deje de hacer trabajo repetitivo y se enfoque en lo que realmente importa.",
     },
     hero: {
-      eyebrow: "Automatización e IA para empresas en Colombia",
+      eyebrow: "Automatización e IA para empresas",
       h1: { a: "Automatizamos lo que", b: "frena tu negocio.", c: "Construimos lo que", d: "lo escala." },
       descripcion: site.descripcion,
       ctaPrimario: "Agenda una llamada de 20 minutos →",
@@ -258,7 +258,7 @@ export const inicio: Record<Idioma, TextosInicio> = {
         "We design and implement AI-powered automations so your team stops doing repetitive work and focuses on what really matters.",
     },
     hero: {
-      eyebrow: "Automation and AI for businesses in Colombia",
+      eyebrow: "Automation and AI for businesses",
       h1: { a: "We automate what", b: "holds your business back.", c: "We build what", d: "helps it scale." },
       descripcion:
         "We connect your tools, your data and AI agents into one system that handles your team's repetitive work. End-to-end processes, not scattered automations or isolated chatbots.",

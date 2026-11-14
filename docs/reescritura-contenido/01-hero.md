@@ -20,7 +20,7 @@
 
 ## 2. Copy final
 
-- **Eyebrow:** Automatización e IA para empresas en Colombia
+- **Eyebrow:** Automatización e IA para empresas (sin "en Colombia" desde 2026-11-14, por decisión de Federico)
 - **H1:** Automatizamos lo que *frena tu negocio.* Construimos lo que *lo escala.* (sin cambios)
 - **Subtítulo:** Conectamos tus herramientas, tus datos y agentes de IA en un solo sistema que hace el trabajo repetitivo por tu equipo. Procesos completos, no automatizaciones sueltas ni chatbots aislados.
 - **CTA primario:** Agenda una llamada de 20 minutos →
