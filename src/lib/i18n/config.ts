@@ -25,7 +25,7 @@ export const IDIOMAS_CON_PREFIJO = IDIOMAS.filter(
  * No pasar a true mientras haya diccionarios en PENDIENTES_REVISION_EN
  * (src/content/data/i18n/revision.ts) o algún "[FALTA REVISION EN]": lo bloquea un test unitario.
  */
-export const PUBLICADO_EN: boolean = false;
+export const PUBLICADO_EN: boolean = true;
 
 /** Marca del texto provisional en inglés que falta revisar. */
 export const MARCA_FALTA_REVISION = "[FALTA REVISION EN]";

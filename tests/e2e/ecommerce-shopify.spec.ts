@@ -93,7 +93,9 @@ test.describe("Página /productos/ecommerce-shopify", () => {
     if (PUBLICADO) {
       await expect(robots).toHaveAttribute("content", "index, follow");
       expect(sitemap).toContain(`<loc>${SITE}${RUTA}</loc>`);
-      expect(sitemap).toMatch(new RegExp(`${RUTA}</loc>\\s*<lastmod>${ULTIMA_ACTUALIZACION}`));
+      // Con el inglés publicado, los alternates (hreflang) van entre <loc> y <lastmod>.
+      const entrada = sitemap.split("<url>").find((u) => u.includes(`<loc>${SITE}${RUTA}</loc>`)) ?? "";
+      expect(entrada).toContain(`<lastmod>${ULTIMA_ACTUALIZACION}`);
     } else {
       await expect(robots).toHaveAttribute("content", "noindex, nofollow");
       expect(sitemap).not.toContain(RUTA);

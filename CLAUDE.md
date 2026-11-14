@@ -73,7 +73,7 @@ mundo-lavender:#6F6DFB
 - **Formulario**: valida campos → POST al webhook de Make (`MAKE_WEBHOOK_URL` en env).
 - **CTAs de diagnóstico**: `CALENDARIO_URL` centralizado en `site.ts`, todos abren en nueva pestaña.
 - **IALabSection**: cliente component con isotipo SVG flotante y parallax (lerp 0.06).
-- **i18n**: ver sección i18n. Fase 1 (arquitectura) lista; el inglés no está publicado.
+- **i18n**: ver sección i18n. Inglés publicado desde 2026-11-14 (`PUBLICADO_EN = true`).
 - **Metadata**: cada página usa `pageMetadata()` de `src/lib/metadata.ts` (canonical, openGraph, twitter). No definir canonical ni openGraph en el layout: Next mezcla la metadata de forma superficial y las páginas heredarían los del home.
 - **areaServed** (JSON-LD, confirmado 2026-11-13): Organization `["CO", "US"]`; servicio de Shopify Colombia y EE.UU. (`AREA_SERVICIO` en `ecommerce-shopify.ts`). La meta description del hub dice "Colombia y EE.UU." en los dos idiomas.
 - **Imagen social**: diseño en `src/lib/imagen-social.tsx`. Español en `src/app/opengraph-image.tsx` (`/opengraph-image`), inglés en `src/app/opengraph-image-en/route.tsx` (`/opengraph-image-en`). `pageMetadata()` elige la del idioma.
@@ -117,7 +117,7 @@ Español sin prefijo (URLs de siempre), inglés bajo `/en/`. Las páginas del ma
 - **Mapa de rutas**: `src/lib/i18n/rutas.ts`, fuente única de enlaces internos, selector de idioma, hreflang, sitemap y proxy. Cada ruta: path en español, path en inglés sin prefijo, `"solo-es"` (legales, por decisión) o `"pendiente"` (sin uso hoy). Slugs de casos iguales en ambos idiomas.
 - **Proxy**: `src/proxy.ts` reescribe lo sin prefijo a `/es/...`, traduce `/en/...` con el mapa (lo que no está da 404) y manda `/es/...` con 308 a la URL sin prefijo. Sin redirección por `Accept-Language`. Excluye `api`, `_next`, `_vercel`, `opengraph-image`, `demos-ml`, `contacto` y todo lo que tenga extensión.
 - **404**: `src/app/global-not-found.tsx` (`experimental.globalNotFound`), porque con el layout raíz dentro de `[lang]` el `notFound()` no renderiza el layout. Páginas con slug usan `dynamicParams = false`.
-- **`PUBLICADO_EN` en false**: `/en` existe con `noindex, nofollow`, fuera del sitemap, sin hreflang y sin enlaces. El selector de idioma del Header solo aparece en Previews (`*.vercel.app`) y en local; lo decide el navegador por el dominio, así que en `mundologico.com` nunca sale. El JSON-LD declara `availableLanguage` solo en español.
+- **`PUBLICADO_EN`** (true desde 2026-11-14): `/en` indexable, en el sitemap con hreflang recíproco y x-default, selector ES | EN visible en el Header y `availableLanguage` en español e inglés. Si vuelve a false: `/en` queda con `noindex`, sale del sitemap y el selector solo se ve en Previews y local.
 - **Diccionarios**: `src/content/data/i18n/` con `Record<Idioma, Tipo>` (navegación, inicio, productos-pagina, casos-pagina, ecommerce-contenido, cookies, nosotros), más `productosPorIdioma`, `casosPorIdioma` y `entradaPorIdioma` en sus archivos de datos. El español publicado no se tocó; el inglés de un objeto `as const` existente se tipa con `Textos<typeof x>` (`src/lib/i18n/tipos.ts`).
 - **Revisión del inglés**: `src/content/data/i18n/revision.ts` lista los diccionarios en borrador. Un test unitario impide poner `PUBLICADO_EN` en true mientras la lista no esté vacía. Al aprobar un diccionario, quitarlo de la lista.
 - **Traducido (borrador)**: home (con formulario: envía `idioma` a Make), `/en/products`, `/en/products/shopify-ecommerce`, `/en/case-studies` y cada caso, `/en/about`, Header, Footer, banner de cookies e imagen social.
@@ -137,5 +137,5 @@ En `.env.local` para desarrollo. Agregar en Vercel antes del deploy.
 
 ## Pendientes
 
-1. i18n: revisión de Federico del inglés en borrador (ver `revision.ts`). Luego `PUBLICADO_EN = true` y probar `?lang=en` en el Preview antes de promover. Francés más adelante.
+1. i18n: francés más adelante. Para cambios de copy en inglés, los diccionarios están en `src/content/data/i18n/`.
 2. Revisión y limpieza de etiquetas en GTM (proyecto aparte)

@@ -5,4 +5,5 @@
  *
  * Un test unitario impide poner PUBLICADO_EN en true mientras la lista no esté vacía.
  */
-export const PENDIENTES_REVISION_EN: readonly string[] = ["navegacion", "inicio", "productos", "casos", "ecommerce-entrada", "productos-pagina", "casos-pagina", "ecommerce", "cookies", "nosotros"];
+// Federico aprobó el inglés completo el 2026-11-14 (revisó las páginas en /en).
+export const PENDIENTES_REVISION_EN: readonly string[] = [];
