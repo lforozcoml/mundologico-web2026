@@ -60,7 +60,7 @@ export function HeaderCliente({ inicio, logoAlt, botonMenu, links, cta, otroIdio
             width={160}
             height={36}
             priority
-            className="h-8 w-auto"
+            className="h-8 w-auto max-[359px]:h-7"
           />
         </Link>
 
@@ -97,9 +97,20 @@ export function HeaderCliente({ inicio, logoAlt, botonMenu, links, cta, otroIdio
           </Link>
         </div>
 
-        {/* Mobile hamburger */}
+        {/* Móvil: selector de idioma compacto y hamburguesa, siempre visibles en la barra */}
+        <div className="md:hidden flex items-center gap-2">
+        {hrefOtroIdioma && otroIdioma && (
+          <SelectorIdioma
+            idioma={otroIdioma.actual}
+            destino={{ hrefs: { [otroIdioma.idioma]: hrefOtroIdioma } }}
+            etiqueta={otroIdioma.aria}
+            nombreIdioma={NOMBRE_IDIOMA}
+            tema="claro"
+            tamano="compacto"
+          />
+        )}
         <button
-          className="md:hidden p-2 text-gray-600"
+          className="p-2 text-gray-600"
           onClick={() => setOpen(!open)}
           aria-label={botonMenu}
         >
@@ -113,6 +124,7 @@ export function HeaderCliente({ inicio, logoAlt, botonMenu, links, cta, otroIdio
             </svg>
           )}
         </button>
+        </div>
       </div>
 
       {/* Mobile menu */}
@@ -128,18 +140,6 @@ export function HeaderCliente({ inicio, logoAlt, botonMenu, links, cta, otroIdio
               {link.label}
             </Link>
           ))}
-          {hrefOtroIdioma && otroIdioma && (
-            <div className="self-start">
-              <SelectorIdioma
-                idioma={otroIdioma.actual}
-                destino={{ hrefs: { [otroIdioma.idioma]: hrefOtroIdioma } }}
-                etiqueta={otroIdioma.aria}
-                nombreIdioma={NOMBRE_IDIOMA}
-                tema="claro"
-                onElegir={() => setOpen(false)}
-              />
-            </div>
-          )}
           <Link
             href={nav.cta.href}
             target="_blank"

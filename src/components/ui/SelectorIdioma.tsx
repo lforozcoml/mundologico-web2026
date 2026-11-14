@@ -17,14 +17,17 @@ type Props = {
   tema?: "oscuro" | "claro";
   /** Al elegir un idioma (por ejemplo, cerrar el menú móvil). */
   onElegir?: () => void;
+  /** "compacto" para la barra del Header en móvil. Por defecto, área táctil de 44 px. */
+  tamano?: "normal" | "compacto";
 };
 
 /**
  * Selector ES/EN en píldora. Lo usan las páginas con ?lang= (conserva src; sin lang es
  * español) y el Header (lleva a la misma página bajo /en o sin prefijo).
  */
-export function SelectorIdioma({ idioma, destino, etiqueta, nombreIdioma, tema = "oscuro", onElegir }: Props) {
+export function SelectorIdioma({ idioma, destino, etiqueta, nombreIdioma, tema = "oscuro", onElegir, tamano = "normal" }: Props) {
   const oscuro = tema === "oscuro";
+  const medida = tamano === "compacto" ? "min-h-9 min-w-9 px-2.5 text-xs" : "min-h-11 min-w-11 px-3 text-sm";
   const conQuery = "ruta" in destino;
   const hrefDe = (opcion: Idioma): string | undefined =>
     conQuery ? hrefConIdioma(destino.ruta, destino.src, opcion) : opcion === idioma ? undefined : destino.hrefs[opcion];
@@ -39,7 +42,7 @@ export function SelectorIdioma({ idioma, destino, etiqueta, nombreIdioma, tema =
               <span
                 lang={opcion}
                 aria-current="true"
-                className={`flex min-h-11 min-w-11 items-center justify-center rounded-full px-3 text-sm font-bold uppercase ${
+                className={`flex ${medida} items-center justify-center rounded-full font-bold uppercase ${
                   oscuro ? "bg-white text-mundo-dark" : "bg-mundo-dark text-white"
                 }`}
               >
@@ -56,7 +59,7 @@ export function SelectorIdioma({ idioma, destino, etiqueta, nombreIdioma, tema =
               // En ?lang= se cambia en el lugar; en /en es otra página.
               replace={conQuery}
               scroll={conQuery ? false : undefined}
-              className={`flex min-h-11 min-w-11 items-center justify-center rounded-full px-3 text-sm font-bold uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mundo-teal ${
+              className={`flex ${medida} items-center justify-center rounded-full font-bold uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mundo-teal ${
                 opcion === idioma
                   ? oscuro ? "bg-white text-mundo-dark" : "bg-mundo-dark text-white"
                   : oscuro ? "text-white/80 hover:bg-white/10" : "text-mundo-dark hover:bg-gray-100"
