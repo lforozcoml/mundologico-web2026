@@ -241,13 +241,20 @@ test.describe("inglés sin restos del español", () => {
 test.describe("selector de idioma", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test("en local o Preview lleva a la página equivalente; sin par no aparece", async ({ page }) => {
+  test("lleva a la página equivalente; sin par no aparece", async ({ page }) => {
     await page.goto("/productos");
-    const aIngles = page.locator('header a[hreflang="en"]');
+    // Hay dos selectores (escritorio y barra móvil); se prueba el que se ve.
+    const aIngles = page.locator('header a[hreflang="en"]:visible');
     await expect(aIngles).toHaveAttribute("href", "/en/products");
     await page.goto("/en/case-studies/formex");
-    await expect(page.locator('header a[hreflang="es"]')).toHaveAttribute("href", "/casos/formex");
+    await expect(page.locator('header a[hreflang="es"]:visible')).toHaveAttribute("href", "/casos/formex");
     await page.goto("/terminos");
     await expect(page.locator("header a[hreflang]")).toHaveCount(0);
+  });
+
+  test("en móvil se ve en la barra, sin abrir el menú", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/productos");
+    await expect(page.locator('header a[hreflang="en"]:visible')).toHaveAttribute("href", "/en/products");
   });
 });
