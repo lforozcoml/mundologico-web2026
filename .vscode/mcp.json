@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "Sentry": {
+      "url": "https://mcp.sentry.dev/mcp/mundologico-mj/mundologico-web2026",
+      "type": "http"
+    }
+  }
+}
