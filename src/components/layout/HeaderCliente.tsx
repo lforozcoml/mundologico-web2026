@@ -14,7 +14,7 @@ export type PropsHeader = {
   links: { label: string; href: string }[];
   cta: { label: string; href: string };
   /** Enlace a la misma página en el otro idioma, o null si la página no tiene par. */
-  otroIdioma: { idioma: Idioma; actual: Idioma; label: string; aria: string; href: string } | null;
+  otroIdioma: { idioma: Idioma; actual: Idioma; aria: string; href: string } | null;
   /** PUBLICADO_EN. En false, el selector solo aparece en Previews y en local. */
   selectorPublicado: boolean;
 };

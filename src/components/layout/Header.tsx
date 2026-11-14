@@ -31,7 +31,7 @@ export function Header({ idioma, ruta, params }: Props) {
       botonMenu={tx.botonMenu}
       links={links}
       cta={{ label: tx.cta, href: CALENDARIO_URL }}
-      otroIdioma={hrefOtro ? { idioma: destino, actual: idioma, label: tx.cambiarIdioma, aria: tx.idiomaAria, href: hrefOtro } : null}
+      otroIdioma={hrefOtro ? { idioma: destino, actual: idioma, aria: tx.idiomaAria, href: hrefOtro } : null}
       selectorPublicado={PUBLICADO_EN}
     />
   );
