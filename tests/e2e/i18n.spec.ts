@@ -237,3 +237,17 @@ test.describe("inglés sin restos del español", () => {
     });
   }
 });
+
+test.describe("selector de idioma", () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test("en local o Preview lleva a la página equivalente; sin par no aparece", async ({ page }) => {
+    await page.goto("/productos");
+    const aIngles = page.locator('header a[hreflang="en"]');
+    await expect(aIngles).toHaveAttribute("href", "/en/products");
+    await page.goto("/en/case-studies/formex");
+    await expect(page.locator('header a[hreflang="es"]')).toHaveAttribute("href", "/casos/formex");
+    await page.goto("/terminos");
+    await expect(page.locator("header a[hreflang]")).toHaveCount(0);
+  });
+});

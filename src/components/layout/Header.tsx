@@ -19,9 +19,10 @@ export function Header({ idioma, ruta, params }: Props) {
     .filter((l) => tieneIdioma(l.ruta, idioma))
     .map((l) => ({ label: l.label, href: `${enlace(l.ruta, idioma, {})}${l.ancla ?? ""}` }));
 
-  // Selector: la misma página en el otro idioma. Oculto hasta publicar el inglés.
+  // Selector: la misma página en el otro idioma. Con el inglés sin publicar, HeaderCliente
+  // solo lo muestra en Previews de Vercel y en local (nunca en mundologico.com).
   const destino: Idioma = idioma === "es" ? "en" : "es";
-  const hrefOtro = PUBLICADO_EN ? enlace(ruta, destino, params) : null;
+  const hrefOtro = enlace(ruta, destino, params);
 
   return (
     <HeaderCliente
@@ -31,6 +32,7 @@ export function Header({ idioma, ruta, params }: Props) {
       links={links}
       cta={{ label: tx.cta, href: CALENDARIO_URL }}
       otroIdioma={hrefOtro ? { idioma: destino, label: tx.cambiarIdioma, href: hrefOtro } : null}
+      selectorPublicado={PUBLICADO_EN}
     />
   );
 }

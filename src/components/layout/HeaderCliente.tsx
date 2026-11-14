@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import type { Idioma } from "@/lib/i18n/config";
 
 export type PropsHeader = {
@@ -12,18 +12,39 @@ export type PropsHeader = {
   botonMenu: string;
   links: { label: string; href: string }[];
   cta: { label: string; href: string };
-  /** Enlace a la misma página en el otro idioma, o null (inglés sin publicar o sin par). */
+  /** Enlace a la misma página en el otro idioma, o null si la página no tiene par. */
   otroIdioma: { idioma: Idioma; label: string; href: string } | null;
+  /** PUBLICADO_EN. En false, el selector solo aparece en Previews y en local. */
+  selectorPublicado: boolean;
 };
+
+/**
+ * Previews de Vercel (*.vercel.app) y desarrollo local. Se decide en el navegador por el
+ * dominio, así no depende de cómo se construya el deployment al promoverlo: en
+ * mundologico.com nunca da true.
+ */
+/** El dominio no cambia durante la visita: no hay nada a qué suscribirse. */
+const sinSuscripcion = () => () => {};
+
+function esEntornoDeRevision(hostname: string): boolean {
+  return hostname.endsWith(".vercel.app") || hostname === "localhost" || hostname === "127.0.0.1";
+}
 
 /**
  * Parte de cliente del Header (menú móvil). Recibe textos y URLs ya resueltos desde
  * Header.tsx para no cargar el mapa de rutas ni los diccionarios en el navegador.
  */
-export function HeaderCliente({ inicio, logoAlt, botonMenu, links, cta, otroIdioma }: PropsHeader) {
+export function HeaderCliente({ inicio, logoAlt, botonMenu, links, cta, otroIdioma, selectorPublicado }: PropsHeader) {
   const [open, setOpen] = useState(false);
+  // Sin publicar, el HTML del servidor no trae el selector (snapshot del servidor: false);
+  // en el navegador aparece si el dominio es un Preview o local.
+  const enRevision = useSyncExternalStore(
+    sinSuscripcion,
+    () => esEntornoDeRevision(window.location.hostname),
+    () => false,
+  );
   const nav = { links, cta };
-  const hrefOtroIdioma = otroIdioma?.href ?? null;
+  const hrefOtroIdioma = otroIdioma && (selectorPublicado || enRevision) ? otroIdioma.href : null;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
