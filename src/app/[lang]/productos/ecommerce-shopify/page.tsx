@@ -7,7 +7,7 @@ import { breadcrumbJsonLd, faqJsonLd, jsonLdScript, serviceJsonLd } from "@/lib/
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CtaBand } from "@/components/ui/CtaBand";
-import { PUBLICADO, RUTA, robotsPara, visibleModulos, visibleTiendas } from "@/content/data/ecommerce-shopify";
+import { AREA_SERVICIO, PUBLICADO, RUTA, robotsPara, visibleModulos, visibleTiendas } from "@/content/data/ecommerce-shopify";
 import { ecommerce, moduloEnIdioma, tiendaEnIdioma } from "@/content/data/i18n/ecommerce-contenido";
 import { CALENDARIO_URL } from "@/content/data/site";
 import { MotionProvider } from "@/components/sections/ecommerce/MotionProvider";
@@ -37,7 +37,7 @@ function jsonLdDe(idioma: Idioma) {
   const ruta = enlace("ecommerceShopify", idioma) ?? RUTA;
   const { meta, faq, ui } = ecommerce[idioma];
   return [
-    serviceJsonLd({ nombre: meta.title, descripcion: meta.description, ruta, areaServed: "Colombia", idioma }),
+    serviceJsonLd({ nombre: meta.title, descripcion: meta.description, ruta, areaServed: AREA_SERVICIO, idioma }),
     breadcrumbJsonLd([
       { nombre: ui.migas.inicio, ruta: enlace("inicio", idioma) ?? "/" },
       { nombre: ui.migas.productos, ruta: enlace("productos", idioma) ?? "/productos" },

@@ -13,7 +13,8 @@ export function jsonLdScript(data: object): string {
 
 /**
  * Organization del layout. availableLanguage es el idioma de atención: el inglés solo
- * se declara cuando el sitio en inglés está publicado. areaServed queda como estaba.
+ * se declara cuando el sitio en inglés está publicado. areaServed: Colombia y EE.UU.,
+ * confirmado por Federico el 2026-11-13.
  */
 export function organizationJsonLd(publicadoEn: boolean = PUBLICADO_EN) {
   const idiomas = IDIOMAS.filter((i) => idiomaPublicado(i, publicadoEn)).map((i) => NOMBRE_IDIOMA_SCHEMA[i]);
@@ -35,7 +36,19 @@ export function organizationJsonLd(publicadoEn: boolean = PUBLICADO_EN) {
   };
 }
 
-export function serviceJsonLd(input: { nombre: string; descripcion: string; ruta: string; areaServed: string; idioma: Idioma }) {
+/** Uno o varios países. Con uno solo se emite un objeto, como antes; con varios, una lista. */
+function paises(nombres: string | readonly string[]) {
+  const lista = (typeof nombres === "string" ? [nombres] : [...nombres]).map((name) => ({ "@type": "Country", name }));
+  return lista.length === 1 ? lista[0] : lista;
+}
+
+export function serviceJsonLd(input: {
+  nombre: string;
+  descripcion: string;
+  ruta: string;
+  areaServed: string | readonly string[];
+  idioma: Idioma;
+}) {
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -44,7 +57,7 @@ export function serviceJsonLd(input: { nombre: string; descripcion: string; ruta
     serviceType: input.nombre,
     description: input.descripcion,
     url: `${SITE_URL}${input.ruta}`,
-    areaServed: { "@type": "Country", name: input.areaServed },
+    areaServed: paises(input.areaServed),
     provider: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 }

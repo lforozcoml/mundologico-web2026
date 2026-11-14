@@ -26,6 +26,12 @@ export const ULTIMA_ACTUALIZACION = "2026-11-06";
 
 export const RUTA = "/productos/ecommerce-shopify";
 
+/**
+ * Países donde se presta el servicio (JSON-LD). Confirmado por Federico el 2026-11-13:
+ * Colombia y EE.UU. El copy publicado dice "en Colombia"; si se amplía, revisar meta.description.
+ */
+export const AREA_SERVICIO = ["Colombia", "United States"] as const;
+
 // ── Tipos ───────────────────────────────────────────────────────────────────
 
 export type IconoForma = "store" | "gauge" | "lifebuoy";

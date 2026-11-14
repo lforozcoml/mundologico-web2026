@@ -46,10 +46,19 @@ describe("pageMetadata por idioma", () => {
 });
 
 describe("JSON-LD por idioma", () => {
-  test("Organization: solo español hasta publicar el inglés; areaServed sin cambios", () => {
+  test("Organization: solo español hasta publicar el inglés; areaServed Colombia y EE.UU.", () => {
     assert.equal(organizationJsonLd(false).contactPoint.availableLanguage, "Spanish");
     assert.deepEqual(organizationJsonLd(true).contactPoint.availableLanguage, ["Spanish", "English"]);
     assert.deepEqual(organizationJsonLd(false).contactPoint.areaServed, ["CO", "US"]);
+  });
+
+  test("Service: areaServed con uno o varios países", () => {
+    const base = { nombre: "a", descripcion: "b", ruta: "/x", idioma: "es" as const };
+    assert.deepEqual(serviceJsonLd({ ...base, areaServed: "Colombia" }).areaServed, { "@type": "Country", name: "Colombia" });
+    assert.deepEqual(serviceJsonLd({ ...base, areaServed: ["Colombia", "United States"] }).areaServed, [
+      { "@type": "Country", name: "Colombia" },
+      { "@type": "Country", name: "United States" },
+    ]);
   });
 
   test("Service, BreadcrumbList y FAQPage llevan inLanguage", () => {
