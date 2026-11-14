@@ -120,7 +120,7 @@ const en: ContenidoEcommerce = {
   meta: {
     title: "Shopify e-commerce development",
     description:
-      "Well-built Shopify stores connected to your operation: orders, payments and support. Custom development, optimization and monthly support in Colombia",
+      "Well-built Shopify stores connected to your operation: orders, payments and support. Development, optimization and monthly support in Colombia and the US.",
   },
   hero: {
     eyebrow: "Shopify e-commerce development",

@@ -5,7 +5,7 @@ Reglas: sin em dashes, sin precios, sin cifras de ventas, sin promesas de crecim
 
 ## Metadatos
 - title: Desarrollo de e-commerce en Shopify (se añade " | Mundo Lógico")
-- description: Tiendas Shopify bien construidas y conectadas a tu operación: pedidos, pagos y atención. Desarrollo a la medida, optimización y soporte mensual en Colombia.
+- description: Tiendas Shopify bien construidas y conectadas a tu operación: pedidos, pagos y atención. Desarrollo, optimización y soporte mensual en Colombia y EE.UU. (cambio aprobado por Federico el 2026-11-13: el servicio cubre Colombia y EE.UU.)
 - H1: Una tienda en Shopify que vende bien y no complica tu operación
 
 ## 1. Hero (actualizado 2026-11-06)

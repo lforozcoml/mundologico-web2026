@@ -28,7 +28,7 @@ export const RUTA = "/productos/ecommerce-shopify";
 
 /**
  * Países donde se presta el servicio (JSON-LD). Confirmado por Federico el 2026-11-13:
- * Colombia y EE.UU. El copy publicado dice "en Colombia"; si se amplía, revisar meta.description.
+ * Colombia y EE.UU. La meta.description lo dice igual; si cambia, cambiar las dos.
  */
 export const AREA_SERVICIO = ["Colombia", "United States"] as const;
 
@@ -109,9 +109,9 @@ export type Pregunta = { pregunta: string; respuesta: readonly string[] };
 
 export const meta = {
   title: "Desarrollo de e-commerce en Shopify",
-  // El documento tiene 156 caracteres con el punto final; sin él cabe en 155.
+  // Hasta 155 caracteres. Colombia y EE.UU. desde 2026-11-13 (ver AREA_SERVICIO).
   description:
-    "Tiendas Shopify bien construidas y conectadas a tu operación: pedidos, pagos y atención. Desarrollo a la medida, optimización y soporte mensual en Colombia",
+    "Tiendas Shopify bien construidas y conectadas a tu operación: pedidos, pagos y atención. Desarrollo, optimización y soporte mensual en Colombia y EE.UU.",
 } as const;
 
 export const hero = {
