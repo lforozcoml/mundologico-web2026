@@ -123,6 +123,7 @@ Español sin prefijo (URLs de siempre), inglés bajo `/en/`. Las páginas del ma
 - **Traducido (borrador)**: home (con formulario: envía `idioma` a Make), `/en/products`, `/en/products/shopify-ecommerce`, `/en/case-studies` y cada caso, `/en/about`, Header, Footer, banner de cookies e imagen social.
 - **Términos fijos del hub en inglés**: ver la cabecera de `ecommerce-contenido.ts`.
 - **Prueba de restos**: `tests/e2e/i18n.spec.ts` falla si una página en inglés repite un texto de su par en español (salvo nombres propios y cifras).
+- **Aviso de idioma** (`src/components/layout/AvisoIdioma.tsx`): franja bajo el Header que sugiere el otro idioma cuando el idioma principal del navegador es distinto al de la página y hay par. No redirige ni sale en el HTML del servidor; no se muestra a robots. Si el visitante lo cierra o usa el selector, se guarda en `localStorage` (`ml-idioma-elegido`) y no vuelve. Mientras se ve, ajusta `scroll-padding-top` para que los saltos a secciones no queden bajo el Header.
 - **Demos y tarjeta** viven en `src/app/(sin-prefijo)/` con su propio layout raíz y siguen con `?lang=` e `IdiomaDocumento`. No moverlas a `[lang]`: en Vercel el rewrite del proxy llega a la página sin el query string y `?lang=` se pierde (con `next start` local no se ve). Probar siempre `?lang=en` en el Preview.
 
 ## Variables de entorno

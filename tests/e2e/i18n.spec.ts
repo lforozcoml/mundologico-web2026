@@ -244,17 +244,58 @@ test.describe("selector de idioma", () => {
   test("lleva a la página equivalente; sin par no aparece", async ({ page }) => {
     await page.goto("/productos");
     // Hay dos selectores (escritorio y barra móvil); se prueba el que se ve.
-    const aIngles = page.locator('header a[hreflang="en"]:visible');
+    const aIngles = page.locator('header nav[aria-label] a[hreflang="en"]:visible');
     await expect(aIngles).toHaveAttribute("href", "/en/products");
     await page.goto("/en/case-studies/formex");
-    await expect(page.locator('header a[hreflang="es"]:visible')).toHaveAttribute("href", "/casos/formex");
+    await expect(page.locator('header nav[aria-label] a[hreflang="es"]:visible')).toHaveAttribute("href", "/casos/formex");
     await page.goto("/terminos");
-    await expect(page.locator("header a[hreflang]")).toHaveCount(0);
+    await expect(page.locator("header nav[aria-label] a[hreflang]")).toHaveCount(0);
   });
 
   test("en móvil se ve en la barra, sin abrir el menú", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/productos");
-    await expect(page.locator('header a[hreflang="en"]:visible')).toHaveAttribute("href", "/en/products");
+    await expect(page.locator('header nav[aria-label] a[hreflang="en"]:visible')).toHaveAttribute("href", "/en/products");
+  });
+});
+
+test.describe("aviso para navegadores en el otro idioma", () => {
+  test.describe("navegador en inglés", () => {
+    test.use({ locale: "en-US" });
+
+    test("en una página en español sugiere el inglés y al cerrarlo no vuelve", async ({ page }) => {
+      await page.goto("/productos");
+      const aviso = page.getByRole("region", { name: "Language notice" });
+      await expect(aviso).toBeVisible();
+      await expect(aviso.getByRole("link", { name: /View in English/ })).toHaveAttribute("href", "/en/products");
+      await aviso.getByRole("button", { name: "Dismiss" }).click();
+      await expect(aviso).toBeHidden();
+      await page.reload();
+      await expect(page.getByRole("region", { name: "Language notice" })).toHaveCount(0);
+    });
+
+    test("no aparece en la página en inglés ni en páginas solo en español", async ({ page }) => {
+      await page.goto("/en/products");
+      await expect(page.getByRole("region", { name: /Language notice|Aviso de idioma/ })).toHaveCount(0);
+      await page.goto("/terminos");
+      await expect(page.getByRole("region", { name: /Language notice|Aviso de idioma/ })).toHaveCount(0);
+    });
+
+    test("no está en el HTML del servidor", async ({ request }) => {
+      const h = await (await request.get("/productos", { headers: { "accept-language": "en-US" } })).text();
+      expect(h).not.toContain("This page is also available in English");
+    });
+  });
+
+  test.describe("navegador en español", () => {
+    test.use({ locale: "es-CO" });
+
+    test("en una página en inglés sugiere el español; en español no aparece", async ({ page }) => {
+      await page.goto("/en/products");
+      const aviso = page.getByRole("region", { name: "Aviso de idioma" });
+      await expect(aviso.getByRole("link", { name: /Ver en español/ })).toHaveAttribute("href", "/productos");
+      await page.goto("/productos");
+      await expect(page.getByRole("region", { name: /Language notice|Aviso de idioma/ })).toHaveCount(0);
+    });
   });
 });

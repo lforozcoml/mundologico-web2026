@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useSyncExternalStore } from "react";
 import { SelectorIdioma } from "@/components/ui/SelectorIdioma";
+import { AvisoIdioma } from "@/components/layout/AvisoIdioma";
+import { guardarPreferenciaIdioma } from "@/lib/i18n/preferencia";
 import type { Idioma } from "@/lib/i18n/config";
 
 export type PropsHeader = {
@@ -85,6 +87,7 @@ export function HeaderCliente({ inicio, logoAlt, botonMenu, links, cta, otroIdio
               etiqueta={otroIdioma.aria}
               nombreIdioma={NOMBRE_IDIOMA}
               tema="claro"
+              onElegir={() => guardarPreferenciaIdioma(otroIdioma.idioma)}
             />
           )}
           <Link
@@ -107,6 +110,7 @@ export function HeaderCliente({ inicio, logoAlt, botonMenu, links, cta, otroIdio
             nombreIdioma={NOMBRE_IDIOMA}
             tema="claro"
             tamano="compacto"
+            onElegir={() => guardarPreferenciaIdioma(otroIdioma.idioma)}
           />
         )}
         <button
@@ -126,6 +130,11 @@ export function HeaderCliente({ inicio, logoAlt, botonMenu, links, cta, otroIdio
         </button>
         </div>
       </div>
+
+      {/* Aviso para navegadores en el otro idioma (solo con el inglés publicado) */}
+      {selectorPublicado && otroIdioma && (
+        <AvisoIdioma idiomaPagina={otroIdioma.actual} destino={{ idioma: otroIdioma.idioma, href: otroIdioma.href }} />
+      )}
 
       {/* Mobile menu */}
       {open && (
