@@ -78,9 +78,8 @@ export default async function TarjetaPage({ params, searchParams }: Props) {
             <Image src="/logo-mundologico-blanco.png" alt="Mundo Lógico" width={160} height={36} className="h-8 w-auto" priority />
           </Link>
           <SelectorIdioma
-            ruta={d.ruta}
             idioma={idioma}
-            src={primero(query.src)}
+            destino={{ ruta: d.ruta, src: primero(query.src) }}
             etiqueta={tx.selectorIdioma}
             nombreIdioma={tx.nombreIdioma}
           />

@@ -71,9 +71,8 @@ export default async function DemosPage({ searchParams }: Props) {
               <Image src="/logo-mundologico-blanco.png" alt="Mundo Lógico" width={160} height={36} className="h-8 w-auto" priority />
             </Link>
             <SelectorIdioma
-              ruta={RUTA_DEMOS}
               idioma={idioma}
-              src={src}
+              destino={{ ruta: RUTA_DEMOS, src: src }}
               etiqueta={tx.selectorIdioma}
               nombreIdioma={tx.nombreIdioma}
             />

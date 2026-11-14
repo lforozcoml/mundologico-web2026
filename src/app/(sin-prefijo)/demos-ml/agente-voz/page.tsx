@@ -92,9 +92,8 @@ export default async function AgenteVozPage({ searchParams }: Props) {
               <Image src="/logo-mundologico-blanco.png" alt="Mundo Lógico" width={160} height={36} className="h-8 w-auto" priority />
             </Link>
             <SelectorIdioma
-              ruta={RUTA_AGENTE_VOZ}
               idioma={idioma}
-              src={src}
+              destino={{ ruta: RUTA_AGENTE_VOZ, src: src }}
               etiqueta={tx.selectorIdioma}
               nombreIdioma={tx.nombreIdioma}
             />

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useSyncExternalStore } from "react";
+import { SelectorIdioma } from "@/components/ui/SelectorIdioma";
 import type { Idioma } from "@/lib/i18n/config";
 
 export type PropsHeader = {
@@ -13,7 +14,7 @@ export type PropsHeader = {
   links: { label: string; href: string }[];
   cta: { label: string; href: string };
   /** Enlace a la misma página en el otro idioma, o null si la página no tiene par. */
-  otroIdioma: { idioma: Idioma; label: string; href: string } | null;
+  otroIdioma: { idioma: Idioma; actual: Idioma; label: string; aria: string; href: string } | null;
   /** PUBLICADO_EN. En false, el selector solo aparece en Previews y en local. */
   selectorPublicado: boolean;
 };
@@ -23,6 +24,9 @@ export type PropsHeader = {
  * dominio, así no depende de cómo se construya el deployment al promoverlo: en
  * mundologico.com nunca da true.
  */
+/** Cada idioma con su propio nombre, como en el selector de demos y tarjeta. */
+const NOMBRE_IDIOMA: Record<Idioma, string> = { es: "Español", en: "English" };
+
 /** El dominio no cambia durante la visita: no hay nada a qué suscribirse. */
 const sinSuscripcion = () => () => {};
 
@@ -74,15 +78,14 @@ export function HeaderCliente({ inicio, logoAlt, botonMenu, links, cta, otroIdio
         </nav>
 
         <div className={hrefOtroIdioma ? "hidden md:flex items-center gap-6" : "hidden md:block"}>
-          {hrefOtroIdioma && (
-            <Link
-              href={hrefOtroIdioma}
-              hrefLang={otroIdioma?.idioma}
-              lang={otroIdioma?.idioma}
-              className="text-sm font-medium text-gray-600 hover:text-mundo-dark transition-colors"
-            >
-              {otroIdioma?.label}
-            </Link>
+          {hrefOtroIdioma && otroIdioma && (
+            <SelectorIdioma
+              idioma={otroIdioma.actual}
+              destino={{ hrefs: { [otroIdioma.idioma]: hrefOtroIdioma } }}
+              etiqueta={otroIdioma.aria}
+              nombreIdioma={NOMBRE_IDIOMA}
+              tema="claro"
+            />
           )}
           <Link
             href={nav.cta.href}
@@ -125,16 +128,17 @@ export function HeaderCliente({ inicio, logoAlt, botonMenu, links, cta, otroIdio
               {link.label}
             </Link>
           ))}
-          {hrefOtroIdioma && (
-            <Link
-              href={hrefOtroIdioma}
-              hrefLang={otroIdioma?.idioma}
-              lang={otroIdioma?.idioma}
-              className="text-sm font-medium text-gray-600 hover:text-mundo-dark"
-              onClick={() => setOpen(false)}
-            >
-              {otroIdioma?.label}
-            </Link>
+          {hrefOtroIdioma && otroIdioma && (
+            <div className="self-start">
+              <SelectorIdioma
+                idioma={otroIdioma.actual}
+                destino={{ hrefs: { [otroIdioma.idioma]: hrefOtroIdioma } }}
+                etiqueta={otroIdioma.aria}
+                nombreIdioma={NOMBRE_IDIOMA}
+                tema="claro"
+                onElegir={() => setOpen(false)}
+              />
+            </div>
           )}
           <Link
             href={nav.cta.href}

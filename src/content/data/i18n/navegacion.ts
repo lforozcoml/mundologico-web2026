@@ -23,8 +23,10 @@ export type DiccHeader = {
   /** Solo se muestran los que tienen página en ese idioma. */
   links: readonly EnlaceNav[];
   cta: string;
-  /** Texto del enlace a la otra versión (solo visible con PUBLICADO_EN en true). */
+  /** Nombre del otro idioma: aria-label del enlace del selector. */
   cambiarIdioma: string;
+  /** aria-label del grupo del selector de idioma. */
+  idiomaAria: string;
 };
 
 export type DiccFooter = {
@@ -54,6 +56,7 @@ export const header: Record<Idioma, DiccHeader> = {
     ],
     cta: "Agendar llamada",
     cambiarIdioma: "English",
+    idiomaAria: "Idioma",
   },
   en: {
     logoAlt: "Mundo Lógico",
@@ -66,6 +69,7 @@ export const header: Record<Idioma, DiccHeader> = {
     ],
     cta: "Book a call",
     cambiarIdioma: "Español",
+    idiomaAria: "Language",
   },
 };
 
